@@ -1,4 +1,4 @@
-package com._Blog.backend.model; // <--- CHANGED THIS LINE
+package com._Blog.backend.model;
 
 import jakarta.persistence.*;
 import lombok.Data;

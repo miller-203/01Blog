@@ -1,6 +1,6 @@
-package com._Blog.backend.repository; // <--- CHANGED THIS LINE
+package com._Blog.backend.repository;
 
-import com._Blog.backend.model.User; // <--- CHANGED THIS LINE
+import com._Blog.backend.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.Optional;
 
