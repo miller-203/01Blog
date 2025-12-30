@@ -1,4 +1,4 @@
-package com._Blog.backend.model;
+package com._Blog.backend.domain.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
