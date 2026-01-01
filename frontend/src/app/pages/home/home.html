@@ -1,0 +1,22 @@
+<nav class="navbar navbar-dark bg-dark">
+  <div class="container">
+    <a class="navbar-brand" href="#">01Blog</a>
+    <button (click)="logout()" class="btn btn-danger">Logout</button>
+  </div>
+</nav>
+
+<div class="container mt-5 text-center">
+  <div class="card shadow-lg">
+    <div class="card-body">
+      <h1 class="display-4 text-primary">Welcome, {{ username }}!</h1>
+      <p class="lead">You have successfully logged into the 01Blog System.</p>
+      <hr class="my-4">
+      <p>This data is coming from your Cloud Database.</p>
+      
+      <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
+        <button class="btn btn-primary btn-lg px-4 gap-3">Create New Post</button>
+        <button class="btn btn-outline-secondary btn-lg px-4">View Profile</button>
+      </div>
+    </div>
+  </div>
+</div>

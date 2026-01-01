@@ -1,0 +1,36 @@
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-header bg-success text-white">
+          <h3>Register</h3>
+        </div>
+        <div class="card-body">
+          <form (ngSubmit)="onSubmit()">
+            
+            <div class="mb-3">
+              <label class="form-label">Username</label>
+              <input type="text" class="form-control" name="username" [(ngModel)]="registerData.username" required>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">Email</label>
+              <input type="email" class="form-control" name="email" [(ngModel)]="registerData.email" required>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">Password</label>
+              <input type="password" class="form-control" name="password" [(ngModel)]="registerData.password" required>
+            </div>
+
+            <button type="submit" class="btn btn-success w-100">Register</button>
+            <div class="mt-3 text-center">
+              <a href="/login">Already have an account? Login</a>
+            </div>
+            
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
