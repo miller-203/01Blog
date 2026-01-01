@@ -23,7 +23,7 @@ export class HomeComponent implements OnInit {
     if (token) {
       try {
         const decoded: any = jwtDecode(token);
-        this.username = decoded.sub; // 'sub' holds the username in JWT
+        this.username = decoded.sub;
       } catch (error) {
         console.error('Invalid token');
       }
@@ -34,7 +34,7 @@ export class HomeComponent implements OnInit {
   }
 
   logout() {
-    localStorage.removeItem('token'); // Destroy the key
-    this.router.navigate(['/login']); // Go back to login
+    localStorage.removeItem('token');
+    this.router.navigate(['/login']);
   }
 }
