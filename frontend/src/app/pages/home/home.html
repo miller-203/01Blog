@@ -1,21 +1,54 @@
-<nav class="navbar navbar-dark bg-dark">
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
   <div class="container">
     <a class="navbar-brand" href="#">01Blog</a>
-    <button (click)="logout()" class="btn btn-danger">Logout</button>
+    <div class="d-flex">
+      <span class="navbar-text text-white me-3">
+        Signed in as: <strong>{{ username }}</strong>
+      </span>
+      <button (click)="logout()" class="btn btn-outline-danger btn-sm">Logout</button>
+    </div>
   </div>
 </nav>
 
-<div class="container mt-5 text-center">
-  <div class="card shadow-lg">
-    <div class="card-body">
-      <h1 class="display-4 text-primary">Welcome, {{ username }}!</h1>
-      <p class="lead">You have successfully logged into the 01Blog System.</p>
-      <hr class="my-4">
-      <p>This data is coming from your Cloud Database.</p>
-      
-      <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
-        <button class="btn btn-primary btn-lg px-4 gap-3">Create New Post</button>
-        <button class="btn btn-outline-secondary btn-lg px-4">View Profile</button>
+<div class="container">
+  
+  <div class="alert alert-info">
+    DEBUG STATUS: Found <strong>{{ posts.length }}</strong> posts.
+  </div>
+
+  <div class="row align-items-center mb-4">
+    <div class="col">
+      <h2 class="text-primary">Latest Posts</h2>
+    </div>
+    <div class="col-auto">
+      <a routerLink="/create-post" class="btn btn-primary">
+        + Write New Post
+      </a>
+    </div>
+  </div>
+
+  <div *ngIf="posts.length === 0" class="text-center mt-5 text-muted">
+    <h4>No posts found yet.</h4>
+    <p>Be the first one to write something!</p>
+  </div>
+
+  <div class="row">
+    <div class="col-md-8 mx-auto" *ngFor="let post of posts">
+      <div class="card mb-3 shadow-sm">
+        <div class="card-body">
+          <h3 class="card-title text-dark">{{ post.title }}</h3>
+          <h6 class="card-subtitle mb-2 text-muted">
+            By {{ post.user?.username || 'Unknown' }} 
+            <small>• {{ post.createdAt | date:'mediumDate' }}</small>
+          </h6>
+          <div *ngIf="post.imageUrl" class="mb-3">
+            <img [src]="'http://localhost:8080/uploads/' + post.imageUrl" 
+                 alt="Post Image" 
+                 class="img-fluid rounded" 
+                 style="max-height: 400px; width: 100%; object-fit: cover;">
+          </div>
+          <p class="card-text mt-3">{{ post.content }}</p>
+        </div>
       </div>
     </div>
   </div>

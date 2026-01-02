@@ -1,16 +1,19 @@
-import { Injectable } from '@angular/core';
+import { Injectable, Inject, PLATFORM_ID } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { isPlatformBrowser } from '@angular/common'; // <--- Import this
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
 
-  // The URL of your Spring Boot Backend
   private apiUrl = 'http://localhost:8080/api/auth';
 
-  constructor(private http: HttpClient) { }
+  constructor(
+    private http: HttpClient,
+    @Inject(PLATFORM_ID) private platformId: Object // <--- Inject Platform ID
+  ) { }
 
   // Register Method
   register(user: any): Observable<any> {
@@ -22,13 +25,18 @@ export class AuthService {
     return this.http.post(`${this.apiUrl}/login`, credentials);
   }
 
-  // Save the token to browser storage
+  // Safe Save Token (Checks if Browser)
   saveToken(token: string): void {
-    localStorage.setItem('token', token);
+    if (isPlatformBrowser(this.platformId)) {
+      localStorage.setItem('token', token);
+    }
   }
 
-  // Get the token
+  // Safe Get Token (Checks if Browser)
   getToken(): string | null {
-    return localStorage.getItem('token');
+    if (isPlatformBrowser(this.platformId)) {
+      return localStorage.getItem('token');
+    }
+    return null;
   }
 }
