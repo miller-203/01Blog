@@ -77,7 +77,6 @@ public class PostController {
         
         Post post = postService.getPostById(id);
         
-        // Security: Check ownership
         if (!post.getUser().getUsername().equals(username)) {
             return ResponseEntity.status(403).body("You can only edit your own posts!");
         }
