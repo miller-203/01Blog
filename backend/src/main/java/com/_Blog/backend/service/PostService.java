@@ -39,4 +39,14 @@ public class PostService {
     public void savePost(Post post) {
         postRepository.save(post);
     }
+    // Find one post
+    public Post getPostById(Long id) {
+        return postRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Post not found"));
+    }
+
+    // Delete post
+    public void deletePost(Long id) {
+        postRepository.deleteById(id);
+    }
 }

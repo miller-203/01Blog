@@ -55,4 +55,39 @@ public class PostController {
     public ResponseEntity<List<Post>> getAllPosts() {
         return ResponseEntity.ok(postService.getAllPosts());
     }
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deletePost(@PathVariable Long id, Authentication authentication) {
+        String username = authentication.getName();
+        
+        // Find the post first
+        Post post = postService.getPostById(id); // We need to add this helper in Service
+        
+        // Security Check: Is this YOUR post?
+        if (!post.getUser().getUsername().equals(username)) {
+            return ResponseEntity.status(403).body("You can only delete your own posts!");
+        }
+
+        postService.deletePost(id); // We need to add this in Service
+        return ResponseEntity.ok("Post deleted successfully");
+    }
+    // 4. Update a Post (Edit)
+    @PutMapping("/{id}")
+    public ResponseEntity<?> updatePost(@PathVariable Long id, @RequestBody com._Blog.backend.dto.PostRequest request, Authentication authentication) {
+        String username = authentication.getName();
+        
+        Post post = postService.getPostById(id);
+        
+        // Security: Check ownership
+        if (!post.getUser().getUsername().equals(username)) {
+            return ResponseEntity.status(403).body("You can only edit your own posts!");
+        }
+
+        // Update fields
+        post.setTitle(request.getTitle());
+        post.setContent(request.getContent());
+        
+        postService.savePost(post);
+        
+        return ResponseEntity.ok(post);
+    }
 }

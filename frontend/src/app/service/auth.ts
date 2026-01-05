@@ -1,7 +1,7 @@
 import { Injectable, Inject, PLATFORM_ID } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { isPlatformBrowser } from '@angular/common'; // <--- Import this
+import { HttpClient, HttpHeaders } from '@angular/common/http'; // <--- Added HttpHeaders here
 
 @Injectable({
   providedIn: 'root'
@@ -38,5 +38,14 @@ export class AuthService {
       return localStorage.getItem('token');
     }
     return null;
+  }
+  // Get User Profile (Stats + Info)
+  getProfile(): Observable<any> {
+    // We need to send the token, so we use the same headers approach
+    const token = this.getToken();
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`
+    });
+    return this.http.get('http://localhost:8080/api/user/profile', { headers });
   }
 }
