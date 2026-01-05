@@ -82,7 +82,6 @@ public class PostController {
             return ResponseEntity.status(403).body("You can only edit your own posts!");
         }
 
-        // Update fields
         post.setTitle(request.getTitle());
         post.setContent(request.getContent());
         
