@@ -41,12 +41,41 @@
             By {{ post.user?.username || 'Unknown' }}
             <small>• {{ post.createdAt | date:'mediumDate' }}</small>
           </h6>
+          
           <div *ngIf="post.imageUrl" class="mb-3">
             <img [src]="'http://localhost:8080/uploads/' + post.imageUrl" alt="Post Image" class="img-fluid rounded"
               style="max-height: 400px; width: 100%; object-fit: cover;">
           </div>
+          
           <p class="card-text mt-3">{{ post.content }}</p>
-        </div>
+
+          <hr>
+          
+          <button class="btn btn-sm btn-outline-primary" (click)="toggleComments(post)">
+            💬 Comments ({{ post.comments?.length || 0 }})
+          </button>
+
+          <div *ngIf="post.showComments" class="mt-3 bg-light p-3 rounded">
+            
+            <div *ngFor="let comment of post.comments" class="mb-2 border-bottom pb-1">
+              <strong>{{ comment.user?.username || 'User' }}</strong>: 
+              <span class="text-muted">{{ comment.content }}</span>
+            </div>
+
+            <div *ngIf="!post.comments || post.comments.length === 0" class="text-muted small mb-2">
+              No comments yet.
+            </div>
+
+            <div class="input-group mt-2">
+              <input type="text" 
+                     class="form-control" 
+                     placeholder="Write a comment..." 
+                     [(ngModel)]="commentText[post.id]">
+              <button class="btn btn-primary" (click)="submitComment(post)">Send</button>
+            </div>
+            
+          </div>
+          </div>
       </div>
     </div>
   </div>

@@ -9,7 +9,7 @@ export const routes: Routes = [
   { path: 'login', component: LoginComponent },
   { path: 'register', component: RegisterComponent },
   { path: 'home', component: HomeComponent },
-  { path: 'create-post', component: CreatePostComponent }, // <--- Add this route
-  { path: '', redirectTo: 'login', pathMatch: 'full' },
-  { path: 'profile', component: ProfileComponent }
+  { path: 'create-post', component: CreatePostComponent },
+  { path: 'profile', component: ProfileComponent },
+  { path: '', redirectTo: 'home', pathMatch: 'full' }
 ];

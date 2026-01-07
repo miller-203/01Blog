@@ -64,4 +64,29 @@ export class PostService {
     // Correct syntax: { headers: headers }
     return this.http.put(`${this.apiUrl}/${id}`, postData, { headers: headers });
   }
+  // 5. Get Comments for a Post
+  getComments(postId: number): Observable<any> {
+    return this.http.get(`http://localhost:8080/api/comments/${postId}`, this.getHeaders());
+  }
+
+  // 6. Add a Comment
+  // 6. Add a Comment (Fixed for Text Response)
+  addComment(postId: number, content: string): Observable<any> {
+    const payload = { postId, content };
+    
+    // We get the token headers manually
+    const token = this.authService.getToken();
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`
+    });
+
+    return this.http.post(
+      `http://localhost:8080/api/comments`, 
+      payload, 
+      { 
+        headers: headers, 
+        responseType: 'text' // <--- THIS FIXES THE ERROR
+      }
+    );
+  }
 }
