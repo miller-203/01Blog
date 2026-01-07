@@ -1,6 +1,11 @@
 package com._Blog.backend.controller;
 
 import com._Blog.backend.domain.model.Post;
+import com._Blog.backend.domain.model.User;
+import com._Blog.backend.dto.PostRequest;
+import com._Blog.backend.dto.PostResponse;
+import com._Blog.backend.repository.LikeRepository;
+import com._Blog.backend.repository.UserRepository;
 import com._Blog.backend.service.FileStorageService;
 import com._Blog.backend.service.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/posts")
@@ -22,7 +28,13 @@ public class PostController {
     @Autowired
     private FileStorageService fileStorageService;
 
-    // 1. Create a Post (Updated to accept Files)
+    @Autowired
+    private LikeRepository likeRepository;
+
+    @Autowired
+    private UserRepository userRepository;
+
+    // 1. Create a Post (Supports Files)
     @PostMapping(consumes = {"multipart/form-data"})
     public ResponseEntity<Post> createPost(
             @RequestParam("title") String title,
@@ -33,15 +45,12 @@ public class PostController {
         String username = authentication.getName();
         String imageUrl = null;
 
-        // 1. Upload the file if it exists
         if (file != null && !file.isEmpty()) {
             imageUrl = fileStorageService.saveFile(file);
         }
 
-        // 2. Create the post in the database
         Post newPost = postService.createPost(username, title, content);
 
-        // 3. If we have an image, update the post with the link
         if (imageUrl != null) {
             newPost.setImageUrl(imageUrl);
             postService.savePost(newPost);
@@ -50,31 +59,55 @@ public class PostController {
         return ResponseEntity.ok(newPost);
     }
 
-    // 2. Get All Posts
+    // 2. Get All Posts (Smart version: Includes Likes)
     @GetMapping
-    public ResponseEntity<List<Post>> getAllPosts() {
-        return ResponseEntity.ok(postService.getAllPosts());
+    public ResponseEntity<List<PostResponse>> getAllPosts(Authentication authentication) {
+        String currentUsername = (authentication != null) ? authentication.getName() : "";
+        
+        List<Post> posts = postService.getAllPosts();
+        
+        // Convert Post -> PostResponse
+        List<PostResponse> responseList = posts.stream().map(post -> {
+            PostResponse resp = new PostResponse();
+            resp.setId(post.getId());
+            resp.setTitle(post.getTitle());
+            resp.setContent(post.getContent());
+            resp.setImageUrl(post.getImageUrl());
+            resp.setCreatedAt(post.getCreatedAt());
+            resp.setUsername(post.getUser().getUsername());
+            
+            // Like Logic
+            resp.setLikeCount(likeRepository.countByPost(post));
+            if (!currentUsername.isEmpty()) {
+                User user = userRepository.findByUsername(currentUsername).orElse(null);
+                if (user != null) {
+                    resp.setLikedByCurrentUser(likeRepository.findByUserAndPost(user, post).isPresent());
+                }
+            }
+            return resp;
+        }).collect(Collectors.toList());
+
+        return ResponseEntity.ok(responseList);
     }
+
+    // 3. Delete a Post
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deletePost(@PathVariable Long id, Authentication authentication) {
         String username = authentication.getName();
+        Post post = postService.getPostById(id);
         
-        // Find the post first
-        Post post = postService.getPostById(id); // We need to add this helper in Service
-        
-        // Security Check: Is this YOUR post?
         if (!post.getUser().getUsername().equals(username)) {
             return ResponseEntity.status(403).body("You can only delete your own posts!");
         }
 
-        postService.deletePost(id); // We need to add this in Service
+        postService.deletePost(id);
         return ResponseEntity.ok("Post deleted successfully");
     }
-    // 4. Update a Post (Edit)
+
+    // 4. Update a Post
     @PutMapping("/{id}")
-    public ResponseEntity<?> updatePost(@PathVariable Long id, @RequestBody com._Blog.backend.dto.PostRequest request, Authentication authentication) {
+    public ResponseEntity<?> updatePost(@PathVariable Long id, @RequestBody PostRequest request, Authentication authentication) {
         String username = authentication.getName();
-        
         Post post = postService.getPostById(id);
         
         if (!post.getUser().getUsername().equals(username)) {
@@ -83,7 +116,6 @@ public class PostController {
 
         post.setTitle(request.getTitle());
         post.setContent(request.getContent());
-        
         postService.savePost(post);
         
         return ResponseEntity.ok(post);

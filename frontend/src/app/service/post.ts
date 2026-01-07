@@ -89,4 +89,9 @@ export class PostService {
       }
     );
   }
+  // 7. Toggle Like
+  toggleLike(postId: number): Observable<any> {
+    const payload = {}; // Empty body
+    return this.http.post(`http://localhost:8080/api/likes/${postId}`, payload, this.getHeaders());
+  }
 }

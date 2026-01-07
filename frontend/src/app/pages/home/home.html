@@ -38,8 +38,8 @@
         <div class="card-body">
           <h3 class="card-title text-dark">{{ post.title }}</h3>
           <h6 class="card-subtitle mb-2 text-muted">
-            By {{ post.user?.username || 'Unknown' }}
-            <small>• {{ post.createdAt | date:'mediumDate' }}</small>
+            By {{ post.user?.username || post.username || 'Unknown' }}
+            <small>• {{ post.createdAt | timeAgo }}</small>
           </h6>
           
           <div *ngIf="post.imageUrl" class="mb-3">
@@ -51,9 +51,21 @@
 
           <hr>
           
-          <button class="btn btn-sm btn-outline-primary" (click)="toggleComments(post)">
-            💬 Comments ({{ post.comments?.length || 0 }})
-          </button>
+          <div class="d-flex align-items-center gap-3">
+            
+            <button class="btn btn-sm" 
+                    [ngClass]="post.likedByCurrentUser ? 'btn-danger' : 'btn-outline-danger'"
+                    (click)="likePost(post)">
+              <span *ngIf="post.likedByCurrentUser">❤️</span>
+              <span *ngIf="!post.likedByCurrentUser">🤍</span>
+              Like ({{ post.likeCount || 0 }})
+            </button>
+
+            <button class="btn btn-sm btn-outline-primary" (click)="toggleComments(post)">
+              💬 Comments ({{ post.comments?.length || 0 }})
+            </button>
+
+          </div>
 
           <div *ngIf="post.showComments" class="mt-3 bg-light p-3 rounded">
             

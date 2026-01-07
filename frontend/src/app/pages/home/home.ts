@@ -1,17 +1,18 @@
 import { Component, OnInit, ChangeDetectorRef, Inject, PLATFORM_ID } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
-import { FormsModule } from '@angular/forms'; // <--- IMPORT THIS
+import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../service/auth';
-import { PostService } from '../../service/post'; // Check your filename (post.service or post)
+import { PostService } from '../../service/post'; // Ensure filename matches
 import { jwtDecode } from 'jwt-decode';
+import { TimeAgoPipe } from '../../pipes/time-ago-pipe'; // <--- 1. Import TimeAgoPipe
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule], // <--- ADD HERE
-  templateUrl: './home.html', // Keep your existing filename
-  styleUrls: ['./home.scss']  // Keep your existing filename
+  imports: [CommonModule, RouterModule, FormsModule, TimeAgoPipe], // <--- 2. Add TimeAgoPipe here
+  templateUrl: './home.html', 
+  styleUrls: ['./home.scss']
 })
 export class HomeComponent implements OnInit {
 
@@ -49,6 +50,7 @@ export class HomeComponent implements OnInit {
   loadPosts() {
     this.postService.getAllPosts().subscribe({
       next: (data: any) => {
+        // Handle different data formats (Page object vs List)
         const rawPosts = Array.isArray(data) ? data : data.content || [];
         
         // Prepare posts with extra fields for the UI
@@ -93,6 +95,19 @@ export class HomeComponent implements OnInit {
         });
       },
       error: (err) => alert('Failed to post comment')
+    });
+  }
+
+  // 👇 NEW: LIKE FUNCTION 👇
+  likePost(post: any) {
+    this.postService.toggleLike(post.id).subscribe({
+      next: (response: any) => {
+        // The backend returns: { liked: true/false, count: 12 }
+        post.likedByCurrentUser = response.liked;
+        post.likeCount = response.count;
+        this.cdr.detectChanges();
+      },
+      error: (err) => console.error('Error liking post', err)
     });
   }
 
