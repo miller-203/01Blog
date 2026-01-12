@@ -8,7 +8,9 @@ services:
       - "8080:8080"
     volumes:
       - ./backend/uploads:/app/uploads
+    # 👇 ADD THIS SECTION 👇
     environment:
+      # Copy these EXACT values from your application.properties or Neon Dashboard
       - SPRING_DATASOURCE_URL=jdbc:postgresql://ep-wispy-hill-aggrsj0s-pooler.c-2.eu-central-1.aws.neon.tech/neondb?sslmode=require
       - SPRING_DATASOURCE_USERNAME=neondb_owner
       - SPRING_DATASOURCE_PASSWORD=npg_sBVZr8co1Pbx

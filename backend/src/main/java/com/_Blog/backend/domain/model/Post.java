@@ -17,7 +17,7 @@ public class Post {
     private String title;
 
     @Column(nullable = true)
-    private String imageUrl; // Stores the filename (e.g., "cat.jpg")
+    private String imageUrl;
 
     @Column(columnDefinition = "TEXT", nullable = false)
     private String content;

@@ -28,6 +28,7 @@ public class PostService {
         post.setContent(content);
         post.setUser(user);
 
+        
         return postRepository.save(post);
     }
 
