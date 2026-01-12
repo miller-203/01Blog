@@ -6,10 +6,16 @@ import com._Blog.backend.repository.PostRepository;
 import com._Blog.backend.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import com._Blog.backend.service.FollowService;
+import com._Blog.backend.service.NotificationService;
+
+import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class PostService {
 
     @Autowired
@@ -18,7 +24,12 @@ public class PostService {
     @Autowired
     private UserRepository userRepository;
 
-    // Create a new Post
+    @Autowired
+    private FollowService followService;
+
+    @Autowired
+    private NotificationService notificationService;
+
     public Post createPost(String username, String title, String content) {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("User not found"));
@@ -28,25 +39,32 @@ public class PostService {
         post.setContent(content);
         post.setUser(user);
 
-        
+
+        List<User> followers = followService.getFollowersForUser(user);
+
+        for (User follower : followers) {
+            notificationService.createNotification(
+                user,
+                follower,
+                post,
+                user.getUsername() + " posted: " + post.getTitle()
+            );
+        }
+
         return postRepository.save(post);
     }
 
-    // Get All Posts
     public List<Post> getAllPosts() {
         return postRepository.findAllByOrderByCreatedAtDesc();
     }
-    // Helper to save a post (used for updating images)
     public void savePost(Post post) {
         postRepository.save(post);
     }
-    // Find one post
     public Post getPostById(Long id) {
         return postRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Post not found"));
     }
 
-    // Delete post
     public void deletePost(Long id) {
         postRepository.deleteById(id);
     }

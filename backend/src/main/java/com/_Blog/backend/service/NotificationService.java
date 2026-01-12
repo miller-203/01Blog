@@ -24,12 +24,12 @@ public class NotificationService {
     @Autowired
     private UserRepository userRepository;
 
-    public Notification createNotification(User sender, User recipient, Post post) {
+    public Notification createNotification(User sender, User recipient, Post post, String message) {
         Notification notification = new Notification();
         notification.setSender(sender);
         notification.setRecipient(recipient);
         notification.setPost(post);
-        notification.setMessage(sender.getUsername() + " commented on your post: " + post.getTitle());
+        notification.setMessage(message);
         return notificationRepository.save(notification);
     }
     public List<Notification> getUserNotifications(User currentUser) {
