@@ -24,25 +24,23 @@ public class FollowController {
     private FollowRepository followRepository;
 
     // 1. Add a Follow
-    @PostMapping("/follow")
-    public ResponseEntity<?> addFollow(@RequestBody FollowRequest request, Authentication authentication) {
-        String username = authentication.getName();
-
+    @PostMapping("/follow/{userId}")
+    public ResponseEntity<?> addFollow(@PathVariable Long userId, @RequestBody FollowRequest request) {
         // Find User
-        User user = userRepository.findByUsername(username)
+        User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
-
         // Find Followed User
-        User followedUser = userRepository.findById(request.getFollowedUserId())
+        User followedUser = userRepository.findById(request.getFollower())
                 .orElseThrow(() -> new RuntimeException("Followed user not found"));
-
+        // Check if already following
+        if (followRepository.existsByFollowerAndFollowed(user, followedUser)) {
+            return ResponseEntity.badRequest().body("You are already following this user");
+        }
         // Create Follow
         Follow follow = new Follow();
         follow.setFollower(user);
         follow.setFollowed(followedUser);
-
         followRepository.save(follow);
-
         return ResponseEntity.ok("Follow added!");
     }
 
@@ -53,7 +51,7 @@ public class FollowController {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("User not found"));
         // Find Followed User
-        User followedUser = userRepository.findById(request.getFollowedUserId())
+        User followedUser = userRepository.findById(request.getFollower())
                 .orElseThrow(() -> new RuntimeException("Followed user not found"));
         // Find Follow Relationship
         Follow follow = followRepository.findByFollowerAndFollowed(user, followedUser)
