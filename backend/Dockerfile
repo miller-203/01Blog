@@ -1,17 +1,23 @@
-# 1. Use Eclipse Temurin (The modern standard for Java 17)
-FROM eclipse-temurin:17-jdk-alpine
-
-# 2. Set the working directory inside the container
+# Stage 1: Build JAR using Maven
+FROM maven:3.9.3-eclipse-temurin-17 AS build
 WORKDIR /app
 
-# 3. Copy the compiled JAR file into the container
-COPY target/*.jar app.jar
+# Copy pom.xml and source code
+COPY pom.xml .
+COPY src ./src
 
-# 4. Create a folder for uploads inside the container
+# Build the JAR
+RUN mvn clean package -DskipTests
+
+# Stage 2: Run JAR using lightweight JDK
+FROM eclipse-temurin:17-jdk-alpine
+WORKDIR /app
+
+# Copy JAR from build stage
+COPY --from=build /app/target/*.jar app.jar
+
+# Create uploads folder
 RUN mkdir -p uploads
 
-# 5. Expose port 8080
 EXPOSE 8080
-
-# 6. Run the JAR file
 ENTRYPOINT ["java", "-jar", "app.jar"]

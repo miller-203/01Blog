@@ -2,24 +2,26 @@ version: '3.8'
 
 services:
   backend:
-    build: ./backend
+    build:
+      context: ./backend
     container_name: blog-backend
     ports:
       - "8080:8080"
     volumes:
       - ./backend/uploads:/app/uploads
-    # 👇 ADD THIS SECTION 👇
     environment:
-      # Copy these EXACT values from your application.properties or Neon Dashboard
       - SPRING_DATASOURCE_URL=jdbc:postgresql://ep-wispy-hill-aggrsj0s-pooler.c-2.eu-central-1.aws.neon.tech/neondb?sslmode=require
       - SPRING_DATASOURCE_USERNAME=neondb_owner
       - SPRING_DATASOURCE_PASSWORD=npg_sBVZr8co1Pbx
       - SPRING_JPA_HIBERNATE_DDL_AUTO=update
 
   frontend:
-    build: ./frontend
+    build:
+      context: ./frontend
+    image: 01blog-frontend
     container_name: blog-frontend
     ports:
-      - "8081:80"
+      - "4200:80"
     depends_on:
       - backend
+    command: npm start -- --host 0.0.0.0
