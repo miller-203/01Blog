@@ -10,6 +10,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List; // <--- THIS WAS MISSING
+
 @RestController
 @RequestMapping("/api/user")
 @CrossOrigin(origins = "http://localhost:4200")
@@ -23,17 +25,13 @@ public class UserController {
 
     @GetMapping("/profile")
     public ResponseEntity<UserProfileDTO> getMyProfile(Authentication authentication) {
-        // 1. Get the logged-in username
         String username = authentication.getName();
 
-        // 2. Find the user in DB
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
-        // 3. Count their posts
         int postCount = postRepository.findByUserId(user.getId()).size();
 
-        // 4. Create DTO and return
         UserProfileDTO profile = new UserProfileDTO(
             user.getId(),
             user.getUsername(),
@@ -44,4 +42,25 @@ public class UserController {
 
         return ResponseEntity.ok(profile);
     }
-}
+
+    @GetMapping("/all")
+    public ResponseEntity<List<UserProfileDTO>> getAllUsers(Authentication authentication) {
+        String currentUsername = authentication.getName();
+        
+        List<UserProfileDTO> users = userRepository.findAll().stream()
+                .filter(user -> !user.getUsername().equals(currentUsername)) 
+                .map(user -> {
+                    int postCount = postRepository.findByUserId(user.getId()).size();
+                    return new UserProfileDTO(
+                        user.getId(),
+                        user.getUsername(),
+                        user.getEmail(),
+                        user.getCreatedAt(),
+                        postCount
+                    );
+                })
+                .toList();
+
+        return ResponseEntity.ok(users);
+    }
+} // Make sure this closing bracket is here!

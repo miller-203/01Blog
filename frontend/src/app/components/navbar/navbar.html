@@ -1,1 +1,24 @@
-<p>navbar works!</p>
+<div class="notification-container">
+  
+  <button class="icon-btn" (click)="toggleDropdown()">
+    🔔
+    <span *ngIf="unreadCount > 0" class="badge">{{ unreadCount }}</span>
+  </button>
+
+  <div class="dropdown-menu" *ngIf="showDropdown">
+    <div *ngIf="notifications.length === 0" class="empty-state">
+      No notifications
+    </div>
+
+    <div 
+      *ngFor="let n of notifications" 
+      class="notification-item" 
+      [class.unread]="!n.isRead"
+      (click)="onNotificationClick(n)"
+    >
+      <p class="message">{{ n.message }}</p>
+      <small class="date">{{ n.createdAt | date:'short' }}</small>
+    </div>
+  </div>
+
+</div>

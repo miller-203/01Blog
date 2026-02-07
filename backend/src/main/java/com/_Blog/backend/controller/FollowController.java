@@ -24,25 +24,32 @@ public class FollowController {
     private FollowRepository followRepository;
 
     // 1. Add a Follow
-    @PostMapping("/follow/{userId}")
-    public ResponseEntity<?> addFollow(@PathVariable Long userId, @RequestBody FollowRequest request) {
-        // Find User
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
-        // Find Followed User
-        User followedUser = userRepository.findById(request.getFollower())
-                .orElseThrow(() -> new RuntimeException("Followed user not found"));
-        // Check if already following
-        if (followRepository.existsByFollowerAndFollowed(user, followedUser)) {
-            return ResponseEntity.badRequest().body("You are already following this user");
+    @PostMapping("/follow/{userId}") // userId here is the person I want to follow
+        public ResponseEntity<?> addFollow(@PathVariable Long userId, Authentication authentication) {
+            // 1. Get ME (the follower) from the token
+            String currentUsername = authentication.getName();
+            User me = userRepository.findByUsername(currentUsername)
+                    .orElseThrow(() -> new RuntimeException("Current user not found"));
+        
+            // 2. Get THEM (the person to be followed) from the PathVariable
+            User toFollow = userRepository.findById(userId)
+                    .orElseThrow(() -> new RuntimeException("User to follow not found"));
+        
+            if (me.getId().equals(toFollow.getId())) {
+                return ResponseEntity.badRequest().body("You cannot follow yourself");
+            }
+        
+            if (followRepository.existsByFollowerAndFollowed(me, toFollow)) {
+                return ResponseEntity.badRequest().body("Already following");
+            }
+        
+            Follow follow = new Follow();
+            follow.setFollower(me);
+            follow.setFollowed(toFollow);
+            followRepository.save(follow);
+        
+            return ResponseEntity.ok("Followed successfully");
         }
-        // Create Follow
-        Follow follow = new Follow();
-        follow.setFollower(user);
-        follow.setFollowed(followedUser);
-        followRepository.save(follow);
-        return ResponseEntity.ok("Follow added!");
-    }
 
     @PostMapping("/unfollow")
     public ResponseEntity<?> removeFollow(@RequestBody FollowRequest request, Authentication authentication) {

@@ -6,9 +6,10 @@ import com._Blog.backend.repository.NotificationRepository;
 import com._Blog.backend.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication; // <--- ADDED THIS
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import java.util.List; // This was already here, but keep it!
 
 @RestController
 @RequestMapping("/api/notifications")
@@ -21,12 +22,12 @@ public class NotificationController {
     @Autowired
     private UserRepository userRepository;
 
-    // 1. Get Notifications for Authenticated User
-    @GetMapping("/{userId}")
-    public ResponseEntity<List<Notification>> getNotifications(@PathVariable Long userId) {
-        User user = userRepository.findById(userId)
+    @GetMapping
+    public ResponseEntity<List<Notification>> getNotifications(Authentication authentication) {
+        String username = authentication.getName();
+        User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("User not found"));
-
+    
         List<Notification> notifications = notificationRepository.findByRecipientOrderByCreatedAtDesc(user);
         return ResponseEntity.ok(notifications);
     }
