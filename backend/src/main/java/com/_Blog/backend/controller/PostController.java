@@ -34,7 +34,6 @@ public class PostController {
     @Autowired
     private UserRepository userRepository;
 
-    // 1. Create a Post (Supports Files)
     @PostMapping(consumes = {"multipart/form-data"})
     public ResponseEntity<Post> createPost(
             @RequestParam("title") String title,
@@ -59,14 +58,12 @@ public class PostController {
         return ResponseEntity.ok(newPost);
     }
 
-    // 2. Get All Posts (Smart version: Includes Likes)
     @GetMapping
     public ResponseEntity<List<PostResponse>> getAllPosts(Authentication authentication) {
         String currentUsername = (authentication != null) ? authentication.getName() : "";
         
         List<Post> posts = postService.getAllPosts();
         
-        // Convert Post -> PostResponse
         List<PostResponse> responseList = posts.stream().map(post -> {
             PostResponse resp = new PostResponse();
             resp.setId(post.getId());
@@ -76,7 +73,6 @@ public class PostController {
             resp.setCreatedAt(post.getCreatedAt());
             resp.setUsername(post.getUser().getUsername());
             
-            // Like Logic
             resp.setLikeCount(likeRepository.countByPost(post));
             if (!currentUsername.isEmpty()) {
                 User user = userRepository.findByUsername(currentUsername).orElse(null);
@@ -90,7 +86,6 @@ public class PostController {
         return ResponseEntity.ok(responseList);
     }
 
-    // 3. Delete a Post
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deletePost(@PathVariable Long id, Authentication authentication) {
         String username = authentication.getName();
@@ -104,7 +99,6 @@ public class PostController {
         return ResponseEntity.ok("Post deleted successfully");
     }
 
-    // 4. Update a Post
     @PutMapping("/{id}")
     public ResponseEntity<?> updatePost(@PathVariable Long id, @RequestBody PostRequest request, Authentication authentication) {
         String username = authentication.getName();

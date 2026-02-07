@@ -39,19 +39,21 @@ public class PostService {
         post.setContent(content);
         post.setUser(user);
 
+        // 1. Save the post FIRST so it gets an ID
+        Post savedPost = postRepository.save(post);
 
+        // 2. Now handle notifications using the savedPost
         List<User> followers = followService.getFollowersForUser(user);
-
         for (User follower : followers) {
             notificationService.createNotification(
-                user,
-                follower,
-                post,
-                user.getUsername() + " posted: " + post.getTitle()
+                user,        // Sender
+                follower,    // Recipient
+                savedPost,   // The post (now has an ID!)
+                user.getUsername() + " posted: " + savedPost.getTitle()
             );
         }
 
-        return postRepository.save(post);
+        return savedPost;
     }
 
     public List<Post> getAllPosts() {

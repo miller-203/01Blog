@@ -24,7 +24,7 @@
 
     <div class="row">
         <div class="col-md-6" *ngFor="let post of myPosts">
-            <div class="card mb-3 shadow-sm" *ngIf="post.user.username === userProfile.username">
+            <div class="card mb-3 shadow-sm" *ngIf="post.username === userProfile.username">
                 <div class="card-body">
 
                     <div *ngIf="editingPostId !== post.id">

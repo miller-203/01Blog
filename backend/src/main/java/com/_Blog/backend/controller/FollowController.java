@@ -4,6 +4,8 @@ import com._Blog.backend.domain.model.Follow;
 import com._Blog.backend.domain.model.User;
 import com._Blog.backend.repository.FollowRepository;
 import com._Blog.backend.repository.UserRepository;
+// import com._Blog.backend.repository.NotificationRepository;
+import com._Blog.backend.service.NotificationService;
 import com._Blog.backend.dto.FollowRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -23,15 +25,15 @@ public class FollowController {
     @Autowired
     private FollowRepository followRepository;
 
-    // 1. Add a Follow
-    @PostMapping("/follow/{userId}") // userId here is the person I want to follow
+    @Autowired
+    private NotificationService notificationService;
+
+    @PostMapping("/follow/{userId}")
         public ResponseEntity<?> addFollow(@PathVariable Long userId, Authentication authentication) {
-            // 1. Get ME (the follower) from the token
             String currentUsername = authentication.getName();
             User me = userRepository.findByUsername(currentUsername)
                     .orElseThrow(() -> new RuntimeException("Current user not found"));
         
-            // 2. Get THEM (the person to be followed) from the PathVariable
             User toFollow = userRepository.findById(userId)
                     .orElseThrow(() -> new RuntimeException("User to follow not found"));
         
@@ -48,27 +50,34 @@ public class FollowController {
             follow.setFollowed(toFollow);
             followRepository.save(follow);
         
+                // Create a notification for the followed user
+            // notificationService.createNotification(me, toFollow, null, me.getUsername() + " started following you!");
+            
             return ResponseEntity.ok("Followed successfully");
         }
 
-    @PostMapping("/unfollow")
-    public ResponseEntity<?> removeFollow(@RequestBody FollowRequest request, Authentication authentication) {
-        String username = authentication.getName();
-        // Find User
-        User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new RuntimeException("User not found"));
-        // Find Followed User
-        User followedUser = userRepository.findById(request.getFollower())
-                .orElseThrow(() -> new RuntimeException("Followed user not found"));
-        // Find Follow Relationship
-        Follow follow = followRepository.findByFollowerAndFollowed(user, followedUser)
+    @PostMapping("/unfollow/{userId}")
+    public ResponseEntity<?> removeFollow(@PathVariable Long userId, Authentication authentication) {
+        String currentUsername = authentication.getName();
+
+        User me = userRepository.findByUsername(currentUsername)
+                    .orElseThrow(() -> new RuntimeException("Current user not found"));
+
+        User toFollow = userRepository.findById(userId)
+                    .orElseThrow(() -> new RuntimeException("User to unfollow not found"));
+
+        if (me.getId().equals(toFollow.getId())) {
+                return ResponseEntity.badRequest().body("You cannot unfollow yourself");
+            }
+
+        Follow follow = followRepository.findByFollowerAndFollowed(me, toFollow)
                 .orElseThrow(() -> new RuntimeException("Follow relationship not found"));
-        // Delete Follow
+
         followRepository.delete(follow);
+
         return ResponseEntity.ok("Follow removed!");
     }
 
-    // 2. Get Followers for a User
     @GetMapping("/{userId}")
     public ResponseEntity<List<User>> getFollowersByUser(@PathVariable Long userId) {
         User user = userRepository.findById(userId)

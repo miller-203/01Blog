@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { AuthService } from './auth'; 
+import { AuthService } from './auth';
 
 @Injectable({
   providedIn: 'root'
@@ -23,6 +23,24 @@ export class PostService {
   }
 
   // 1. Create a Post
+  // createPost(title: string, content: string, file: File | null): Observable<any> {
+  //   const formData = new FormData();
+  //   formData.append('title', title);
+  //   formData.append('content', content);
+  //   if (file) {
+  //     formData.append('file', file);
+  //   }
+  //   return this.http.post(this.apiUrl, formData, this.getHeaders());
+  // }
+
+  //   private getHeaders() {
+  //   const token = this.authService.getToken();
+  //   // We return just the HttpHeaders object
+  //   return new HttpHeaders({
+  //     'Authorization': `Bearer ${token}`
+  //   });
+  // }
+
   createPost(title: string, content: string, file: File | null): Observable<any> {
     const formData = new FormData();
     formData.append('title', title);
@@ -30,6 +48,8 @@ export class PostService {
     if (file) {
       formData.append('file', file);
     }
+
+    // Pass the headers inside an object under the 'headers' key
     return this.http.post(this.apiUrl, formData, this.getHeaders());
   }
 
@@ -45,8 +65,8 @@ export class PostService {
       'Authorization': `Bearer ${token}`
     });
 
-    return this.http.delete(`${this.apiUrl}/${id}`, { 
-      headers: headers, 
+    return this.http.delete(`${this.apiUrl}/${id}`, {
+      headers: headers,
       responseType: 'text'
     });
   }
@@ -60,7 +80,7 @@ export class PostService {
     });
 
     const postData = { title, content };
-    
+
     // Correct syntax: { headers: headers }
     return this.http.put(`${this.apiUrl}/${id}`, postData, { headers: headers });
   }
@@ -73,7 +93,7 @@ export class PostService {
   // 6. Add a Comment (Fixed for Text Response)
   addComment(postId: number, content: string): Observable<any> {
     const payload = { postId, content };
-    
+
     // We get the token headers manually
     const token = this.authService.getToken();
     const headers = new HttpHeaders({
@@ -81,10 +101,10 @@ export class PostService {
     });
 
     return this.http.post(
-      `http://localhost:8080/api/comments`, 
-      payload, 
-      { 
-        headers: headers, 
+      `http://localhost:8080/api/comments`,
+      payload,
+      {
+        headers: headers,
         responseType: 'text' // <--- THIS FIXES THE ERROR
       }
     );

@@ -3,17 +3,16 @@ import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../service/auth';
-import { PostService } from '../../service/post'; // Ensure filename matches
+import { PostService } from '../../service/post';
 import { jwtDecode } from 'jwt-decode';
-import { TimeAgoPipe } from '../../pipes/time-ago-pipe'; // <--- 1. Import TimeAgoPipe
-// Add UserService and NotificationService to your imports
-import { UserService } from '../../service/user'; // Create if needed
+import { TimeAgoPipe } from '../../pipes/time-ago-pipe';
+import { UserService } from '../../service/user';
 import { NotificationService } from '../../service/notification';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule, TimeAgoPipe], // <--- 2. Add TimeAgoPipe here
+  imports: [CommonModule, RouterModule, FormsModule, TimeAgoPipe],
   templateUrl: './home.html',
   styleUrls: ['./home.scss']
 })
@@ -22,7 +21,6 @@ export class HomeComponent implements OnInit {
   username: string = 'User';
   posts: any[] = [];
 
-  // Stores text for each post's comment input: { postId: "text..." }
   commentText: { [key: number]: string } = {};
 
   constructor(
@@ -35,31 +33,27 @@ export class HomeComponent implements OnInit {
     private notificationService: NotificationService
   ) { }
 
- ngOnInit(): void {
-  if (isPlatformBrowser(this.platformId)) {
-    const token = this.authService.getToken();
-    
-    if (token) {
-      try {
-        const decoded: any = jwtDecode(token);
-        this.username = decoded.sub;
+  ngOnInit(): void {
+    if (isPlatformBrowser(this.platformId)) {
+      const token = this.authService.getToken();
 
-        // ✅ MOVE ALL DATA LOADING HERE
-        // These only run if a valid token exists
-        this.loadPosts();
-        this.loadUsersToFollow();
-        this.loadNotifications();
-        
-      } catch (error) {
-        console.error('Invalid token');
+      if (token) {
+        try {
+          const decoded: any = jwtDecode(token);
+          this.username = decoded.sub;
+          this.loadPosts();
+          this.loadUsersToFollow();
+          this.loadNotifications();
+          this.refreshData();
+        } catch (error) {
+          console.error('Invalid token');
+          this.router.navigate(['/login']);
+        }
+      } else {
         this.router.navigate(['/login']);
       }
-    } else {
-      // No token found, go to login
-      this.router.navigate(['/login']);
     }
   }
-}
 
 
   loadPosts() {
@@ -150,13 +144,6 @@ export class HomeComponent implements OnInit {
     });
   }
 
-  loadNotifications() {
-    this.notificationService.getNotifications().subscribe(data => {
-      this.notifications = data;
-      this.unreadCount = data.filter((n: any) => !n.isRead).length;
-    });
-  }
-
   toggleNotifDropdown() {
     this.showNotifDropdown = !this.showNotifDropdown;
   }
@@ -168,6 +155,21 @@ export class HomeComponent implements OnInit {
       this.router.navigate(['/posts', notif.postId]);
       this.showNotifDropdown = false;
     });
+  }
+  loadNotifications() {
+    this.notificationService.getNotifications().subscribe({
+      next: (data) => {
+        console.log('Notifications received:', data); // <--- Add this log!
+        this.notifications = data;
+        this.unreadCount = data.filter((n: any) => !n.isRead).length;
+        this.cdr.detectChanges();
+      },
+      error: (err) => console.error('Notification error:', err)
+    });
+  }
+  refreshData() {
+    this.loadPosts();
+    this.loadNotifications();
   }
 }
 

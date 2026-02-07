@@ -6,10 +6,10 @@ import com._Blog.backend.repository.NotificationRepository;
 import com._Blog.backend.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication; // <--- ADDED THIS
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List; // This was already here, but keep it!
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/notifications")
