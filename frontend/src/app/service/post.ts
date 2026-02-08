@@ -12,7 +12,6 @@ export class PostService {
 
   constructor(private http: HttpClient, private authService: AuthService) { }
 
-  // Helper (Used for Create/Get)
   private getHeaders() {
     const token = this.authService.getToken();
     return {
@@ -21,25 +20,6 @@ export class PostService {
       })
     };
   }
-
-  // 1. Create a Post
-  // createPost(title: string, content: string, file: File | null): Observable<any> {
-  //   const formData = new FormData();
-  //   formData.append('title', title);
-  //   formData.append('content', content);
-  //   if (file) {
-  //     formData.append('file', file);
-  //   }
-  //   return this.http.post(this.apiUrl, formData, this.getHeaders());
-  // }
-
-  //   private getHeaders() {
-  //   const token = this.authService.getToken();
-  //   // We return just the HttpHeaders object
-  //   return new HttpHeaders({
-  //     'Authorization': `Bearer ${token}`
-  //   });
-  // }
 
   createPost(title: string, content: string, file: File | null): Observable<any> {
     const formData = new FormData();
