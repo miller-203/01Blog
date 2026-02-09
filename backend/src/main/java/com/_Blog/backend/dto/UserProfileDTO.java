@@ -9,7 +9,7 @@ public class UserProfileDTO {
     private String username;
     private String email;
     private LocalDateTime joinedAt;
-    private int postCount; // How many posts they wrote
+    private int postCount;
 
     public UserProfileDTO(Long id, String username, String email, LocalDateTime joinedAt, int postCount) {
         this.id = id;

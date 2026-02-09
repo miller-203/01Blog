@@ -1,13 +1,13 @@
 import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common'; // Important for *ngIf
-import { FormsModule } from '@angular/forms';   // Important for [(ngModel)]
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { AuthService } from '../../service/auth'; // Importing from auth.ts
+import { AuthService } from '../../service/auth'; 
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, FormsModule], // <--- We import modules HERE now
+  imports: [CommonModule, FormsModule],
   templateUrl: './login.html',
   styleUrls: ['./login.scss']
 })
@@ -27,7 +27,6 @@ export class LoginComponent {
         this.authService.saveToken(response.token);
         console.log('Login Successful:', response);
         
-        // 2. Navigate to Home (We will create this later)
         this.router.navigate(['/home']);
       },
       error: (err) => {

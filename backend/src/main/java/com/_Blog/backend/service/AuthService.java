@@ -16,7 +16,6 @@ public class AuthService {
     @Autowired
     PasswordEncoder encoder;
 
-    // We return a String message, or throw an exception if it fails
     public String registerUser(RegisterRequest request) {
         if (userRepository.existsByUsername(request.getUsername())) {
             return "Error: Username is already taken!";
@@ -26,12 +25,12 @@ public class AuthService {
             return "Error: Email is already in use!";
         }
 
-        // Create new user entity
         User user = new User();
         user.setUsername(request.getUsername());
         user.setEmail(request.getEmail());
         user.setPassword(encoder.encode(request.getPassword()));
-        user.setRole("USER"); 
+        user.setRole("USER");
+        user.setStatus("ACTIVE");
 
         userRepository.save(user);
         return "User registered successfully!";

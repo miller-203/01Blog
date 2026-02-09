@@ -22,35 +22,31 @@ public class AuthController {
     AuthenticationManager authenticationManager;
 
     @Autowired
-    UserRepository userRepository; // Used for fetching user details after login
+    UserRepository userRepository;
 
     @Autowired
     JwtUtils jwtUtils;
 
     @Autowired
-    AuthService authService; // Our new service
+    AuthService authService;
 
     @PostMapping("/login")
     public ResponseEntity<?> authenticateUser(@RequestBody LoginRequest loginRequest) {
-        // 1. Authenticate with Spring Security
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
 
-        // 2. Set Context
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        // 3. Generate Token
         String jwt = jwtUtils.generateJwtToken(authentication);
 
-        // 4. Get User Info
         User user = userRepository.findByUsername(loginRequest.getUsername()).orElseThrow();
 
-        // 5. Return Response
         return ResponseEntity.ok(new JwtResponse(jwt, 
                 user.getId(), 
                 user.getUsername(), 
                 user.getEmail(), 
-                user.getRole()));
+                user.getRole(),
+                user.getStatus()));
     }
 
     @PostMapping("/register")
