@@ -43,9 +43,7 @@ export class HomeComponent implements OnInit {
           const payload = token.split('.')[1];
           const decoded = JSON.parse(atob(payload));
           this.username = decoded.sub;
-          this.loadPosts();
           this.loadUsersToFollow();
-          this.loadNotifications();
           this.refreshData();
         } catch (error) {
           console.error('Invalid token');
@@ -153,15 +151,14 @@ export class HomeComponent implements OnInit {
   onNotifClick(notif: any) {
     this.notificationService.markAsRead(notif.id).subscribe(() => {
       notif.isRead = true;
-      this.unreadCount--;
-      this.router.navigate(['/posts', notif.postId]);
+      this.unreadCount = Math.max(0, this.unreadCount - 1);
       this.showNotifDropdown = false;
+      this.loadNotifications();
     });
   }
   loadNotifications() {
     this.notificationService.getNotifications().subscribe({
       next: (data) => {
-        console.log('Notifications received:', data); // <--- Add this log!
         this.notifications = data;
         this.unreadCount = data.filter((n: any) => !n.isRead).length;
         this.cdr.detectChanges();
