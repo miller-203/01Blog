@@ -22,6 +22,7 @@
           </button>
         </div>
       </div>
+      <a routerLink="/admin" class="btn btn-sm btn-outline-light me-2">Admin</a>
       <a routerLink="/profile" class="text-white text-decoration-none me-3">
         Signed in as: <strong>{{ username }}</strong>
       </a>
@@ -103,13 +104,21 @@
     <div class="card mb-3 shadow-sm">
       <div class="card-body">
         <h5 class="card-title text-primary">Who to Follow</h5>
-        <div *ngFor="let user of usersToFollow" class="d-flex align-items-center justify-content-between mb-2">
-          <div>
-            <strong>{{ user.username }}</strong>
+        <div *ngFor="let user of usersToFollow" class="mb-2">
+          <div class="d-flex align-items-center justify-content-between mb-1">
+            <div>
+              <strong>{{ user.username }}</strong>
+            </div>
+            <div class="d-flex gap-2">
+              <button class="btn btn-sm btn-outline-primary" (click)="followUser(user)">
+                Follow
+              </button>
+              <button class="btn btn-sm btn-outline-danger" (click)="reportUser(user)">Report user</button>
+            </div>
           </div>
-          <button class="btn btn-sm btn-outline-primary" (click)="followUser(user)">
-            Follow
-          </button>
+          <div class="input-group input-group-sm">
+            <input class="form-control" placeholder="Reason for report" [(ngModel)]="reportReason[user.id]" />
+          </div>
         </div>
         <div *ngIf="usersToFollow.length === 0" class="text-muted small">
           No suggestions at the moment.

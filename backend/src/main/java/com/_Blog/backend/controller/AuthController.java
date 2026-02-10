@@ -41,6 +41,10 @@ public class AuthController {
 
         User user = userRepository.findByUsername(loginRequest.getUsername()).orElseThrow();
 
+        if ("BANNED".equalsIgnoreCase(user.getStatus())) {
+            return ResponseEntity.status(403).body("Your account is banned");
+        }
+
         return ResponseEntity.ok(new JwtResponse(jwt, 
                 user.getId(), 
                 user.getUsername(), 
