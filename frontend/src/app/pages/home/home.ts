@@ -4,7 +4,6 @@ import { RouterModule, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../service/auth';
 import { PostService } from '../../service/post';
-import { jwtDecode } from 'jwt-decode';
 import { TimeAgoPipe } from '../../pipes/time-ago-pipe';
 import { UserService } from '../../service/user';
 import { NotificationService } from '../../service/notification';
@@ -41,7 +40,8 @@ export class HomeComponent implements OnInit {
 
       if (token) {
         try {
-          const decoded: any = jwtDecode(token);
+          const payload = token.split('.')[1];
+          const decoded = JSON.parse(atob(payload));
           this.username = decoded.sub;
           this.loadPosts();
           this.loadUsersToFollow();

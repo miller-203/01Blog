@@ -1,5 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, Inject, OnInit, PLATFORM_ID } from '@angular/core';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { AdminService } from '../../service/admin';
 
 @Component({
@@ -13,10 +13,15 @@ export class AdminDashboardComponent implements OnInit {
   posts: any[] = [];
   reports: any[] = [];
 
-  constructor(private adminService: AdminService) {}
+  constructor(
+    private adminService: AdminService,
+    @Inject(PLATFORM_ID) private platformId: Object
+  ) {}
 
   ngOnInit(): void {
-    this.loadAll();
+    if (isPlatformBrowser(this.platformId)) {
+      this.loadAll();
+    }
   }
 
   loadAll(): void {

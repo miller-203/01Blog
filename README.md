@@ -1,5 +1,37 @@
 ## 01Blog
 
+### How to run the project
+
+#### 1) Backend (Spring Boot)
+
+```bash
+cd backend
+
+# Option A (recommended if Maven is installed globally)
+mvn spring-boot:run
+
+# Option B (Maven Wrapper)
+./mvnw spring-boot:run
+```
+
+Backend default URL: `http://localhost:8080`
+
+#### 2) Frontend (Angular)
+
+```bash
+cd frontend
+npm install
+npm start
+```
+
+Frontend default URL: `http://localhost:4200`
+
+#### 3) Environment notes
+
+- Make sure your SQL database is running and matches `backend/src/main/resources/application.properties`.
+- Start backend first, then start frontend.
+- If you get dependency download errors (Maven/NPM), verify your network/proxy settings and retry installation.
+
 ### Overview
 
 In this project, you will build a **social blogging platform** called **01Blog**, where students can share their learning experiences, discoveries, and progress throughout their journey. Users can interact with each other’s content, follow one another, and engage in meaningful discussions.
