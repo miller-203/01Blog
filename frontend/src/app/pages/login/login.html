@@ -1,37 +1,36 @@
-<div class="container mt-5">
-  <div class="row justify-content-center">
-    <div class="col-md-6">
-      <div class="card">
-        <div class="card-header bg-primary text-white">
-          <h3>Login</h3>
-        </div>
-        <div class="card-body">
-          <form (ngSubmit)="onSubmit()">
-            
-            <div class="mb-3">
-              <label for="username" class="form-label">Username</label>
-              <input type="text" 
-                     class="form-control" 
-                     id="username" 
-                     name="username"
-                     [(ngModel)]="loginData.username" 
-                     required>
-            </div>
+<div class="auth-shell">
+  <div class="auth-card">
+    <div class="auth-brand">01Blog</div>
+    <h1>Welcome back</h1>
+    <p class="subtitle">Login to continue writing and connecting with your community.</p>
 
-            <div class="mb-3">
-              <label for="password" class="form-label">Password</label>
-              <input type="password" 
-                     class="form-control" 
-                     id="password" 
-                     name="password"
-                     [(ngModel)]="loginData.password" 
-                     required>
-            </div>
+    <form (ngSubmit)="onSubmit()" class="auth-form">
+      <label for="username">Username</label>
+      <input
+        type="text"
+        id="username"
+        name="username"
+        [(ngModel)]="loginData.username"
+        placeholder="Enter your username"
+        required
+      />
 
-            <button type="submit" class="btn btn-primary w-100">Login</button>
-          </form>
-        </div>
-      </div>
-    </div>
+      <label for="password">Password</label>
+      <input
+        type="password"
+        id="password"
+        name="password"
+        [(ngModel)]="loginData.password"
+        placeholder="Enter your password"
+        required
+      />
+
+      <button type="submit">Login</button>
+    </form>
+
+    <p class="helper-text">
+      New here?
+      <a routerLink="/register">Create an account</a>
+    </p>
   </div>
 </div>
