@@ -33,9 +33,13 @@ public class NotificationController {
     }
 
     @PutMapping("/{notificationId}/read")
-    public ResponseEntity<Void> markNotificationAsRead(@PathVariable Long notificationId) {
+    public ResponseEntity<Void> markNotificationAsRead(@PathVariable Long notificationId, Authentication authentication) {
         Notification notification = notificationRepository.findById(notificationId)
                 .orElseThrow(() -> new RuntimeException("Notification not found"));
+
+        if (!notification.getRecipient().getUsername().equals(authentication.getName())) {
+            return ResponseEntity.status(403).build();
+        }
 
         notification.setIsRead(true);
         notificationRepository.save(notification);

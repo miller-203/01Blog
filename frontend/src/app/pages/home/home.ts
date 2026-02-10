@@ -4,10 +4,10 @@ import { RouterModule, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../service/auth';
 import { PostService } from '../../service/post';
-import { jwtDecode } from 'jwt-decode';
 import { TimeAgoPipe } from '../../pipes/time-ago-pipe';
 import { UserService } from '../../service/user';
 import { NotificationService } from '../../service/notification';
+import { ReportService } from '../../service/report';
 
 @Component({
   selector: 'app-home',
@@ -30,7 +30,8 @@ export class HomeComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     @Inject(PLATFORM_ID) private platformId: Object,
     private userService: UserService,
-    private notificationService: NotificationService
+    private notificationService: NotificationService,
+    private reportService: ReportService
   ) { }
 
   ngOnInit(): void {
@@ -39,7 +40,8 @@ export class HomeComponent implements OnInit {
 
       if (token) {
         try {
-          const decoded: any = jwtDecode(token);
+          const payload = token.split('.')[1];
+          const decoded = JSON.parse(atob(payload));
           this.username = decoded.sub;
           this.loadPosts();
           this.loadUsersToFollow();
@@ -170,6 +172,24 @@ export class HomeComponent implements OnInit {
   refreshData() {
     this.loadPosts();
     this.loadNotifications();
+  }
+
+  reportReason: { [key: number]: string } = {};
+
+  reportUser(user: any) {
+    const reason = (this.reportReason[user.id] || '').trim();
+    if (!reason) {
+      alert('Please provide a report reason');
+      return;
+    }
+
+    this.reportService.reportUser(user.id, reason).subscribe({
+      next: () => {
+        alert(`Report submitted for ${user.username}`);
+        this.reportReason[user.id] = "";
+      },
+      error: () => alert('Failed to submit report')
+    });
   }
 }
 

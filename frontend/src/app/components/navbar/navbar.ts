@@ -1,5 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common'; 
+import { Component, Inject, OnInit, PLATFORM_ID } from '@angular/core';
+import { CommonModule, isPlatformBrowser } from '@angular/common'; 
 import { RouterModule, Router } from '@angular/router'; 
 import { NotificationService } from '../../service/notification';
 import { Notification } from '../../models/notification';
@@ -18,11 +18,14 @@ export class NavbarComponent implements OnInit {
 
   constructor(
     private notificationService: NotificationService, 
-    private router: Router
+    private router: Router,
+    @Inject(PLATFORM_ID) private platformId: Object
   ) {}
 
   ngOnInit(): void {
-    this.loadNotifications();
+    if (isPlatformBrowser(this.platformId)) {
+      this.loadNotifications();
+    }
   }
 
   loadNotifications() {
