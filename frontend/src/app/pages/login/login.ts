@@ -23,10 +23,8 @@ export class LoginComponent {
   onSubmit() {
     this.authService.login(this.loginData).subscribe({
       next: (response: any) => {
-        // 1. Save the token
         this.authService.saveToken(response.token);
-        console.log('Login Successful:', response);
-        
+        this.authService.saveRole(response.role || null);
         this.router.navigate(['/home']);
       },
       error: (err) => {

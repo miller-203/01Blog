@@ -4,6 +4,7 @@ import com._Blog.backend.domain.model.Post;
 import com._Blog.backend.domain.model.User;
 import com._Blog.backend.dto.PostRequest;
 import com._Blog.backend.dto.PostResponse;
+import com._Blog.backend.repository.FollowRepository;
 import com._Blog.backend.repository.LikeRepository;
 import com._Blog.backend.repository.UserBlockRepository;
 import com._Blog.backend.repository.UserRepository;
@@ -15,6 +16,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -35,6 +37,9 @@ public class PostController {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private FollowRepository followRepository;
 
     @Autowired
     private UserBlockRepository userBlockRepository;
@@ -107,6 +112,49 @@ public class PostController {
                     resp.setLikedByCurrentUser(likeRepository.findByUserAndPost(user, post).isPresent());
                 }
             }
+            return resp;
+        }).collect(Collectors.toList());
+
+        return ResponseEntity.ok(responseList);
+    }
+
+    @GetMapping("/feed")
+    public ResponseEntity<List<PostResponse>> getFollowingFeed(Authentication authentication) {
+        String currentUsername = authentication.getName();
+
+        User currentUser = userRepository.findByUsername(currentUsername)
+                .orElseThrow(() -> new RuntimeException("Current user not found"));
+
+        Set<Long> blockedByMe = userBlockRepository.findByBlocker(currentUser).stream()
+                .map(block -> block.getBlocked().getId())
+                .collect(java.util.stream.Collectors.toSet());
+        Set<Long> blockedMe = userBlockRepository.findByBlocked(currentUser).stream()
+                .map(block -> block.getBlocker().getId())
+                .collect(java.util.stream.Collectors.toSet());
+
+        List<User> followedUsers = followRepository.findByFollower(currentUser).stream()
+                .map(follow -> follow.getFollowed())
+                .filter(user -> !blockedByMe.contains(user.getId()) && !blockedMe.contains(user.getId()))
+                .toList();
+
+        if (followedUsers.isEmpty()) {
+            return ResponseEntity.ok(new ArrayList<>());
+        }
+
+        List<Post> posts = postService.getAllPosts().stream()
+                .filter(post -> followedUsers.stream().anyMatch(user -> user.getId().equals(post.getUser().getId())))
+                .toList();
+
+        List<PostResponse> responseList = posts.stream().map(post -> {
+            PostResponse resp = new PostResponse();
+            resp.setId(post.getId());
+            resp.setTitle(post.getTitle());
+            resp.setContent(post.getContent());
+            resp.setImageUrl(post.getImageUrl());
+            resp.setCreatedAt(post.getCreatedAt());
+            resp.setUsername(post.getUser().getUsername());
+            resp.setLikeCount(likeRepository.countByPost(post));
+            resp.setLikedByCurrentUser(likeRepository.findByUserAndPost(currentUser, post).isPresent());
             return resp;
         }).collect(Collectors.toList());
 

@@ -76,7 +76,7 @@ export class HomeComponent implements OnInit {
   }
 
   loadPosts() {
-    this.postService.getAllPosts().subscribe({
+    this.postService.getFeedPosts().subscribe({
       next: (data: any) => {
         const rawPosts = Array.isArray(data) ? data : data.content || [];
         this.posts = rawPosts.map((post: any) => ({
@@ -132,7 +132,7 @@ export class HomeComponent implements OnInit {
   }
 
   logout() {
-    localStorage.removeItem('token');
+    this.authService.logout();
     this.router.navigate(['/login']);
   }
 
