@@ -20,8 +20,15 @@ export class HomeComponent implements OnInit {
 
   username: string = 'User';
   posts: any[] = [];
+  usersToFollow: any[] = [];
+  notifications: any[] = [];
+  showNotifDropdown = false;
+  unreadCount = 0;
 
   commentText: { [key: number]: string } = {};
+  reportReason: { [key: number]: string } = {};
+  followingIds = new Set<number>();
+  blockedIds = new Set<number>();
 
   constructor(
     private authService: AuthService,
@@ -35,40 +42,48 @@ export class HomeComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    if (isPlatformBrowser(this.platformId)) {
-      const token = this.authService.getToken();
+    if (!isPlatformBrowser(this.platformId)) {
+      return;
+    }
 
-      if (token) {
-        try {
-          const payload = token.split('.')[1];
-          const decoded = JSON.parse(atob(payload));
-          this.username = decoded.sub;
-          this.loadUsersToFollow();
-          this.refreshData();
-        } catch (error) {
-          console.error('Invalid token');
-          this.router.navigate(['/login']);
-        }
-      } else {
-        this.router.navigate(['/login']);
-      }
+    const token = this.authService.getToken();
+    if (!token) {
+      this.router.navigate(['/login']);
+      return;
+    }
+
+    try {
+      const payload = token.split('.')[1];
+      const decoded = JSON.parse(atob(payload));
+      this.username = decoded.sub;
+      this.refreshData();
+    } catch {
+      console.error('Invalid token');
+      this.router.navigate(['/login']);
     }
   }
 
+  private getErrorMessage(err: any, fallback: string) {
+    return err?.error?.message || err?.error || fallback;
+  }
+
+  refreshData() {
+    this.loadPosts();
+    this.loadNotifications();
+    this.loadBlockedUsers();
+    this.loadFollowingIds();
+    this.loadUsersToFollow();
+  }
 
   loadPosts() {
     this.postService.getAllPosts().subscribe({
       next: (data: any) => {
-        // Handle different data formats (Page object vs List)
         const rawPosts = Array.isArray(data) ? data : data.content || [];
-
-        // Prepare posts with extra fields for the UI
         this.posts = rawPosts.map((post: any) => ({
           ...post,
-          showComments: false, // Is the chat box open?
-          comments: []         // The list of comments
+          showComments: false,
+          comments: []
         }));
-
         this.cdr.detectChanges();
       },
       error: (err) => console.error('Error loading posts:', err)
@@ -78,45 +93,41 @@ export class HomeComponent implements OnInit {
   toggleComments(post: any) {
     post.showComments = !post.showComments;
 
-    // If opening for the first time, fetch comments from server
     if (post.showComments && post.comments.length === 0) {
       this.postService.getComments(post.id).subscribe({
         next: (comments) => {
           post.comments = comments;
           this.cdr.detectChanges();
         },
-        error: (err) => console.error('Error fetching comments', err)
+        error: () => alert('Unable to load comments for this post.')
       });
     }
   }
 
   submitComment(post: any) {
     const text = this.commentText[post.id];
-    if (!text) return; // Don't send empty comments
+    if (!text) return;
 
     this.postService.addComment(post.id, text).subscribe({
       next: () => {
-        // Refresh the comment list for this post
         this.postService.getComments(post.id).subscribe(newComments => {
           post.comments = newComments;
-          this.commentText[post.id] = ''; // Clear the input box
+          this.commentText[post.id] = '';
           this.cdr.detectChanges();
         });
       },
-      error: (err) => alert('Failed to post comment')
+      error: () => alert('Failed to post comment')
     });
   }
 
-  // 👇 NEW: LIKE FUNCTION 👇
   likePost(post: any) {
     this.postService.toggleLike(post.id).subscribe({
       next: (response: any) => {
-        // The backend returns: { liked: true/false, count: 12 }
         post.likedByCurrentUser = response.liked;
         post.likeCount = response.count;
         this.cdr.detectChanges();
       },
-      error: (err) => console.error('Error liking post', err)
+      error: () => alert('Failed to like post.')
     });
   }
 
@@ -125,22 +136,87 @@ export class HomeComponent implements OnInit {
     this.router.navigate(['/login']);
   }
 
-  usersToFollow: any[] = [];
-  notifications: any[] = [];
-  showNotifDropdown = false;
-  unreadCount = 0;
-
   loadUsersToFollow() {
-    this.userService.getAllUsers().subscribe(users => {
-      // Filter out the current user
-      this.usersToFollow = users.filter((u: any) => u.username !== this.username);
+    this.userService.getAllUsers().subscribe({
+      next: users => {
+        this.usersToFollow = users.filter((u: any) => !this.blockedIds.has(u.id));
+      },
+      error: () => alert('Failed to load suggested users.')
     });
   }
 
-  followUser(user: any) {
-    this.userService.followUser(user.id).subscribe(() => {
-      alert(`You are now following ${user.username}`);
-      this.loadUsersToFollow(); // Refresh list
+  loadFollowingIds() {
+    this.userService.getFollowingIds().subscribe({
+      next: ids => {
+        this.followingIds = new Set(ids);
+      },
+      error: () => {
+        this.followingIds = new Set();
+      }
+    });
+  }
+
+  isFollowing(userId: number) {
+    return this.followingIds.has(userId);
+  }
+
+  toggleFollow(user: any) {
+    if (this.isFollowing(user.id)) {
+      this.userService.unfollowUser(user.id).subscribe({
+        next: () => {
+          this.followingIds.delete(user.id);
+          this.cdr.detectChanges();
+        },
+        error: (err) => alert(this.getErrorMessage(err, 'Failed to unsubscribe user.'))
+      });
+      return;
+    }
+
+    this.userService.followUser(user.id).subscribe({
+      next: () => {
+        this.followingIds.add(user.id);
+        this.cdr.detectChanges();
+      },
+      error: (err) => alert(this.getErrorMessage(err, 'Failed to follow user.'))
+    });
+  }
+
+  loadBlockedUsers() {
+    this.userService.getBlockedUserIds().subscribe({
+      next: ids => {
+        this.blockedIds = new Set(ids);
+      },
+      error: () => {
+        this.blockedIds = new Set();
+      }
+    });
+  }
+
+  isBlocked(userId: number) {
+    return this.blockedIds.has(userId);
+  }
+
+  toggleBlock(user: any) {
+    if (this.isBlocked(user.id)) {
+      this.userService.unblockUser(user.id).subscribe({
+        next: () => {
+          this.blockedIds.delete(user.id);
+          this.loadUsersToFollow();
+          this.cdr.detectChanges();
+        },
+        error: (err) => alert(this.getErrorMessage(err, 'Failed to unblock user.'))
+      });
+      return;
+    }
+
+    this.userService.blockUser(user.id).subscribe({
+      next: () => {
+        this.blockedIds.add(user.id);
+        this.followingIds.delete(user.id);
+        this.usersToFollow = this.usersToFollow.filter(u => u.id !== user.id);
+        this.cdr.detectChanges();
+      },
+      error: (err) => alert(this.getErrorMessage(err, 'Failed to block user.'))
     });
   }
 
@@ -156,6 +232,7 @@ export class HomeComponent implements OnInit {
       this.loadNotifications();
     });
   }
+
   loadNotifications() {
     this.notificationService.getNotifications().subscribe({
       next: (data) => {
@@ -163,15 +240,9 @@ export class HomeComponent implements OnInit {
         this.unreadCount = data.filter((n: any) => !n.isRead).length;
         this.cdr.detectChanges();
       },
-      error: (err) => console.error('Notification error:', err)
+      error: () => console.error('Notification error')
     });
   }
-  refreshData() {
-    this.loadPosts();
-    this.loadNotifications();
-  }
-
-  reportReason: { [key: number]: string } = {};
 
   reportUser(user: any) {
     const reason = (this.reportReason[user.id] || '').trim();
@@ -183,10 +254,9 @@ export class HomeComponent implements OnInit {
     this.reportService.reportUser(user.id, reason).subscribe({
       next: () => {
         alert(`Report submitted for ${user.username}`);
-        this.reportReason[user.id] = "";
+        this.reportReason[user.id] = '';
       },
-      error: () => alert('Failed to submit report')
+      error: (err) => alert(this.getErrorMessage(err, 'Failed to submit report'))
     });
   }
 }
-

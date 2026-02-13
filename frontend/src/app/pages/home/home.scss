@@ -92,6 +92,7 @@
 .follow-item { padding: 0.6rem 0; border-bottom: 1px dashed #e2e8f0; }
 .follow-actions { display: flex; gap: 0.4rem; margin: 0.45rem 0; }
 .follow-actions button { border: 1px solid #93c5fd; background: #eff6ff; color: #1e3a8a; border-radius: 8px; padding: 0.25rem 0.55rem; }
+.follow-actions .warning { border-color: #fde68a; background: #fefce8; color: #a16207; }
 .follow-actions .danger { border-color: #fecaca; background: #fff1f2; color: #9f1239; }
 .follow-item input { width: 100%; border: 1px solid #cbd5e1; border-radius: 8px; padding: 0.4rem 0.5rem; }
 

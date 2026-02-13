@@ -84,7 +84,8 @@
         <div *ngFor="let user of usersToFollow" class="follow-item">
           <strong>{{ user.username }}</strong>
           <div class="follow-actions">
-            <button (click)="followUser(user)">Follow</button>
+            <button (click)="toggleFollow(user)">{{ isFollowing(user.id) ? "Unsubscribe" : "Follow" }}</button>
+            <button class="warning" (click)="toggleBlock(user)">{{ isBlocked(user.id) ? "Unblock" : "Block" }}</button>
             <button class="danger" (click)="reportUser(user)">Report user</button>
           </div>
           <input placeholder="Reason for report" [(ngModel)]="reportReason[user.id]" />
