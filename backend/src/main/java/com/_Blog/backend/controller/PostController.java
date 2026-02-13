@@ -77,20 +77,21 @@ public class PostController {
     public ResponseEntity<List<PostResponse>> getAllPosts(Authentication authentication) {
         String currentUsername = (authentication != null) ? authentication.getName() : "";
 
-        Set<Long> blockedByMe = java.util.Collections.emptySet();
-        Set<Long> blockedMe = java.util.Collections.emptySet();
+        User currentUser = !currentUsername.isEmpty()
+                ? userRepository.findByUsername(currentUsername).orElse(null)
+                : null;
 
-        if (!currentUsername.isEmpty()) {
-            User currentUser = userRepository.findByUsername(currentUsername).orElse(null);
-            if (currentUser != null) {
-                blockedByMe = userBlockRepository.findByBlocker(currentUser).stream()
-                        .map(block -> block.getBlocked().getId())
-                        .collect(java.util.stream.Collectors.toSet());
-                blockedMe = userBlockRepository.findByBlocked(currentUser).stream()
-                        .map(block -> block.getBlocker().getId())
-                        .collect(java.util.stream.Collectors.toSet());
-            }
-        }
+        final Set<Long> blockedByMe = (currentUser != null)
+                ? userBlockRepository.findByBlocker(currentUser).stream()
+                    .map(block -> block.getBlocked().getId())
+                    .collect(java.util.stream.Collectors.toSet())
+                : java.util.Collections.emptySet();
+
+        final Set<Long> blockedMe = (currentUser != null)
+                ? userBlockRepository.findByBlocked(currentUser).stream()
+                    .map(block -> block.getBlocker().getId())
+                    .collect(java.util.stream.Collectors.toSet())
+                : java.util.Collections.emptySet();
 
         List<Post> posts = postService.getAllPosts().stream()
                 .filter(post -> !blockedByMe.contains(post.getUser().getId()) && !blockedMe.contains(post.getUser().getId()))
@@ -106,11 +107,8 @@ public class PostController {
             resp.setUsername(post.getUser().getUsername());
             
             resp.setLikeCount(likeRepository.countByPost(post));
-            if (!currentUsername.isEmpty()) {
-                User user = userRepository.findByUsername(currentUsername).orElse(null);
-                if (user != null) {
-                    resp.setLikedByCurrentUser(likeRepository.findByUserAndPost(user, post).isPresent());
-                }
+            if (currentUser != null) {
+                resp.setLikedByCurrentUser(likeRepository.findByUserAndPost(currentUser, post).isPresent());
             }
             return resp;
         }).collect(Collectors.toList());
