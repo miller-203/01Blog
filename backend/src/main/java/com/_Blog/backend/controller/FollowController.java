@@ -3,16 +3,16 @@ package com._Blog.backend.controller;
 import com._Blog.backend.domain.model.Follow;
 import com._Blog.backend.domain.model.User;
 import com._Blog.backend.repository.FollowRepository;
+import com._Blog.backend.repository.UserBlockRepository;
 import com._Blog.backend.repository.UserRepository;
-// import com._Blog.backend.repository.NotificationRepository;
-import com._Blog.backend.service.NotificationService;
-import com._Blog.backend.dto.FollowRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/follows")
@@ -26,56 +26,81 @@ public class FollowController {
     private FollowRepository followRepository;
 
     @Autowired
-    private NotificationService notificationService;
+    private UserBlockRepository userBlockRepository;
 
     @PostMapping("/follow/{userId}")
-        public ResponseEntity<?> addFollow(@PathVariable Long userId, Authentication authentication) {
-            String currentUsername = authentication.getName();
-            User me = userRepository.findByUsername(currentUsername)
-                    .orElseThrow(() -> new RuntimeException("Current user not found"));
-        
-            User toFollow = userRepository.findById(userId)
-                    .orElseThrow(() -> new RuntimeException("User to follow not found"));
-        
-            if (me.getId().equals(toFollow.getId())) {
-                return ResponseEntity.badRequest().body("You cannot follow yourself");
-            }
-        
-            if (followRepository.existsByFollowerAndFollowed(me, toFollow)) {
-                return ResponseEntity.badRequest().body("Already following");
-            }
-        
-            Follow follow = new Follow();
-            follow.setFollower(me);
-            follow.setFollowed(toFollow);
-            followRepository.save(follow);
-        
-                // Create a notification for the followed user
-            // notificationService.createNotification(me, toFollow, null, me.getUsername() + " started following you!");
-            
-            return ResponseEntity.ok("Followed successfully");
+    public ResponseEntity<?> addFollow(@PathVariable Long userId, Authentication authentication) {
+        String currentUsername = authentication.getName();
+        User me = userRepository.findByUsername(currentUsername)
+                .orElseThrow(() -> new RuntimeException("Current user not found"));
+
+        User toFollow = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User to follow not found"));
+
+        if (me.getId().equals(toFollow.getId())) {
+            return ResponseEntity.badRequest().body("You cannot follow yourself");
         }
+
+        if (followRepository.existsByFollowerAndFollowed(me, toFollow)) {
+            return ResponseEntity.badRequest().body("Already following");
+        }
+
+        boolean blockedEitherWay = userBlockRepository.existsByBlockerAndBlocked(me, toFollow)
+                || userBlockRepository.existsByBlockerAndBlocked(toFollow, me);
+        if (blockedEitherWay) {
+            return ResponseEntity.badRequest().body("Follow unavailable due to block relationship");
+        }
+
+        Follow follow = new Follow();
+        follow.setFollower(me);
+        follow.setFollowed(toFollow);
+        followRepository.save(follow);
+
+        return ResponseEntity.ok("Followed successfully");
+    }
 
     @PostMapping("/unfollow/{userId}")
     public ResponseEntity<?> removeFollow(@PathVariable Long userId, Authentication authentication) {
         String currentUsername = authentication.getName();
 
         User me = userRepository.findByUsername(currentUsername)
-                    .orElseThrow(() -> new RuntimeException("Current user not found"));
+                .orElseThrow(() -> new RuntimeException("Current user not found"));
 
         User toFollow = userRepository.findById(userId)
-                    .orElseThrow(() -> new RuntimeException("User to unfollow not found"));
+                .orElseThrow(() -> new RuntimeException("User to unfollow not found"));
 
         if (me.getId().equals(toFollow.getId())) {
-                return ResponseEntity.badRequest().body("You cannot unfollow yourself");
-            }
+            return ResponseEntity.badRequest().body("You cannot unfollow yourself");
+        }
 
-        Follow follow = followRepository.findByFollowerAndFollowed(me, toFollow)
-                .orElseThrow(() -> new RuntimeException("Follow relationship not found"));
+        return followRepository.findByFollowerAndFollowed(me, toFollow)
+                .map(follow -> {
+                    followRepository.delete(follow);
+                    return ResponseEntity.ok("Follow removed!");
+                })
+                .orElseGet(() -> ResponseEntity.badRequest().body("Not currently following this user"));
+    }
 
-        followRepository.delete(follow);
+    @GetMapping("/following/ids")
+    public ResponseEntity<List<Long>> getFollowingIds(Authentication authentication) {
+        String currentUsername = authentication.getName();
 
-        return ResponseEntity.ok("Follow removed!");
+        User me = userRepository.findByUsername(currentUsername)
+                .orElseThrow(() -> new RuntimeException("Current user not found"));
+
+        Set<Long> blockedByMe = userBlockRepository.findByBlocker(me).stream()
+                .map(block -> block.getBlocked().getId())
+                .collect(Collectors.toSet());
+        Set<Long> blockedMe = userBlockRepository.findByBlocked(me).stream()
+                .map(block -> block.getBlocker().getId())
+                .collect(Collectors.toSet());
+
+        List<Long> followingIds = followRepository.findByFollower(me).stream()
+                .map(follow -> follow.getFollowed().getId())
+                .filter(id -> !blockedByMe.contains(id) && !blockedMe.contains(id))
+                .toList();
+
+        return ResponseEntity.ok(followingIds);
     }
 
     @GetMapping("/{userId}")

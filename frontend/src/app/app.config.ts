@@ -1,14 +1,15 @@
 import { ApplicationConfig } from '@angular/core';
 import { provideRouter } from '@angular/router';
-import { provideHttpClient, withFetch } from '@angular/common/http'; // <--- Import this
+import { provideHttpClient, withFetch, withInterceptors } from '@angular/common/http';
 
 import { routes } from './app.routes';
 import { provideClientHydration } from '@angular/platform-browser';
+import { authInterceptor } from './interceptors/auth.interceptor';
 
 export const appConfig: ApplicationConfig = {
   providers: [
-    provideRouter(routes), 
+    provideRouter(routes),
     provideClientHydration(),
-    provideHttpClient(withFetch()) // <--- Add this line to enable API calls
+    provideHttpClient(withFetch(), withInterceptors([authInterceptor]))
   ]
 };

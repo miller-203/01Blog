@@ -1,64 +1,55 @@
-<div class="container mt-5" *ngIf="userProfile">
-    <header>
-        <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
-            <a class="navbar-brand" href="#">01Blog</a>
-        </nav>
-    </header>
+<div class="profile-page" *ngIf="userProfile">
+  <header class="profile-header">
+    <a routerLink="/home" class="back-link">← Back to Home</a>
+    <span>01Blog Profile</span>
+  </header>
 
-    <div class="card shadow-sm mb-4">
-        <div class="card-body text-center">
-            <div class="display-1 text-primary mb-3">
-                <i class="bi bi-person-circle"></i> 👤
-            </div>
-            <h2>{{ userProfile.username }}</h2>
-            <p class="text-muted">{{ userProfile.email }}</p>
-            <div class="d-flex justify-content-center gap-4 mt-3">
-                <div>
-                    <h5>{{ userProfile.postCount }}</h5>
-                    <small class="text-muted">Posts</small>
-                </div>
-                <div>
-                    <h5>{{ userProfile.joinedAt | date:'mediumDate' }}</h5>
-                    <small class="text-muted">Joined</small>
-                </div>
-            </div>
+  <section class="profile-summary">
+    <div class="avatar">{{ userProfile.username?.[0] | uppercase }}</div>
+    <div>
+      <h1>{{ userProfile.username }}</h1>
+      <p>{{ userProfile.email }}</p>
+      <div class="stats">
+        <div>
+          <strong>{{ userProfile.postCount }}</strong>
+          <small>Posts</small>
         </div>
-    </div>
-
-    <h3 class="mb-3">My Posts</h3>
-
-    <div class="row">
-        <div class="col-md-6" *ngFor="let post of myPosts">
-            <div class="card mb-3 shadow-sm" *ngIf="post.username === userProfile.username">
-                <div class="card-body">
-
-                    <div *ngIf="editingPostId !== post.id">
-                        <h5 class="card-title">{{ post.title }}</h5>
-                        <p class="card-text">{{ post.content }}</p>
-
-                        <div class="d-flex justify-content-between align-items-center mt-3">
-                            <small class="text-muted">{{ post.createdAt | date:'short' }}</small>
-                            <div>
-                                <button class="btn btn-outline-primary btn-sm me-2"
-                                    (click)="startEditing(post)">Edit</button>
-                                <button class="btn btn-outline-danger btn-sm"
-                                    (click)="deletePost(post.id)">Delete</button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div *ngIf="editingPostId === post.id">
-                        <input type="text" class="form-control mb-2" [(ngModel)]="editTitle">
-                        <textarea class="form-control mb-2" rows="3" [(ngModel)]="editContent"></textarea>
-
-                        <div class="d-flex gap-2">
-                            <button class="btn btn-success btn-sm" (click)="saveEdit()">Save</button>
-                            <button class="btn btn-secondary btn-sm" (click)="cancelEdit()">Cancel</button>
-                        </div>
-                    </div>
-
-                </div>
-            </div>
+        <div>
+          <strong>{{ userProfile.joinedAt | date:'mediumDate' }}</strong>
+          <small>Joined</small>
         </div>
+      </div>
     </div>
+  </section>
+
+  <section class="my-posts">
+    <h2>My Posts</h2>
+
+    <div class="posts-grid">
+      <article class="post" *ngFor="let post of myPosts">
+        <ng-container *ngIf="post.username === userProfile.username">
+          <ng-container *ngIf="editingPostId !== post.id; else editForm">
+          <h3>{{ post.title }}</h3>
+          <p>{{ post.content }}</p>
+          <div class="post-footer">
+            <small>{{ post.createdAt | date:'short' }}</small>
+            <div class="actions">
+              <button class="edit" (click)="startEditing(post)">Edit</button>
+              <button class="delete" (click)="deletePost(post.id)">Delete</button>
+            </div>
+          </div>
+          </ng-container>
+
+          <ng-template #editForm>
+          <input type="text" [(ngModel)]="editTitle" />
+          <textarea rows="4" [(ngModel)]="editContent"></textarea>
+          <div class="actions">
+            <button class="save" (click)="saveEdit()">Save</button>
+            <button class="cancel" (click)="cancelEdit()">Cancel</button>
+          </div>
+          </ng-template>
+        </ng-container>
+      </article>
+    </div>
+  </section>
 </div>
