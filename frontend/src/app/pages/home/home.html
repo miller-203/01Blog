@@ -1,129 +1,98 @@
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
-  <div class="container">
-    <a class="navbar-brand" href="#">01Blog</a>
-    <div class="d-flex align-items-center">
-      <div class="dropdown me-3">
-        <button class="btn btn-dark position-relative" (click)="toggleNotifDropdown()">
+<div class="home-page">
+  <header class="home-header">
+    <div class="brand">01Blog</div>
+
+    <div class="header-actions">
+      <div class="notif-wrap">
+        <button class="notif-btn" (click)="toggleNotifDropdown()" aria-label="Notifications">
           🔔
-          <span *ngIf="unreadCount > 0"
-            class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-            {{ unreadCount }}
-          </span>
+          <span *ngIf="unreadCount > 0" class="badge">{{ unreadCount }}</span>
         </button>
 
-        <div class="dropdown-menu dropdown-menu-end show" *ngIf="showNotifDropdown"
-          style="width: 300px; max-height: 400px; overflow-y: auto;">
-          <h6 class="dropdown-header">Notifications</h6>
-          <div *ngIf="notifications.length === 0" class="p-3 text-center text-muted">No notifications</div>
-          <button *ngFor="let n of notifications" (click)="onNotifClick(n)" class="dropdown-item border-bottom py-2"
-            [style.background-color]="n.isRead ? 'transparent' : '#f0f7ff'">
-            <div class="small">{{ n.message }}</div>
-            <small class="text-muted">{{ n.createdAt | timeAgo }}</small>
+        <div class="notif-dropdown" *ngIf="showNotifDropdown">
+          <h6>Notifications</h6>
+          <div *ngIf="notifications.length === 0" class="empty">No notifications</div>
+          <button
+            *ngFor="let n of notifications"
+            (click)="onNotifClick(n)"
+            class="notif-item"
+            [class.unread]="!n.isRead"
+          >
+            <span>{{ n.message }}</span>
+            <small>{{ n.createdAt | timeAgo }}</small>
           </button>
         </div>
       </div>
-      <a routerLink="/admin" class="btn btn-sm btn-outline-light me-2">Admin</a>
-      <a routerLink="/profile" class="text-white text-decoration-none me-3">
-        Signed in as: <strong>{{ username }}</strong>
-      </a>
-      <button (click)="logout()" class="btn btn-outline-danger btn-sm">Logout</button>
+
+      <a routerLink="/admin" class="chip">Admin</a>
+      <a routerLink="/profile" class="chip">{{ username }}</a>
+      <button (click)="logout()" class="logout-btn">Logout</button>
     </div>
-  </div>
-</nav>
+  </header>
 
-<div class="container">
-
-  <div class="row align-items-center mb-4">
-    <div class="col-auto">
-      <a routerLink="/create-post" class="btn btn-primary">
-        + Write New Post
-      </a>
-    </div>
-  </div>
-
-  <div *ngIf="posts.length === 0" class="text-center mt-5 text-muted">
-    <h4>No posts found yet.</h4>
-    <p>Be the first one to write something!</p>
-  </div>
-
-  <div class="row">
-    <div class="col-md-8 mx-auto" *ngFor="let post of posts">
-      <div class="card mb-3 shadow-sm">
-        <div class="card-body">
-          <h3 class="card-title text-dark">{{ post.title }}</h3>
-          <h6 class="card-subtitle mb-2 text-muted">
-            By {{ post.user?.username || post.username || 'Unknown' }}
-            <small>• {{ post.createdAt | timeAgo }}</small>
-          </h6>
-
-          <div *ngIf="post.imageUrl" class="mb-3">
-            <img [src]="'http://localhost:8080/uploads/' + post.imageUrl" alt="Post Image" class="img-fluid rounded"
-              style="max-height: 400px; width: 100%; object-fit: cover;">
-          </div>
-
-          <p class="card-text mt-3">{{ post.content }}</p>
-
-          <hr>
-
-          <div class="d-flex align-items-center gap-3">
-
-            <button class="btn btn-sm" [ngClass]="post.likedByCurrentUser ? 'btn-danger' : 'btn-outline-danger'"
-              (click)="likePost(post)">
-              <span *ngIf="post.likedByCurrentUser">❤️</span>
-              <span *ngIf="!post.likedByCurrentUser">🤍</span>
-              Like ({{ post.likeCount || 0 }})
-            </button>
-
-            <button class="btn btn-sm btn-outline-primary" (click)="toggleComments(post)">
-              💬 Comments ({{ post.comments?.length || 0 }})
-            </button>
-
-          </div>
-
-          <div *ngIf="post.showComments" class="mt-3 bg-light p-3 rounded">
-
-            <div *ngFor="let comment of post.comments" class="mb-2 border-bottom pb-1">
-              <strong>{{ comment.user?.username || 'User' }}</strong>:
-              <span class="text-muted">{{ comment.content }}</span>
-            </div>
-
-            <div *ngIf="!post.comments || post.comments.length === 0" class="text-muted small mb-2">
-              No comments yet.
-            </div>
-
-            <div class="input-group mt-2">
-              <input type="text" class="form-control" placeholder="Write a comment..."
-                [(ngModel)]="commentText[post.id]">
-              <button class="btn btn-primary" (click)="submitComment(post)">Send</button>
-            </div>
-
-          </div>
-        </div>
+  <section class="home-content">
+    <div class="feed-column">
+      <div class="feed-toolbar">
+        <h1>Home Feed</h1>
+        <a routerLink="/create-post" class="new-post-btn">+ Write New Post</a>
       </div>
-    </div>
-    <div class="card mb-3 shadow-sm">
-      <div class="card-body">
-        <h5 class="card-title text-primary">Who to Follow</h5>
-        <div *ngFor="let user of usersToFollow" class="mb-2">
-          <div class="d-flex align-items-center justify-content-between mb-1">
-            <div>
-              <strong>{{ user.username }}</strong>
-            </div>
-            <div class="d-flex gap-2">
-              <button class="btn btn-sm btn-outline-primary" (click)="followUser(user)">
-                Follow
-              </button>
-              <button class="btn btn-sm btn-outline-danger" (click)="reportUser(user)">Report user</button>
-            </div>
-          </div>
-          <div class="input-group input-group-sm">
-            <input class="form-control" placeholder="Reason for report" [(ngModel)]="reportReason[user.id]" />
-          </div>
-        </div>
-        <div *ngIf="usersToFollow.length === 0" class="text-muted small">
-          No suggestions at the moment.
-        </div>
+
+      <div *ngIf="posts.length === 0" class="empty-feed">
+        <h4>No posts found yet.</h4>
+        <p>Be the first one to write something!</p>
       </div>
+
+      <article class="post-card" *ngFor="let post of posts">
+        <h3>{{ post.title }}</h3>
+        <p class="meta">By {{ post.user?.username || post.username || 'Unknown' }} • {{ post.createdAt | timeAgo }}</p>
+
+        <div *ngIf="post.imageUrl" class="image-wrap">
+          <img [src]="'http://localhost:8080/uploads/' + post.imageUrl" alt="Post Image" />
+        </div>
+
+        <p class="content">{{ post.content }}</p>
+
+        <div class="post-actions">
+          <button class="btn-like" [class.active]="post.likedByCurrentUser" (click)="likePost(post)">
+            {{ post.likedByCurrentUser ? '❤️' : '🤍' }} Like ({{ post.likeCount || 0 }})
+          </button>
+          <button class="btn-comment" (click)="toggleComments(post)">
+            💬 Comments ({{ post.comments?.length || 0 }})
+          </button>
+        </div>
+
+        <div *ngIf="post.showComments" class="comments-box">
+          <div *ngFor="let comment of post.comments" class="comment-item">
+            <strong>{{ comment.user?.username || 'User' }}</strong>
+            <span>{{ comment.content }}</span>
+          </div>
+
+          <div *ngIf="!post.comments || post.comments.length === 0" class="empty-comment">No comments yet.</div>
+
+          <div class="comment-input">
+            <input type="text" placeholder="Write a comment..." [(ngModel)]="commentText[post.id]" />
+            <button (click)="submitComment(post)">Send</button>
+          </div>
+        </div>
+      </article>
     </div>
-  </div>
+
+    <aside class="side-column">
+      <section class="side-card">
+        <h5>Who to Follow</h5>
+
+        <div *ngFor="let user of usersToFollow" class="follow-item">
+          <strong>{{ user.username }}</strong>
+          <div class="follow-actions">
+            <button (click)="toggleFollow(user)">{{ isFollowing(user.id) ? "Unsubscribe" : "Follow" }}</button>
+            <button class="warning" (click)="toggleBlock(user)">{{ isBlocked(user.id) ? "Unblock" : "Block" }}</button>
+            <button class="danger" (click)="reportUser(user)">Report user</button>
+          </div>
+          <input placeholder="Reason for report" [(ngModel)]="reportReason[user.id]" />
+        </div>
+
+        <div *ngIf="usersToFollow.length === 0" class="empty">No suggestions at the moment.</div>
+      </section>
+    </aside>
+  </section>
 </div>

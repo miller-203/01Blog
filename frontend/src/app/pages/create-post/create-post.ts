@@ -16,24 +16,39 @@ export class CreatePostComponent {
   title: string = '';
   content: string = '';
   selectedFile: File | null = null;
+  readonly maxFileSizeBytes = 5 * 1024 * 1024;
 
   constructor(private postService: PostService, private router: Router) {}
 
-  // Triggered when user picks an image
   onFileSelected(event: any) {
-    this.selectedFile = event.target.files[0];
+    const file = event.target.files[0] as File | undefined;
+    if (!file) {
+      this.selectedFile = null;
+      return;
+    }
+
+    if (file.size > this.maxFileSizeBytes) {
+      alert('Image is too large. Please select an image smaller than 5MB.');
+      event.target.value = '';
+      this.selectedFile = null;
+      return;
+    }
+
+    this.selectedFile = file;
+  }
+
+  private getErrorMessage(err: any): string {
+    return err?.error?.message || err?.error || 'Failed to create post.';
   }
 
   onSubmit() {
     this.postService.createPost(this.title, this.content, this.selectedFile).subscribe({
-      next: (res) => {
-        console.log('Post Created:', res);
+      next: () => {
         alert('Post Published Successfully!');
         this.router.navigate(['/home']);
       },
       error: (err) => {
-        console.error('Error:', err);
-        alert('Failed to create post.');
+        alert(this.getErrorMessage(err));
       }
     });
   }
