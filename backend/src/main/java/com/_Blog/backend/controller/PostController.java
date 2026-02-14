@@ -104,6 +104,7 @@ public class PostController {
             resp.setContent(post.getContent());
             resp.setImageUrl(post.getImageUrl());
             resp.setCreatedAt(post.getCreatedAt());
+            resp.setUserId(post.getUser().getId());
             resp.setUsername(post.getUser().getUsername());
             
             resp.setLikeCount(likeRepository.countByPost(post));
@@ -150,6 +151,7 @@ public class PostController {
             resp.setContent(post.getContent());
             resp.setImageUrl(post.getImageUrl());
             resp.setCreatedAt(post.getCreatedAt());
+            resp.setUserId(post.getUser().getId());
             resp.setUsername(post.getUser().getUsername());
             resp.setLikeCount(likeRepository.countByPost(post));
             resp.setLikedByCurrentUser(likeRepository.findByUserAndPost(currentUser, post).isPresent());

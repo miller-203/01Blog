@@ -83,6 +83,29 @@
 .btn-like.active { border-color: #ef4444; background: #fff1f2; }
 
 .comments-box { margin-top: 0.8rem; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 0.75rem; }
+
+.post-report-box {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.7rem;
+
+  input {
+    flex: 1;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    padding: 0.45rem 0.6rem;
+  }
+
+  .btn-report-post {
+    border: 1px solid #fecaca;
+    background: #fff1f2;
+    color: #9f1239;
+    border-radius: 8px;
+    padding: 0.45rem 0.7rem;
+    font-weight: 600;
+  }
+}
+
 .comment-item { display: flex; gap: 0.35rem; padding-bottom: 0.35rem; margin-bottom: 0.35rem; border-bottom: 1px solid #e2e8f0; }
 .comment-input { display: flex; gap: 0.45rem; margin-top: 0.5rem; }
 .comment-input input { flex: 1; border: 1px solid #cbd5e1; border-radius: 8px; padding: 0.45rem 0.6rem; }

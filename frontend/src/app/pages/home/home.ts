@@ -27,6 +27,10 @@ export class HomeComponent implements OnInit {
 
   commentText: { [key: number]: string } = {};
   reportReason: { [key: number]: string } = {};
+<<<<<<< codex/style-login,-home,-and-profile-pages-p0d0rd
+  postReportReason: { [key: number]: string } = {};
+=======
+>>>>>>> main
   followingIds = new Set<number>();
   blockedIds = new Set<number>();
 
@@ -142,6 +146,7 @@ export class HomeComponent implements OnInit {
         this.usersToFollow = users.filter((u: any) => !this.blockedIds.has(u.id));
       },
       error: () => alert('Failed to load suggested users.')
+<<<<<<< codex/style-login,-home,-and-profile-pages-p0d0rd
     });
   }
 
@@ -181,6 +186,47 @@ export class HomeComponent implements OnInit {
     });
   }
 
+=======
+    });
+  }
+
+  loadFollowingIds() {
+    this.userService.getFollowingIds().subscribe({
+      next: ids => {
+        this.followingIds = new Set(ids);
+      },
+      error: () => {
+        this.followingIds = new Set();
+      }
+    });
+  }
+
+  isFollowing(userId: number) {
+    return this.followingIds.has(userId);
+  }
+
+  toggleFollow(user: any) {
+    if (this.isFollowing(user.id)) {
+      this.userService.unfollowUser(user.id).subscribe({
+        next: () => {
+          this.followingIds.delete(user.id);
+          this.cdr.detectChanges();
+        },
+        error: (err) => alert(this.getErrorMessage(err, 'Failed to unsubscribe user.'))
+      });
+      return;
+    }
+
+    this.userService.followUser(user.id).subscribe({
+      next: () => {
+        this.followingIds.add(user.id);
+        this.cdr.detectChanges();
+      },
+      error: (err) => alert(this.getErrorMessage(err, 'Failed to follow user.'))
+    });
+  }
+
+>>>>>>> main
   loadBlockedUsers() {
     this.userService.getBlockedUserIds().subscribe({
       next: ids => {
@@ -243,6 +289,32 @@ export class HomeComponent implements OnInit {
       error: () => console.error('Notification error')
     });
   }
+<<<<<<< codex/style-login,-home,-and-profile-pages-p0d0rd
+
+
+  reportPost(post: any) {
+    const reason = (this.postReportReason[post.id] || '').trim();
+    if (!reason) {
+      alert('Please provide a reason for reporting this post.');
+      return;
+    }
+
+    const reportedUserId = post.userId || post.user?.id;
+    if (!reportedUserId) {
+      alert('Unable to identify post author for report.');
+      return;
+    }
+
+    this.reportService.reportUser(reportedUserId, reason).subscribe({
+      next: () => {
+        alert('Post report submitted successfully.');
+        this.postReportReason[post.id] = '';
+      },
+      error: (err) => alert(this.getErrorMessage(err, 'Failed to submit post report'))
+    });
+  }
+=======
+>>>>>>> main
 
   reportUser(user: any) {
     const reason = (this.reportReason[user.id] || '').trim();

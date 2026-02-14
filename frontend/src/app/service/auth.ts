@@ -31,7 +31,8 @@ export class AuthService {
 
   saveRole(role: string | null): void {
     if (isPlatformBrowser(this.platformId) && role) {
-      localStorage.setItem('role', role);
+      const normalized = role.startsWith('ROLE_') ? role.replace('ROLE_', '') : role;
+      localStorage.setItem('role', normalized.toUpperCase());
     }
   }
 
