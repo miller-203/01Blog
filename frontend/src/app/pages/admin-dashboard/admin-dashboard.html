@@ -1,35 +1,47 @@
-<div class="container mt-4">
-  <h2>Admin Dashboard</h2>
+<div class="admin-shell">
+  <header class="admin-header">
+    <h2>Admin Dashboard</h2>
+    <p>Moderate users, posts, and reports.</p>
+  </header>
 
-  <h4 class="mt-4">Users</h4>
-  <table class="table table-sm table-striped">
-    <thead><tr><th>ID</th><th>Username</th><th>Status</th><th>Actions</th></tr></thead>
-    <tbody>
+  <div *ngIf="loading" class="state-info">Loading dashboard...</div>
+  <div *ngIf="error" class="state-error">{{ error }}</div>
+  <div *ngIf="success" class="state-success">{{ success }}</div>
+
+  <section class="panel">
+    <h4>Users</h4>
+    <table>
+      <thead><tr><th>ID</th><th>Username</th><th>Status</th><th>Actions</th></tr></thead>
+      <tbody>
       <tr *ngFor="let user of users">
-        <td>{{ user.id }}</td><td>{{ user.username }}</td><td>{{ user.status }}</td>
+        <td>{{ user.id }}</td><td>{{ user.username }}</td><td>{{ user.status || 'ACTIVE' }}</td>
         <td>
-          <button class="btn btn-warning btn-sm me-2" (click)="banUser(user.id)">Ban</button>
-          <button class="btn btn-danger btn-sm" (click)="deleteUser(user.id)">Delete</button>
+          <button class="warn" (click)="banUser(user.id)">Ban</button>
+          <button class="danger" (click)="deleteUser(user.id)">Delete</button>
         </td>
       </tr>
-    </tbody>
-  </table>
+      </tbody>
+    </table>
+  </section>
 
-  <h4 class="mt-4">Posts</h4>
-  <table class="table table-sm table-striped">
-    <thead><tr><th>ID</th><th>Title</th><th>Author</th><th>Actions</th></tr></thead>
-    <tbody>
+  <section class="panel">
+    <h4>Posts</h4>
+    <table>
+      <thead><tr><th>ID</th><th>Title</th><th>Author</th><th>Actions</th></tr></thead>
+      <tbody>
       <tr *ngFor="let post of posts">
         <td>{{ post.id }}</td><td>{{ post.title }}</td><td>{{ post.user?.username }}</td>
-        <td><button class="btn btn-danger btn-sm" (click)="deletePost(post.id)">Remove</button></td>
+        <td><button class="danger" (click)="deletePost(post.id)">Remove</button></td>
       </tr>
-    </tbody>
-  </table>
+      </tbody>
+    </table>
+  </section>
 
-  <h4 class="mt-4">Reports</h4>
-  <table class="table table-sm table-striped">
-    <thead><tr><th>ID</th><th>Reporter</th><th>Reported</th><th>Reason</th><th>Status</th><th>Actions</th></tr></thead>
-    <tbody>
+  <section class="panel">
+    <h4>Reports</h4>
+    <table>
+      <thead><tr><th>ID</th><th>Reporter</th><th>Reported</th><th>Reason</th><th>Status</th><th>Actions</th></tr></thead>
+      <tbody>
       <tr *ngFor="let report of reports">
         <td>{{ report.id }}</td>
         <td>{{ report.reporter?.username }}</td>
@@ -37,9 +49,10 @@
         <td>{{ report.reason }}</td>
         <td>{{ report.status }}</td>
         <td>
-          <button class="btn btn-success btn-sm" [disabled]="report.status === 'RESOLVED'" (click)="resolveReport(report.id)">Resolve</button>
+          <button class="success" [disabled]="report.status === 'RESOLVED'" (click)="resolveReport(report.id)">Resolve</button>
         </td>
       </tr>
-    </tbody>
-  </table>
+      </tbody>
+    </table>
+  </section>
 </div>
