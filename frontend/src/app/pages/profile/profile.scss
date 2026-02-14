@@ -1,74 +1,83 @@
 :host {
   display: block;
   min-height: 100vh;
-  background: #f8fafc;
+  background: radial-gradient(circle at top right, #eff6ff 0%, #f8fafc 45%, #eef2ff 100%);
 }
 
 .profile-page {
-  max-width: 1000px;
+  max-width: 1100px;
   margin: 0 auto;
   padding: 1.25rem;
 }
 
 .profile-header {
-  background: #0f172a;
+  background: linear-gradient(135deg, #0f172a, #1e293b 50%, #1d4ed8);
   color: #fff;
-  border-radius: 12px;
-  padding: 0.85rem 1rem;
+  border-radius: 14px;
+  padding: 0.95rem 1.1rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 1rem;
+  box-shadow: 0 14px 34px rgba(15, 23, 42, 0.2);
 }
 
 .back-link {
   color: #bfdbfe;
   text-decoration: none;
-  font-weight: 600;
+  font-weight: 700;
 }
 
 .profile-summary {
   background: #fff;
   border: 1px solid #e2e8f0;
-  border-radius: 14px;
-  padding: 1.2rem;
+  border-radius: 16px;
+  padding: 1.25rem;
   display: flex;
   gap: 1rem;
-  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06);
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.07);
 
   h1 {
     margin: 0;
+    color: #0f172a;
+    font-size: 1.7rem;
   }
 
   p {
-    margin: 0.2rem 0 0.6rem;
+    margin: 0.25rem 0 0.7rem;
     color: #64748b;
   }
 }
 
 .avatar {
-  width: 74px;
-  height: 74px;
+  width: 84px;
+  height: 84px;
   display: grid;
   place-items: center;
   border-radius: 50%;
   background: linear-gradient(135deg, #2563eb, #60a5fa);
   color: #fff;
-  font-size: 2rem;
-  font-weight: 700;
+  font-size: 2.1rem;
+  font-weight: 800;
+  box-shadow: 0 8px 24px rgba(37, 99, 235, 0.3);
 }
 
 .stats {
   display: flex;
-  gap: 1rem;
+  gap: 0.8rem;
+  flex-wrap: wrap;
 
   div {
     background: #eff6ff;
     border: 1px solid #bfdbfe;
     border-radius: 10px;
-    padding: 0.45rem 0.7rem;
+    padding: 0.48rem 0.8rem;
     display: grid;
     gap: 0.1rem;
+
+    strong {
+      color: #0f172a;
+    }
   }
 
   small {
@@ -80,29 +89,32 @@
   margin-top: 1rem;
 
   h2 {
-    margin-bottom: 0.7rem;
+    margin-bottom: 0.75rem;
+    color: #0f172a;
   }
 }
 
 .posts-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 0.8rem;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 0.9rem;
 }
 
 .post {
   background: #fff;
   border: 1px solid #e2e8f0;
-  border-radius: 12px;
-  padding: 0.85rem;
-  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06);
+  border-radius: 14px;
+  padding: 1rem;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.06);
 
   h3 {
     margin: 0 0 0.4rem;
+    color: #0f172a;
   }
 
   p {
     color: #334155;
+    line-height: 1.6;
   }
 
   input,
@@ -110,7 +122,7 @@
     width: 100%;
     border: 1px solid #cbd5e1;
     border-radius: 9px;
-    padding: 0.45rem 0.6rem;
+    padding: 0.48rem 0.63rem;
     margin-bottom: 0.55rem;
   }
 }
@@ -119,6 +131,11 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  margin-top: 0.7rem;
+
+  small {
+    color: #64748b;
+  }
 }
 
 .actions {
@@ -128,8 +145,9 @@
   button {
     border: 0;
     border-radius: 8px;
-    padding: 0.35rem 0.6rem;
+    padding: 0.38rem 0.64rem;
     color: #fff;
+    font-weight: 600;
   }
 
   .edit,
@@ -143,5 +161,12 @@
 
   .cancel {
     background: #475569;
+  }
+}
+
+@media (max-width: 720px) {
+  .profile-summary {
+    flex-direction: column;
+    align-items: flex-start;
   }
 }
