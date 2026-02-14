@@ -7,11 +7,14 @@ import { AdminService } from '../../service/admin';
   standalone: true,
   imports: [CommonModule],
   templateUrl: './admin-dashboard.html',
+  styleUrls: ['./admin-dashboard.scss']
 })
 export class AdminDashboardComponent implements OnInit {
   users: any[] = [];
   posts: any[] = [];
   reports: any[] = [];
+  loading = false;
+  error = '';
 
   constructor(
     private adminService: AdminService,
@@ -25,9 +28,20 @@ export class AdminDashboardComponent implements OnInit {
   }
 
   loadAll(): void {
-    this.adminService.getUsers().subscribe((data) => (this.users = data));
-    this.adminService.getPosts().subscribe((data) => (this.posts = data));
-    this.adminService.getReports().subscribe((data) => (this.reports = data));
+    this.loading = true;
+    this.error = '';
+
+    this.adminService.getUsers().subscribe({
+      next: (data) => (this.users = data),
+      error: (err) => {
+        this.error = err?.error?.message || 'Unable to load admin data. Ensure you are logged in as ADMIN.';
+        this.loading = false;
+      },
+      complete: () => (this.loading = false)
+    });
+
+    this.adminService.getPosts().subscribe({ next: (data) => (this.posts = data) });
+    this.adminService.getReports().subscribe({ next: (data) => (this.reports = data) });
   }
 
   banUser(id: number) {

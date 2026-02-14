@@ -38,6 +38,10 @@ export class PostService {
     return this.http.get(this.apiUrl, this.getHeaders());
   }
 
+  getFeedPosts(): Observable<any> {
+    return this.http.get(`${this.apiUrl}/feed`, this.getHeaders());
+  }
+
   // 3. Delete Post
   deletePost(id: number): Observable<any> {
     const token = localStorage.getItem('token');
