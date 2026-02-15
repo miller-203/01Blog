@@ -1,0 +1,23 @@
+<div class="small-profile mb-4" *ngIf="user">
+  <div class="profile-cover"></div>
+
+  <div class="profile-avatar">
+    <img
+       src="{{user.avatarUrl}}"
+      alt="Profile Picture">
+  </div>
+
+  <h4 class="profile-name">{{ user.firstName }} {{ user.lastName }}</h4>
+  <p class="profile-username">@{{ user.username }}</p>
+
+  <div class="profile-stats">
+    <div class="stat-item">
+      <span class="stat-value">{{ user.followersCount }}</span>
+      <span class="stat-label">Follwers</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-value">{{ user.followingCount }}</span>
+      <span class="stat-label">Following</span>
+    </div>
+  </div>
+</div>

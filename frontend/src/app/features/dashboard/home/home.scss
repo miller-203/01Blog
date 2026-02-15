@@ -1,0 +1,134 @@
+/* ================================
+   HOME PAGE LAYOUT
+================================== */
+.home-container {
+  min-height: calc(100vh - 59px);
+  display: flex;
+  background-color: #f8f9fa;
+}
+
+.main-content {
+  flex: 1;
+  padding: 40px 30px;
+  max-height: calc(100vh - 70px);
+  overflow-y: auto;
+  scroll-behavior: smooth;
+}
+
+.content-wrapper {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* ================================
+   HEADER (Category Pills)
+================================== */
+.pills-header {
+  margin-bottom: 40px;
+}
+
+.header-title {
+  font-size: 32px;
+  font-weight: 700;
+  color: #242424;
+  margin-bottom: 20px;
+  letter-spacing: -0.5px;
+}
+
+.category-pills {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.pill {
+  background: #fff;
+  color: #242424;
+  padding: 8px 16px;
+  border-radius: 9999px;
+  font-size: 14px;
+  font-weight: 500;
+  border: 1px solid #e0e0e0;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.pill:hover {
+  background: rgba(0, 0, 0, 0.04);
+}
+
+.pill.active {
+  background: #1a1a1a;
+  color: #fff;
+  border-color: #1a1a1a;
+}
+
+/* ================================
+   POSTS GRID
+================================== */
+.posts-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  margin-bottom: 40px;
+}
+
+/* ================================
+   LOAD MORE BUTTON
+================================== */
+.load-more-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.load-more-btn {
+  background: #1a1a1a;
+  color: #fff;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 160px;
+  justify-content: center;
+}
+
+.load-more-btn:hover:not(:disabled) {
+  background: #2a2a2a;
+  transform: translateY(-1px);
+}
+
+.load-more-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.load-more-btn.loading {
+  background: #1a1a1a;
+}
+
+.loading-text {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.spinner {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}

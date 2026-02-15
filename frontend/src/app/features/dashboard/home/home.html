@@ -1,0 +1,44 @@
+<!-- home.component.html -->
+<div class="home-container d-flex">
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="content-wrapper">
+            <div class="pills-header">
+                <h1 class="header-title">Explore Articles</h1>
+                <div class="category-pills">
+                    <div class="pill" [class.active]="currentFilter === 'all'" (click)="switchFilter('all')">All Posts</div>
+                    <div class="pill" [class.active]="currentFilter === 'followed'" (click)="switchFilter('followed')">Followed Posts</div>
+                </div>
+            </div>
+
+            <div class="posts-grid">
+                <app-post-card *ngFor="let post of posts" [post]="post"></app-post-card>
+            </div>
+
+            <!-- Load More Button -->
+            <div class="load-more-container" *ngIf="hasMorePosts">
+                <button
+                    class="load-more-btn"
+                    (click)="loadMorePosts()"
+                    [disabled]="isLoading"
+                    [class.loading]="isLoading">
+                    <span *ngIf="!isLoading">Load More Posts</span>
+                    <span *ngIf="isLoading" class="loading-text">
+                        <svg class="spinner" width="16" height="16" viewBox="0 0 24 24">
+                            <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none" stroke-dasharray="31.416" stroke-dashoffset="31.416">
+                                <animate attributeName="stroke-dashoffset" dur="1s" repeatCount="indefinite" values="31.416;0"/>
+                            </circle>
+                        </svg>
+                        Loading...
+                    </span>
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <!-- Right Sidebar -->
+    <app-sidebar-right></app-sidebar-right>
+</div>
+
+<!-- Success Popup -->
+<app-popup #popup></app-popup>

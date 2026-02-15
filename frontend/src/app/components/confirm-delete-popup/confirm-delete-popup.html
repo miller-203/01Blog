@@ -1,0 +1,30 @@
+<div class="confirm-delete-popup" *ngIf="show">
+    <div class="popup-backdrop" (click)="onCancel()"></div>
+    <div class="popup-content">
+        <div class="popup-header">
+            <h3 class="popup-title">{{ title }}</h3>
+            <button class="close-btn" (click)="onCancel()">&times;</button>
+        </div>
+        <div class="popup-body">
+            <p class="popup-message">{{ message }}</p>
+            <div class="item-details" *ngIf="item">
+                <div class="detail-row" *ngIf="item.username">
+                    <strong>Username:</strong> @{{ item.username }}
+                </div>
+                <div class="detail-row" *ngIf="item.email">
+                    <strong>Email:</strong> {{ item.email }}
+                </div>
+                <div class="detail-row" *ngIf="item.title">
+                    <strong>Title:</strong> {{ item.title }}
+                </div>
+                <div class="detail-row" *ngIf="item.authorUsername">
+                    <strong>Author:</strong> @{{ item.authorUsername }}
+                </div>
+            </div>
+        </div>
+        <div class="popup-footer">
+            <button class="btn btn-secondary" (click)="onCancel()">Cancel</button>
+            <button class="btn btn-danger" (click)="onConfirm()">{{ confirmButtonText }}</button>
+        </div>
+    </div>
+</div>

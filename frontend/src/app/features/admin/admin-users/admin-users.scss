@@ -1,0 +1,352 @@
+/* Users Page Layout */
+.admin-users-page {
+  background-color: #f8f9fa;
+  padding: 1.5rem;
+}
+
+.load-more-wrapper {
+    margin-top: 1rem;
+    text-align: center;
+}
+
+/* Search and Filter */
+.filters-section {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 12px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+    margin-bottom: 1.5rem;
+}
+
+.search-input {
+    border: 2px solid #e5e5e5;
+    border-radius: 10px;
+    padding: 0.75rem 1rem;
+    font-size: 14px;
+    transition: all 0.2s ease;
+    background: #fff;
+    color: #1a1a1a;
+}
+
+.search-input:focus {
+    outline: none;
+    border-color: #1a1a1a;
+    background: white;
+    box-shadow: 0 0 0 3px rgba(26, 26, 26, 0.1);
+}
+
+.search-input::placeholder {
+    color: #999;
+}
+
+.filter-select {
+    border: 2px solid #e5e5e5;
+    border-radius: 10px;
+    padding: 0.65rem 1rem;
+    font-size: 14px;
+    background: #fff;
+    color: #1a1a1a;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+.filter-select:focus {
+    outline: none;
+    border-color: #1a1a1a;
+    background: white;
+    box-shadow: 0 0 0 3px rgba(26, 26, 26, 0.1);
+}
+
+.filter-label {
+    color: #666;
+    font-weight: 600;
+    font-size: 13px;
+    margin-bottom: 0;
+}
+
+/* Users Table Card */
+.table-card {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+}
+
+.users-table {
+    margin: 0;
+}
+
+.users-table th {
+    background: #f8f8f8;
+    padding: 0.6rem 0.85rem;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #666;
+    border-bottom: 2px solid #e5e5e5;
+}
+
+.users-table td {
+    padding: 0.8rem 0.85rem;
+    font-size: 12px;
+    border-bottom: 1px solid #f0f0f0;
+    vertical-align: middle;
+}
+
+.users-table tbody tr {
+    transition: background-color 0.15s ease;
+}
+
+.users-table tbody tr:hover {
+    background: #fafafa;
+}
+
+.users-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+/* Username Link */
+.username-link {
+    color: #1a1a1a;
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.2s ease;
+}
+
+.username-link:hover {
+    color: #000;
+    text-decoration: underline;
+}
+
+/* Status Badges */
+.status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    padding: 0.25rem 0.55rem;
+    border-radius: 16px;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+}
+
+.status-badge.active {
+    background: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.status-badge.active::before {
+    content: '●';
+    font-size: 8px;
+    color: #28a745;
+}
+
+.status-badge.banned {
+    background: #fee2e2;
+    color: #991b1b;
+    border: 1px solid #fca5a5;
+}
+
+.status-badge.banned::before {
+    content: '●';
+    font-size: 8px;
+    color: #dc2626;
+}
+
+/* Action Buttons */
+.action-btn {
+    padding: 0.35rem 0.75rem;
+    font-size: 11px;
+    font-weight: 600;
+    border-radius: 6px;
+    border: 2px solid;
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+.btn-ban {
+    background: transparent;
+    color: #fd7e14;
+    border-color: #ffc9a1;
+}
+
+.btn-ban:hover {
+    background: #fd7e14;
+    color: #fff;
+    border-color: #fd7e14;
+    transform: translateY(-1px);
+}
+
+.btn-unban {
+    background: transparent;
+    color: #28a745;
+    border-color: #86e29b;
+}
+
+.btn-unban:hover {
+    background: #28a745;
+    color: #fff;
+    border-color: #28a745;
+    transform: translateY(-1px);
+}
+
+.btn-delete {
+    background: transparent;
+    color: #dc2626;
+    border-color: #f5c6cb;
+}
+
+.btn-delete:hover {
+    background: #dc2626;
+    color: #fff;
+    border-color: #dc2626;
+    transform: translateY(-1px);
+}
+
+/* Banned Row */
+.banned-row {
+    background: #fafafa;
+}
+
+.banned-row:hover {
+    background: #f5f5f5 !important;
+}
+
+.banned-row td {
+    color: #999;
+}
+
+.banned-row .username-link {
+    color: #999;
+}
+
+/* Pagination */
+.pagination-wrapper {
+    background: white;
+    padding: 1.25rem;
+    border-radius: 12px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+    margin-top: 1.5rem;
+}
+
+.pagination {
+    margin: 0;
+    gap: 0.35rem;
+}
+
+.page-item .page-link {
+    border: 2px solid #e5e5e5;
+    color: #666;
+    padding: 0.5rem 0.9rem;
+    font-size: 14px;
+    font-weight: 500;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+    margin: 0 2px;
+}
+
+.page-item .page-link:hover {
+    background: #f8f8f8;
+    border-color: #d0d0d0;
+    color: #1a1a1a;
+}
+
+.page-item.active .page-link {
+    background: #1a1a1a;
+    border-color: #1a1a1a;
+    color: white;
+    font-weight: 600;
+}
+
+.page-item.disabled .page-link {
+    background: #f8f8f8;
+    border-color: #e5e5e5;
+    color: #ccc;
+}
+
+
+/* Reports Badge */
+.reports-badge {
+    padding: 0.25rem 0.55rem;
+    border-radius: 16px;
+    font-size: 10px;
+    font-weight: 700;
+    display: inline-block;
+}
+
+.reports-badge.zero {
+    background: #e5e5e5;
+    color: #666;
+}
+
+.reports-badge.warning {
+    background: #fff3cd;
+    color: #856404;
+    border: 1px solid #ffeaa7;
+}
+
+.reports-badge.danger {
+    background: #fee2e2;
+    color: #dc2626;
+    border: 1px solid #fca5a5;
+}
+
+/* Responsive */
+@media (max-width: 992px) {
+    .users-table th:nth-child(3),
+    .users-table td:nth-child(3),
+    .users-table th:nth-child(4),
+    .users-table td:nth-child(4) {
+        display: none;
+    }
+}
+
+@media (max-width: 768px) {
+    .admin-users-page {
+        padding: 1.5rem 1rem;
+    }
+
+    .page-header h1 {
+        font-size: 24px;
+    }
+
+    .filters-section {
+        padding: 1rem;
+    }
+
+    .users-table th,
+    .users-table td {
+        padding: 0.6rem 0.5rem;
+        font-size: 11px;
+    }
+
+    .action-btn {
+        padding: 0.3rem 0.55rem;
+        font-size: 10px;
+    }
+
+    .status-badge {
+        font-size: 9px;
+        padding: 0.2rem 0.45rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .users-table th:nth-child(2),
+    .users-table td:nth-child(2) {
+        display: none;
+    }
+
+    .action-btn {
+        display: block;
+        width: 100%;
+        margin-bottom: 0.3rem;
+    }
+
+    .action-btn.me-1 {
+        margin-right: 0 !important;
+    }
+}

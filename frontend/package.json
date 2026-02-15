@@ -1,17 +1,14 @@
 {
-  "name": "frontend",
+  "name": "01blog-frontend",
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test",
-    "serve:ssr:frontend": "node dist/frontend/server/server.mjs"
+    "test": "ng test"
   },
   "prettier": {
-    "printWidth": 100,
-    "singleQuote": true,
     "overrides": [
       {
         "files": "*.html",
@@ -22,31 +19,39 @@
     ]
   },
   "private": true,
-  "packageManager": "npm@10.8.2",
   "dependencies": {
-    "@angular/common": "^21.0.0",
-    "@angular/compiler": "^21.0.0",
-    "@angular/core": "^21.0.0",
-    "@angular/forms": "^21.0.0",
-    "@angular/platform-browser": "^21.0.0",
-    "@angular/platform-server": "^21.0.0",
-    "@angular/router": "^21.0.0",
-    "@angular/ssr": "^21.0.4",
+    "@angular/animations": "^20.3.2",
+    "@angular/common": "^20.1.0",
+    "@angular/compiler": "^20.3.9",
+    "@angular/core": "^20.1.0",
+    "@angular/forms": "^20.1.0",
+    "@angular/platform-browser": "^20.1.0",
+    "@angular/router": "^20.1.0",
+    "@editorjs/delimiter": "^1.4.2",
+    "@editorjs/editorjs": "^2.31.0",
+    "@editorjs/header": "^2.8.8",
+    "@editorjs/image": "^2.10.3",
+    "@editorjs/paragraph": "^2.11.7",
+    "@ng-bootstrap/ng-bootstrap": "^19.0.1",
     "bootstrap": "^5.3.8",
-    "bootstrap-icons": "^1.13.1",
-    "express": "^5.1.0",
-    "jwt-decode": "^4.0.0",
+    "editorjs-video": "^1.1.0",
+    "ng": "^0.0.0",
+    "or": "^0.2.0",
     "rxjs": "~7.8.0",
-    "tslib": "^2.3.0"
+    "tslib": "^2.3.0",
+    "zone.js": "~0.15.0"
   },
   "devDependencies": {
-    "@angular/build": "^21.0.4",
-    "@angular/cli": "^21.1.4",
-    "@angular/compiler-cli": "^21.0.0",
-    "@types/express": "^5.0.1",
-    "@types/node": "^20.17.19",
-    "jsdom": "^27.1.0",
-    "typescript": "~5.9.2",
-    "vitest": "^4.0.8"
+    "@angular/build": "^20.1.5",
+    "@angular/cli": "^20.3.8",
+    "@angular/compiler-cli": "^20.1.0",
+    "@types/jasmine": "~5.1.0",
+    "jasmine-core": "~5.8.0",
+    "karma": "~6.4.0",
+    "karma-chrome-launcher": "~3.2.0",
+    "karma-coverage": "~2.2.0",
+    "karma-jasmine": "~5.1.0",
+    "karma-jasmine-html-reporter": "~2.1.0",
+    "typescript": "~5.8.2"
   }
 }

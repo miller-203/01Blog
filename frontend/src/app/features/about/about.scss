@@ -1,0 +1,97 @@
+  .about-container {
+    max-height: calc(100vh - 64px);
+    overflow-y: scroll;
+    padding: 40px 30px;
+  }
+
+    .hero-title {
+      font-size: 2rem;
+      font-weight: 700;
+    }
+    .hero-subtitle {
+      color: #666;
+      font-size: 1rem;
+      max-width: 600px;
+    }
+
+    /* Mission Section */
+    .mission-section {
+      padding: 3rem 0;
+    }
+    .mission-card {
+      background: #fff;
+      border: 1px solid #e0e0e0;
+      border-radius: 12px;
+      padding: 2rem;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    }
+    .mission-card h2 {
+      font-weight: 700;
+      font-size: 1.5rem;
+      color: #1a1a1a;
+      margin-bottom: 1rem;
+    }
+
+    /* Values Section */
+    .values-section {
+      padding: 2rem 0 3rem;
+    }
+    .value-card {
+      background: #fff;
+      border-radius: 12px;
+      padding: 1.5rem;
+      border: 1px solid #e0e0e0;
+      text-align: center;
+      transition: all 0.3s ease;
+    }
+
+    .value-title {
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      font-size: 1.1rem;
+    }
+    .value-desc {
+      color: #555;
+      font-size: 0.9rem;
+    }
+
+    /* Team Section */
+    .team-section {
+      background: #f8f9fa;
+    }
+    .team-card {
+      background: #fff;
+      border: 1px solid #e0e0e0;
+      border-radius: 12px;
+      padding: 1.5rem;
+      text-align: center;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+    .owner-avatar {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      border: 3px solid var(--accent-purple);
+      overflow: hidden;
+      margin: 0 auto 1rem;
+      box-shadow: 0 6px 18px rgba(102, 126, 234, 0.3);
+    }
+    .owner-avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    /* Footer */
+    .about-footer {
+      text-align: center;
+      color: #666;
+      padding: 1.5rem 0;
+      font-size: 0.9rem;
+    }
+
+    @media (max-width: 768px) {
+      .hero-title {
+        font-size: 1.5rem;
+      }
+    }

@@ -1,0 +1,97 @@
+<div class="admin-users-page">
+          <app-popup #popup></app-popup>
+    <!-- Search and Filter Section -->
+    <div class="filters-section">
+        <div class="row g-3 align-items-center">
+            <div class="col-md-8">
+                <input type="text" class="form-control search-input" placeholder="Search by username or email..."
+                    (input)="onSearch($event)" />
+            </div>
+            <div class="col-md-4">
+                <div class="d-flex align-items-center gap-2">
+                    <label class="filter-label">Status:</label>
+                    <select class="form-select filter-select flex-grow-1" (change)="onStatusFilter($event)">
+                        <option>All Users</option>
+                        <option>Active</option>
+                        <option>Banned</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Users Table -->
+    <div class="table-card">
+        <div class="table-responsive">
+            <table class="table users-table mb-0">
+                <thead>
+                    <tr>
+                        <th>Username</th>
+                        <th>Email</th>
+                        <th>Registered</th>
+                        <th>Posts</th>
+                        <th>Status</th>
+                        <th class="text-end">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let user of displayedUsers" [class.banned-row]="user.role === 'BANNED'">
+                        <td>
+                            <a [href]="'/profile/' + user.username" class="username-link">
+                                @{{ user.username }}
+                            </a>
+                        </td>
+                        <td>{{ user.email }}</td>
+                        <td>{{ formatDate(user.createdAt) }}</td>
+                        <td><strong>{{ user.postsCount }}</strong></td>
+                        <td>
+                            <span class="status-badge" [class]="getStatusClass(user)">
+                                {{ getStatusText(user) }}
+                            </span>
+                        </td>
+
+                        <td class="text-end">
+                            <button *ngIf="user.status !== 'BANNED'" class="btn action-btn btn-ban me-1"
+                                (click)="banUser(user)">
+                                Ban
+                            </button>
+                            <button *ngIf="user.status === 'BANNED'" class="btn action-btn btn-unban me-1"
+                                (click)="toggleUserStatus(user)">
+                                Unban
+                            </button>
+                            <button class="btn action-btn btn-delete" (click)="deleteUser(user)">
+                                Delete
+                            </button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Load More Button -->
+    <div class="load-more-wrapper">
+        <button class="btn btn-primary" (click)="loadMore()">Load More (+10)</button>
+    </div>
+
+    <!-- Confirm Delete Popup -->
+    <app-confirm-delete-popup
+        [show]="showDeletePopup"
+        [item]="userToDelete"
+        title="Delete User"
+        message="Are you sure you want to delete this user? This action cannot be undone."
+        (confirm)="confirmDeleteUser()"
+        (cancel)="cancelDeleteUser()">
+    </app-confirm-delete-popup>
+
+    <!-- Confirm Ban Popup -->
+    <app-confirm-delete-popup
+        [show]="showBanPopup"
+        [item]="userToBan"
+        title="Ban User"
+        message="Are you sure you want to ban this user?"
+        [confirmButtonText]="'Ban'"
+        (confirm)="confirmBanUser()"
+        (cancel)="cancelBanUser()">
+    </app-confirm-delete-popup>
+</div>

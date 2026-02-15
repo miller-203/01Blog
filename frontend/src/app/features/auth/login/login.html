@@ -1,0 +1,66 @@
+<div class="container-fluid d-flex justify-content-center align-items-center min-vh-100 py-4">
+    <app-popup #popup></app-popup>
+
+    <div class="main-container d-flex position-relative">
+        <div class="left-section d-flex align-items-center justify-content-center flex-fill">
+            <div class="geometric-shape shape-1"></div>
+            <div class="geometric-shape shape-2"></div>
+            <div class="geometric-shape shape-3"></div>
+
+            <div class="main-circle d-flex align-items-center justify-content-center">
+                <div class="inner-circle d-flex align-items-center justify-content-center">
+                </div>
+            </div>
+        </div>
+
+        <div class="flex-fill d-flex flex-column justify-content-center p-5">
+            <div class="d-flex align-items-center mb-4">
+                <div class="logo-circle d-flex align-items-center justify-content-center">
+                    <div class="logo-inner"></div>
+                </div>
+                <h1 class="logo-text">1Blog</h1>
+            </div>
+
+            <p class="text-muted mb-4">Start Sharing Your Journey</p>
+
+            <form id="loginForm" (ngSubmit)="onSubmit()">
+                <div class="form-group mb-3">
+                    <label for="email" class="form-label">Username</label>
+                    <input type="text" class="form-control" [(ngModel)]="userLogin.username" id="username"
+                        name="username" placeholder="yourname@gmail.com" required>
+                </div>
+
+                <div class="form-group mb-4">
+                    <label for="password" class="form-label">Password</label>
+                    <div class="password-wrapper">
+                        <input [type]="passwordVisible ? 'text' : 'password'" id="password" name="password"
+                            class="form-control" [(ngModel)]="userLogin.password" placeholder="••••••••••••" required>
+                        <button type="button" class="eye-icon" (click)="togglePassword()">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none"
+                                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                <circle cx="12" cy="12" r="3"></circle>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <button type="submit" [disabled]="isSubmitting"
+                    class="btn-primary-custom d-flex align-items-center justify-content-center mb-4">
+                    <span *ngIf="!isSubmitting">Sign In</span>
+                    <span *ngIf="isSubmitting" class="spinner"></span>
+                </button>
+
+            </form>
+
+            <p class="signup-text text-center mb-3">
+                Don't have an account?
+                <a routerLink="/register" class="text-black fw-medium text-decoration-none">Sign Up</a>
+            </p>
+
+            <div class="text-center terms-text">
+                By signing in, you agree to our Terms & Privacy Policy
+            </div>
+        </div>
+    </div>
+</div>

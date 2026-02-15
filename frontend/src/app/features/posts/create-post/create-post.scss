@@ -1,0 +1,86 @@
+.create-post-container {
+  padding: 25px 30px;
+  height: 100%;
+  max-height: calc(100vh - 60px);
+  overflow-y: auto;
+  scroll-behavior: smooth;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.editor-container {
+  width: 100%;
+  max-width: 1000px;
+  background: #fff;
+  padding: 30px 40px;
+  padding-left: 50px;
+  border: 1px solid #e0e0e0;
+  border-radius: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.post-title {
+  width: 100%;
+  font-size: 42px;
+  font-weight: 600;
+  border: none;
+  outline: none;
+  transition: border-color 0.3s;
+  margin-bottom: 20px;
+}
+
+.post-title::placeholder {
+  color: #9ca3af;
+}
+
+#editorjs {
+  min-height: 350px;
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 30px;
+}
+
+button {
+  border: none;
+  outline: none;
+  padding: 10px 24px;
+  font-size: 15px;
+  font-weight: 500;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+button:not(.cancel) {
+  background: #1a1a1a;
+  color: #fff;
+}
+
+button:not(.cancel):hover {
+  background: #2a2a2a;
+  transform: translateY(-1px);
+  box-shadow: 0 5px 12px rgba(0, 0, 0, 0.1);
+}
+
+button.cancel {
+  border: 1px solid #e0e0e0;
+  color: #1a1a1a;
+}
+
+button.cancel:hover {
+  background-color: #e5e7eb;
+  border-color: #1a1a1a;
+}
+
+::ng-deep {
+  .ce-toolbar {
+    &[style*="top: -"] {
+      top: 0 !important;
+    }
+  }
+}

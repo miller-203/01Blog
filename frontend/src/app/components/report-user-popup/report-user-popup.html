@@ -1,0 +1,16 @@
+<div class="report-user-popup" *ngIf="show">
+    <div class="popup-backdrop" (click)="onClose()"></div>
+    <div class="popup-content">
+        <h2>Report</h2>
+        <form>
+            <div class="form-group">
+                <label for="reason">Reason</label>
+                <textarea id="reason" [(ngModel)]="reason" (ngModelChange)="onReasonChange()" name="reason"
+                    placeholder="Describe why you are reporting this user..." rows="4" required></textarea>
+            </div>
+
+            <button type="submit" class="btn btn-danger">Submit Report</button>
+            <button type="button" class="btn btn-secondary" (click)="onClose()">Cancel</button>
+        </form>
+    </div>
+</div>

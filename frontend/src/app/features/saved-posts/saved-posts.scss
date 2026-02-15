@@ -1,0 +1,249 @@
+/* ================================
+   HOME PAGE LAYOUT
+================================== */
+.home-container {
+  min-height: calc(100vh - 59px);
+  display: flex;
+  background-color: #f8f9fa;
+}
+
+.main-content {
+  flex: 1;
+  padding: 40px 30px;
+  max-height: calc(100vh - 70px);
+  overflow-y: auto;
+  scroll-behavior: smooth;
+}
+
+.content-wrapper {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* ================================
+   HEADER (Category Pills)
+================================== */
+.pills-header {
+  margin-bottom: 40px;
+}
+
+.header-title {
+  font-size: 32px;
+  font-weight: 700;
+  color: #242424;
+  margin-bottom: 20px;
+  letter-spacing: -0.5px;
+}
+
+.category-pills {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.pill {
+  background: #fff;
+  color: #242424;
+  padding: 8px 16px;
+  border-radius: 9999px;
+  font-size: 14px;
+  font-weight: 500;
+  border: 1px solid #e0e0e0;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.pill:hover {
+  background: rgba(0, 0, 0, 0.04);
+}
+
+.pill.active {
+  background: #1a1a1a;
+  color: #fff;
+  border-color: #1a1a1a;
+}
+
+/* ================================
+   BLOG POST CARDS
+================================== */
+.posts-grid {
+  display: grid;
+  gap: 30px;
+}
+
+.blog-card {
+  background: #fff;
+  padding: 20px;
+  margin-bottom: 20px;
+  border-radius: 16px;
+  border: 1px solid #e6e6e6;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+  transition: all 0.25s ease;
+}
+
+.blog-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.08);
+}
+
+/* Author */
+.author-section {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.author-avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #1a1a1a;
+}
+
+.author-name {
+  font-size: 14px;
+  color: #242424;
+  font-weight: 500;
+}
+
+/* Card Content */
+.card-content {
+  display: flex;
+  gap: 40px;
+  align-items: flex-start;
+}
+
+.text-content {
+  flex: 1;
+}
+
+.card-title {
+  font-size: 22px;
+  font-weight: 700;
+  color: #242424;
+  margin-bottom: 8px;
+  line-height: 1.3;
+  letter-spacing: -0.003em;
+}
+
+.card-excerpt {
+  font-size: 16px;
+  color: #6b6b6b;
+  line-height: 1.5;
+  margin-bottom: 20px;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+}
+
+/* Card Image */
+.card-image {
+  width: 170px;
+  height: 120px;
+  background: #cccccc;
+  border-radius: 12px;
+  flex-shrink: 0;
+}
+
+/* ================================
+   CARD FOOTER (Meta + Actions)
+================================== */
+.card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 16px;
+}
+
+.card-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: #6b6b6b;
+}
+
+.meta-dot {
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: #6b6b6b;
+}
+
+.card-category {
+  display: inline-block;
+  background: #f2f2f2;
+  color: #242424;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 13px;
+  font-weight: 400;
+}
+
+/* ================================
+   ACTION BUTTONS (Like / Comment)
+================================== */
+.card-actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.action-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  color: #555;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.action-item svg {
+  width: 20px;
+  height: 20px;
+  transition: transform 0.2s ease, color 0.2s ease;
+}
+
+.action-item:hover {
+  color: #1a1a1a;
+}
+
+.action-item.like:hover {
+  color: #e74c3c;
+}
+
+.action-item:hover svg {
+  transform: scale(1.1);
+}
+
+.action-count {
+  font-weight: 500;
+}
+
+/* ================================
+   RESPONSIVE TWEAKS
+================================== */
+@media (max-width: 992px) {
+  .card-content {
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .card-image {
+    width: 100%;
+    height: 180px;
+  }
+}
+
+@media (max-width: 768px) {
+  .main-content {
+    padding: 20px 16px;
+  }
+
+  .header-title {
+    font-size: 26px;
+  }
+}

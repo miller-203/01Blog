@@ -1,0 +1,38 @@
+.main-container {
+    height: calc(100vh - 59px);
+    position: relative;
+}
+
+/* Sidebar Overlay */
+.sidebar-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 88;
+    display: none;
+}
+
+@media (max-width: 1023px) {
+    .sidebar-overlay {
+        display: block;
+    }
+}
+
+/* Desktop: Sidebar always visible */
+@media (min-width: 1024px) {
+    .main-container {
+        margin-left: 0;
+    }
+}
+
+/* Tablet/Mobile: Sidebar hidden by default, full width */
+@media (max-width: 1023px) {
+    .main-container {
+        margin-left: 0;
+        width: 100%;
+    }
+}
+

@@ -1,0 +1,56 @@
+.stat-card {
+  border: 1px solid #e0e0e0;
+  border-radius: 0.8rem;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  background-color: #fff;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.stat-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+  cursor: pointer;
+}
+
+
+  .stat-card .card-body {
+    gap: 0.5rem;
+  }
+
+  .stat-icon {
+    width: 56px;
+    height: 56px;
+    display: grid;
+    place-items: center;
+    border-radius: 0.6rem;
+    background: rgba(0,0,0,0.03);
+    flex-shrink: 0;
+  }
+
+.col-12:nth-child(1) .stat-icon { 
+  color: #6b7280;
+  background: rgba(59,130,246,0.1);
+}
+
+.col-12:nth-child(2) .stat-icon { 
+  color: #6b7280; 
+  background: rgba(139,92,246,0.1);
+}
+
+.col-12:nth-child(3) .stat-icon { 
+  color: #dc2626;
+  background: rgba(220,38,38,0.1); 
+}
+
+  .stat-number {
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    font-size: 1.6rem;
+  }
+
+  /* Responsive: make badges smaller on small screens */
+  @media (max-width: 576px) {
+    .stat-number { font-size: 1.35rem; }
+    .stat-icon { width: 48px; height: 48px; }
+  }

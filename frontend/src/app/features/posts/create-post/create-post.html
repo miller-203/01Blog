@@ -1,0 +1,20 @@
+<div class="create-post-container">
+  <app-popup #popup></app-popup>
+
+  <div class="editor-container">
+    <input id="post-title" type="text" placeholder="Title" class="post-title" [(ngModel)]="title" />
+    <!-- Editor.js holder -->
+    <div id="editorjs"></div>
+    <div class="actions">
+
+      @if (postId) {
+      <button (click)="updatePost()">Update</button>
+      } @else {
+      <button (click)="savePost()">Publish</button>
+      }
+
+      <a routerLink="['/home']">
+        <button class="cancel">Cancel</button>
+      </a>
+    </div>
+  </div>
