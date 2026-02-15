@@ -1,7 +1,7 @@
 import { Injectable, Inject, PLATFORM_ID } from '@angular/core';
 import { Observable } from 'rxjs';
-import { isPlatformBrowser } from '@angular/common'; // <--- Import this
-import { HttpClient, HttpHeaders } from '@angular/common/http'; // <--- Added HttpHeaders here
+import { isPlatformBrowser } from '@angular/common';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root'
@@ -12,36 +12,56 @@ export class AuthService {
 
   constructor(
     private http: HttpClient,
-    @Inject(PLATFORM_ID) private platformId: Object // <--- Inject Platform ID
+    @Inject(PLATFORM_ID) private platformId: Object
   ) { }
 
-  // Register Method
   register(user: any): Observable<any> {
     return this.http.post(`${this.apiUrl}/register`, user, { responseType: 'text' });
   }
 
-  // Login Method
   login(credentials: any): Observable<any> {
     return this.http.post(`${this.apiUrl}/login`, credentials);
   }
 
-  // Safe Save Token (Checks if Browser)
   saveToken(token: string): void {
     if (isPlatformBrowser(this.platformId)) {
       localStorage.setItem('token', token);
     }
   }
 
-  // Safe Get Token (Checks if Browser)
+  saveRole(role: string | null): void {
+    if (isPlatformBrowser(this.platformId) && role) {
+      const normalized = role.startsWith('ROLE_') ? role.replace('ROLE_', '') : role;
+      localStorage.setItem('role', normalized.toUpperCase());
+    }
+  }
+
+  getRole(): string | null {
+    if (isPlatformBrowser(this.platformId)) {
+      return localStorage.getItem('role');
+    }
+    return null;
+  }
+
   getToken(): string | null {
     if (isPlatformBrowser(this.platformId)) {
       return localStorage.getItem('token');
     }
     return null;
   }
-  // Get User Profile (Stats + Info)
+
+  isLoggedIn(): boolean {
+    return !!this.getToken();
+  }
+
+  logout(): void {
+    if (isPlatformBrowser(this.platformId)) {
+      localStorage.removeItem('token');
+      localStorage.removeItem('role');
+    }
+  }
+
   getProfile(): Observable<any> {
-    // We need to send the token, so we use the same headers approach
     const token = this.getToken();
     const headers = new HttpHeaders({
       'Authorization': `Bearer ${token}`

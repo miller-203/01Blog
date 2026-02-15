@@ -1,0 +1,58 @@
+:host {
+  display: block;
+  min-height: 100vh;
+  background: #f8fafc;
+}
+
+.admin-shell {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1.2rem;
+}
+
+.admin-header {
+  background: linear-gradient(135deg, #0f172a, #1e293b);
+  color: #fff;
+  border-radius: 12px;
+  padding: 1rem 1.2rem;
+  margin-bottom: 1rem;
+
+  h2 { margin: 0; }
+  p { margin: 0.35rem 0 0; color: #bfdbfe; }
+}
+
+.panel {
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 0.85rem;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06);
+  margin-bottom: 0.9rem;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.92rem;
+
+  th, td { padding: 0.55rem 0.45rem; border-bottom: 1px solid #e2e8f0; text-align: left; }
+  th { background: #f8fafc; color: #334155; }
+}
+
+button {
+  border: 0;
+  border-radius: 8px;
+  padding: 0.35rem 0.55rem;
+  color: #fff;
+  margin-right: 0.35rem;
+}
+
+.warn { background: #d97706; }
+.danger { background: #dc2626; }
+.success { background: #16a34a; }
+
+.state-info, .state-error { margin: 0.5rem 0; padding: 0.65rem 0.75rem; border-radius: 8px; }
+.state-info { background: #eff6ff; color: #1e3a8a; }
+.state-error { background: #fff1f2; color: #9f1239; }
+
+.state-success { margin: 0.5rem 0; padding: 0.65rem 0.75rem; border-radius: 8px; background: #ecfdf5; color: #166534; }
