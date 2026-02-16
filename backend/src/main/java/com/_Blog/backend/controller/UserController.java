@@ -5,11 +5,13 @@ import com._Blog.backend.dto.UserProfileDTO;
 import com._Blog.backend.repository.PostRepository;
 import com._Blog.backend.repository.UserBlockRepository;
 import com._Blog.backend.repository.UserRepository;
+import com._Blog.backend.service.FileStorageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Set;
@@ -29,6 +31,9 @@ public class UserController {
     @Autowired
     UserBlockRepository userBlockRepository;
 
+    @Autowired
+    FileStorageService fileStorageService;
+
     @GetMapping("/profile")
     public ResponseEntity<UserProfileDTO> getMyProfile(Authentication authentication) {
         String username = authentication.getName();
@@ -39,11 +44,11 @@ public class UserController {
         int postCount = postRepository.findByUserId(user.getId()).size();
 
         UserProfileDTO profile = new UserProfileDTO(
-            user.getId(),
-            user.getUsername(),
-            user.getEmail(),
-            user.getCreatedAt(),
-            postCount
+                user.getId(),
+                user.getUsername(),
+                user.getEmail(),
+                user.getCreatedAt(),
+                postCount
         );
 
         return ResponseEntity.ok(profile);
@@ -52,7 +57,7 @@ public class UserController {
     @GetMapping("/all")
     public ResponseEntity<List<UserProfileDTO>> getAllUsers(Authentication authentication) {
         String currentUsername = authentication.getName();
-        
+
         User currentUser = userRepository.findByUsername(currentUsername)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
@@ -69,15 +74,35 @@ public class UserController {
                 .map(user -> {
                     int postCount = postRepository.findByUserId(user.getId()).size();
                     return new UserProfileDTO(
-                        user.getId(),
-                        user.getUsername(),
-                        user.getEmail(),
-                        user.getCreatedAt(),
-                        postCount
+                            user.getId(),
+                            user.getUsername(),
+                            user.getEmail(),
+                            user.getCreatedAt(),
+                            postCount
                     );
                 })
                 .toList();
 
         return ResponseEntity.ok(users);
+    }
+
+    @PutMapping(value = "/profile", consumes = {"multipart/form-data"})
+    public ResponseEntity<User> updateProfile(
+            @RequestParam(value = "bio", required = false) String bio,
+            @RequestParam(value = "avatar", required = false) MultipartFile avatar,
+            Authentication authentication) {
+        User user = userRepository.findByUsername(authentication.getName())
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+
+        if (bio != null) {
+            user.setBio(bio);
+        }
+
+        if (avatar != null && !avatar.isEmpty()) {
+            String avatarUrl = fileStorageService.saveFile(avatar);
+            user.setProfilePicUrl(avatarUrl);
+        }
+
+        return ResponseEntity.ok(userRepository.save(user));
     }
 }

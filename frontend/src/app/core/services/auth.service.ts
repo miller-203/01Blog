@@ -4,20 +4,23 @@ import { Router } from '@angular/router';
 import { Observable, throwError } from 'rxjs';
 import { tap, catchError } from 'rxjs/operators';
 import { UserLogin, UserRegister } from '../models/user';
+import { environment } from '../../../environments/environment.development';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-  private readonly apiUrl = 'http://localhost:8080/auth';
+  private readonly apiUrl = environment.api.auth;
 
   constructor(private http: HttpClient, private router: Router) { }
 
   public register(userRegister: UserRegister): Observable<any> {
     return this.http.post(`${this.apiUrl}/register`, userRegister).pipe(
       tap((response: any) => {
-        localStorage.setItem('access_token', response.accessToken);
-        localStorage.setItem('refresh_token', response.refreshToken);
+        const token = response?.token || response?.accessToken;
+        if (token) {
+          localStorage.setItem('access_token', token);
+        }
       }),
       catchError(error => throwError(() => error))
     );
@@ -26,31 +29,17 @@ export class AuthService {
   public login(userLogin: UserLogin): Observable<any> {
     return this.http.post(`${this.apiUrl}/login`, userLogin).pipe(
       tap((response: any) => {
-        console.log('Login response access_token:', response.accessToken);
-        localStorage.setItem('access_token', response.accessToken);
-        localStorage.setItem('refresh_token', response.refreshToken);
+        const token = response?.token || response?.accessToken;
+        if (token) {
+          localStorage.setItem('access_token', token);
+        }
       }),
       catchError(error => throwError(() => error))
     );
   }
 
   public refreshToken(): Observable<any> {
-    const refreshToken = this.getRefreshToken();
-    if (!refreshToken) {
-      return throwError(() => new Error('No refresh token available'));
-    }
-
-    return this.http.post(`${this.apiUrl}/refresh`, { refreshToken }).pipe(
-      tap((res: any) => {
-        console.log("✅ [AUTH SERVICE] Token refreshed successfully");
-        localStorage.setItem('access_token', res.accessToken);
-      }),
-      catchError(error => {
-        console.log("🔴 [AUTH SERVICE] Refresh token failed:", error);
-        this.logout();
-        return throwError(() => error);
-      })
-    );
+    return throwError(() => new Error('Refresh token endpoint is not available'));
   }
 
   public logout(): void {

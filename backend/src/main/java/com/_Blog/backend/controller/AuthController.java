@@ -56,10 +56,25 @@ public class AuthController {
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(@RequestBody RegisterRequest signUpRequest) {
         String result = authService.registerUser(signUpRequest);
-        
+
         if (result.startsWith("Error")) {
             return ResponseEntity.badRequest().body(result);
         }
-        return ResponseEntity.ok(result);
+
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(signUpRequest.getUsername(), signUpRequest.getPassword()));
+
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        String jwt = jwtUtils.generateJwtToken(authentication);
+
+        User user = userRepository.findByUsername(signUpRequest.getUsername()).orElseThrow();
+
+        return ResponseEntity.ok(new JwtResponse(jwt,
+                user.getId(),
+                user.getUsername(),
+                user.getEmail(),
+                user.getRole(),
+                user.getStatus()));
     }
 }

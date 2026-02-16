@@ -12,11 +12,11 @@ export class CommentService {
   private apiUrl = environment.api.comments;
 
   getCommentsByPostId(postId: string): Observable<Comment[]> {
-    return this.http.get<Comment[]>(`${this.apiUrl}/post/${postId}`);
+    return this.http.get<Comment[]>(`${this.apiUrl}/${postId}`);
   }
 
   createComment(postId: string, commentRequest: CommentRequest): Observable<Comment> {
-    return this.http.post<Comment>(`${this.apiUrl}/post/${postId}`, commentRequest);
+    return this.http.post<Comment>(`${this.apiUrl}`, { postId, content: commentRequest.content });
   }
 
   toggleCommentLike(commentLikeRequest: CommentLikeRequest): Observable<CommentLikeResponse> {

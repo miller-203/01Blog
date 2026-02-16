@@ -56,7 +56,7 @@ export class Register {
       .pipe(finalize(() => this.isSubmitting = false))
       .subscribe({
         next: (res: any) => {
-          localStorage.setItem('token', res.accessToken);
+          localStorage.setItem('access_token', res.token || res.accessToken);
           this.popup.show('Registration successful.', true);
           setTimeout(() => this.router.navigate(['/home']), 300);
         },
