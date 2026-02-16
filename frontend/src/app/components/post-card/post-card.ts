@@ -93,7 +93,7 @@ export class PostCard implements OnInit {
       next: (res: any) => {
         if (this.post) {
           this.post.liked = res.liked;
-          this.post.likesCount = res.likesCount;
+          this.post.likesCount = res.likesCount ?? res.count;
         }
       },
       error: (err) => console.error('Like error', err)

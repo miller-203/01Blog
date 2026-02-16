@@ -1,8 +1,10 @@
 package com._Blog.backend.controller;
 
+import com._Blog.backend.domain.model.Post;
 import com._Blog.backend.domain.model.Report;
 import com._Blog.backend.domain.model.User;
 import com._Blog.backend.dto.ReportRequest;
+import com._Blog.backend.repository.PostRepository;
 import com._Blog.backend.repository.ReportRepository;
 import com._Blog.backend.repository.UserRepository;
 import org.springframework.http.ResponseEntity;
@@ -16,10 +18,12 @@ public class ReportController {
 
     private final ReportRepository reportRepository;
     private final UserRepository userRepository;
+    private final PostRepository postRepository;
 
-    public ReportController(ReportRepository reportRepository, UserRepository userRepository) {
+    public ReportController(ReportRepository reportRepository, UserRepository userRepository, PostRepository postRepository) {
         this.reportRepository = reportRepository;
         this.userRepository = userRepository;
+        this.postRepository = postRepository;
     }
 
     @PostMapping
@@ -31,8 +35,17 @@ public class ReportController {
         User reporter = userRepository.findByUsername(authentication.getName())
                 .orElseThrow(() -> new RuntimeException("Reporter not found"));
 
-        User reportedUser = userRepository.findById(request.getReportedUserId())
-                .orElseThrow(() -> new RuntimeException("Reported user not found"));
+        User reportedUser;
+        if (request.getReportedUserId() != null) {
+            reportedUser = userRepository.findById(request.getReportedUserId())
+                    .orElseThrow(() -> new RuntimeException("Reported user not found"));
+        } else if (request.getReportedPostId() != null) {
+            Post post = postRepository.findById(request.getReportedPostId())
+                    .orElseThrow(() -> new RuntimeException("Reported post not found"));
+            reportedUser = post.getUser();
+        } else {
+            return ResponseEntity.badRequest().body("reportedUserId or reportedPostId is required");
+        }
 
         if (reporter.getId().equals(reportedUser.getId())) {
             return ResponseEntity.badRequest().body("You cannot report yourself");

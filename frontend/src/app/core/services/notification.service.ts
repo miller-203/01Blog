@@ -33,7 +33,16 @@ export class NotificationService {
   }
 
   getUnreadCount(): Observable<number> {
-    return this.http.get<number>(`${this.apiUrl}/unread-count`);
+    return new Observable<number>((subscriber) => {
+      this.getNotifications().subscribe({
+        next: (notifications) => {
+          const unread = notifications.filter(n => !n.read).length;
+          subscriber.next(unread);
+          subscriber.complete();
+        },
+        error: (error) => subscriber.error(error)
+      });
+    });
   }
 
   markAsRead(notificationId: number): Observable<void> {
@@ -41,7 +50,7 @@ export class NotificationService {
   }
 
   toggleRead(notificationId: number): Observable<void> {
-    return this.http.put<void>(`${this.apiUrl}/${notificationId}/toggle`, {});
+    return this.markAsRead(notificationId);
   }
 
   updateUnreadCount(count: number): void {

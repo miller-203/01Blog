@@ -103,6 +103,18 @@ public class FollowController {
         return ResponseEntity.ok(followingIds);
     }
 
+
+    @GetMapping("/{userId}/status")
+    public ResponseEntity<Boolean> isFollowing(@PathVariable Long userId, Authentication authentication) {
+        User me = userRepository.findByUsername(authentication.getName())
+                .orElseThrow(() -> new RuntimeException("Current user not found"));
+
+        User target = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        return ResponseEntity.ok(followRepository.existsByFollowerAndFollowed(me, target));
+    }
+
     @GetMapping("/{userId}")
     public ResponseEntity<List<User>> getFollowersByUser(@PathVariable Long userId) {
         User user = userRepository.findById(userId)

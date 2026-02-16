@@ -12,7 +12,7 @@ export class UserService {
   private http = inject(HttpClient);
 
   getCurrentUser(): Observable<User> {
-    return this.http.get<User>(`${this.apiUrl}/me`);
+    return this.http.get<User>(`${environment.apiUrl}/user/profile`);
   }
 
   getUserByUsername(username: string): Observable<User> {
@@ -20,15 +20,15 @@ export class UserService {
   }
 
   follow(userId: string): Observable<void> {
-    return this.http.post<void>(`${this.apiUrl.replace('/users', '/follows')}/${userId}`, {});
+    return this.http.post<void>(`${environment.apiUrl}/follows/follow/${userId}`, {});
   }
 
   unfollow(userId: string): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl.replace('/users', '/follows')}/${userId}`);
+    return this.http.post<void>(`${environment.apiUrl}/follows/unfollow/${userId}`, {});
   }
 
   isFollowing(userId: string): Observable<boolean> {
-    return this.http.get<boolean>(`${this.apiUrl.replace('/users', '/follows')}/${userId}/status`);
+    return this.http.get<boolean>(`${environment.apiUrl}/follows/${userId}/status`);
   }
 
   searchUsers(username: string): Observable<User[]> {
@@ -36,6 +36,6 @@ export class UserService {
   }
 
   updateProfile(formData: FormData): Observable<User> {
-    return this.http.put<User>(`${this.apiUrl}/profile`, formData);
+    return this.http.put<User>(`${environment.apiUrl}/user/profile`, formData);
   }
 }

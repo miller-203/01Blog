@@ -12,7 +12,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/comments")
@@ -28,34 +30,81 @@ public class CommentController {
     @Autowired
     private UserRepository userRepository;
 
-    // 1. Add a Comment
     @PostMapping
     public ResponseEntity<?> addComment(@RequestBody CommentRequest request, Authentication authentication) {
         String username = authentication.getName();
-        
-        // Find User
+
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        // Find Post
         Post post = postRepository.findById(request.getPostId())
                 .orElseThrow(() -> new RuntimeException("Post not found"));
 
-        // Create Comment
         Comment comment = new Comment();
         comment.setContent(request.getContent());
         comment.setUser(user);
         comment.setPost(post);
 
-        commentRepository.save(comment);
+        Comment saved = commentRepository.save(comment);
 
-        return ResponseEntity.ok("Comment added!");
+        return ResponseEntity.ok(toFrontendComment(saved, user));
     }
 
-    // 2. Get Comments for a Post
     @GetMapping("/{postId}")
-    public ResponseEntity<List<Comment>> getCommentsByPost(@PathVariable Long postId) {
-        List<Comment> comments = commentRepository.findByPostId(postId);
+    public ResponseEntity<List<Map<String, Object>>> getCommentsByPost(@PathVariable Long postId, Authentication authentication) {
+        User currentUser = userRepository.findByUsername(authentication.getName())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        List<Map<String, Object>> comments = commentRepository.findByPostId(postId).stream()
+                .map(comment -> toFrontendComment(comment, currentUser))
+                .toList();
         return ResponseEntity.ok(comments);
     }
-} 
+
+    @DeleteMapping("/{commentId}")
+    public ResponseEntity<Void> deleteComment(@PathVariable Long commentId, Authentication authentication) {
+        User currentUser = userRepository.findByUsername(authentication.getName())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        Comment comment = commentRepository.findById(commentId)
+                .orElseThrow(() -> new RuntimeException("Comment not found"));
+
+        if (!comment.getUser().getId().equals(currentUser.getId())) {
+            return ResponseEntity.status(403).build();
+        }
+
+        commentRepository.delete(comment);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/like")
+    public ResponseEntity<Map<String, Object>> toggleCommentLike() {
+        Map<String, Object> response = new HashMap<>();
+        response.put("liked", false);
+        response.put("likesCount", 0);
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/like")
+    public ResponseEntity<Map<String, Object>> getCommentLikeStatus() {
+        Map<String, Object> response = new HashMap<>();
+        response.put("liked", false);
+        response.put("likesCount", 0);
+        return ResponseEntity.ok(response);
+    }
+
+    private Map<String, Object> toFrontendComment(Comment comment, User currentUser) {
+        Map<String, Object> data = new HashMap<>();
+        data.put("id", comment.getId());
+        data.put("content", comment.getContent());
+        data.put("authorId", comment.getUser().getId());
+        data.put("authorFirstName", "");
+        data.put("authorLastName", comment.getUser().getUsername());
+        data.put("owner", comment.getUser().getId().equals(currentUser.getId()));
+        data.put("postId", comment.getPost().getId());
+        data.put("createdAt", comment.getCreatedAt());
+        data.put("liked", false);
+        data.put("likesCount", 0);
+        return data;
+    }
+}

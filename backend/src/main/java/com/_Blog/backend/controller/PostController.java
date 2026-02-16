@@ -6,6 +6,7 @@ import com._Blog.backend.dto.PostRequest;
 import com._Blog.backend.dto.PostResponse;
 import com._Blog.backend.repository.FollowRepository;
 import com._Blog.backend.repository.LikeRepository;
+import com._Blog.backend.repository.PostRepository;
 import com._Blog.backend.repository.UserBlockRepository;
 import com._Blog.backend.repository.UserRepository;
 import com._Blog.backend.service.FileStorageService;
@@ -37,6 +38,9 @@ public class PostController {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private PostRepository postRepository;
 
     @Autowired
     private FollowRepository followRepository;
@@ -155,6 +159,58 @@ public class PostController {
             resp.setUsername(post.getUser().getUsername());
             resp.setLikeCount(likeRepository.countByPost(post));
             resp.setLikedByCurrentUser(likeRepository.findByUserAndPost(currentUser, post).isPresent());
+            return resp;
+        }).collect(Collectors.toList());
+
+        return ResponseEntity.ok(responseList);
+    }
+
+
+    @GetMapping("/{id}")
+    public ResponseEntity<PostResponse> getPostById(@PathVariable Long id, Authentication authentication) {
+        String currentUsername = (authentication != null) ? authentication.getName() : "";
+        User currentUser = !currentUsername.isEmpty()
+                ? userRepository.findByUsername(currentUsername).orElse(null)
+                : null;
+
+        Post post = postService.getPostById(id);
+
+        PostResponse resp = new PostResponse();
+        resp.setId(post.getId());
+        resp.setTitle(post.getTitle());
+        resp.setContent(post.getContent());
+        resp.setImageUrl(post.getImageUrl());
+        resp.setCreatedAt(post.getCreatedAt());
+        resp.setUserId(post.getUser().getId());
+        resp.setUsername(post.getUser().getUsername());
+        resp.setLikeCount(likeRepository.countByPost(post));
+        if (currentUser != null) {
+            resp.setLikedByCurrentUser(likeRepository.findByUserAndPost(currentUser, post).isPresent());
+        }
+
+        return ResponseEntity.ok(resp);
+    }
+
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<List<PostResponse>> getPostsByUser(@PathVariable Long userId, Authentication authentication) {
+        String currentUsername = (authentication != null) ? authentication.getName() : "";
+        User currentUser = !currentUsername.isEmpty()
+                ? userRepository.findByUsername(currentUsername).orElse(null)
+                : null;
+
+        List<PostResponse> responseList = postRepository.findByUserId(userId).stream().map(post -> {
+            PostResponse resp = new PostResponse();
+            resp.setId(post.getId());
+            resp.setTitle(post.getTitle());
+            resp.setContent(post.getContent());
+            resp.setImageUrl(post.getImageUrl());
+            resp.setCreatedAt(post.getCreatedAt());
+            resp.setUserId(post.getUser().getId());
+            resp.setUsername(post.getUser().getUsername());
+            resp.setLikeCount(likeRepository.countByPost(post));
+            if (currentUser != null) {
+                resp.setLikedByCurrentUser(likeRepository.findByUserAndPost(currentUser, post).isPresent());
+            }
             return resp;
         }).collect(Collectors.toList());
 

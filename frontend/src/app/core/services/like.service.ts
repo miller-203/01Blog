@@ -11,6 +11,6 @@ export class LikeService {
   private http = inject(HttpClient);
   
     toggleLike(postId: String): Observable<any> {
-      return this.http.post(`${this.apiUrl}`, {postId});
+      return this.http.post(`${this.apiUrl}/${postId}`, {});
     }
 }
