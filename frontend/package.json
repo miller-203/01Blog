@@ -1,6 +1,7 @@
 {
   "name": "01blog-frontend",
   "version": "0.0.0",
+  "private": true,
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
@@ -8,25 +9,15 @@
     "watch": "ng build --watch --configuration development",
     "test": "ng test"
   },
-  "prettier": {
-    "overrides": [
-      {
-        "files": "*.html",
-        "options": {
-          "parser": "angular"
-        }
-      }
-    ]
-  },
-  "private": true,
   "dependencies": {
-    "@angular/animations": "^20.3.2",
-    "@angular/common": "^20.1.0",
-    "@angular/compiler": "^20.3.9",
-    "@angular/core": "^20.1.0",
-    "@angular/forms": "^20.1.0",
-    "@angular/platform-browser": "^20.1.0",
-    "@angular/router": "^20.1.0",
+    "@angular/animations": "20.3.9",
+    "@angular/common": "20.3.9",
+    "@angular/compiler": "20.3.9",
+    "@angular/core": "20.3.9",
+    "@angular/forms": "20.3.9",
+    "@angular/platform-browser": "20.3.9",
+    "@angular/router": "20.3.9",
+    "@angular/localize": "20.3.9",
     "@editorjs/delimiter": "^1.4.2",
     "@editorjs/editorjs": "^2.31.0",
     "@editorjs/header": "^2.8.8",
@@ -35,16 +26,17 @@
     "@ng-bootstrap/ng-bootstrap": "^19.0.1",
     "bootstrap": "^5.3.8",
     "editorjs-video": "^1.1.0",
-    "ng": "^0.0.0",
-    "or": "^0.2.0",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
     "zone.js": "~0.15.0"
   },
   "devDependencies": {
-    "@angular/build": "^20.1.5",
-    "@angular/cli": "^20.3.8",
-    "@angular/compiler-cli": "^20.1.0",
+    "@angular/build": "20.3.9",
+    "@angular/cli": "20.3.9",
+    "@angular/compiler-cli": "20.3.9",
+    "tailwindcss": "3.4.17",
+    "postcss": "8.4.38",
+    "autoprefixer": "10.4.19",
     "@types/jasmine": "~5.1.0",
     "jasmine-core": "~5.8.0",
     "karma": "~6.4.0",
