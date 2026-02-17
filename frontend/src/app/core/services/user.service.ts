@@ -12,7 +12,7 @@ export class UserService {
   private http = inject(HttpClient);
 
   getCurrentUser(): Observable<User> {
-    return this.http.get<User>(`${environment.apiUrl}/user/profile`);
+    return this.http.get<User>(`${this.apiUrl}/me`);
   }
 
   getUserByUsername(username: string): Observable<User> {

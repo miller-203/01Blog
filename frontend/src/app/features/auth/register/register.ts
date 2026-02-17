@@ -25,7 +25,8 @@ export class Register {
     firstName: '',
     lastName: '',
     email: '',
-    password: ''
+    password: '',
+    avatar: null
   };
 
   private readonly authService = inject(AuthService);
@@ -69,6 +70,12 @@ export class Register {
           this.popup.show(errorMessage, false);
         }
       });
+  }
+
+
+  onAvatarSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    this.userRegister.avatar = input.files?.[0] ?? null;
   }
 
   togglePassword(): void {

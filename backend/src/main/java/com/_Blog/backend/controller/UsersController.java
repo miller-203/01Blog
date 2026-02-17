@@ -6,6 +6,7 @@ import com._Blog.backend.repository.FollowRepository;
 import com._Blog.backend.repository.PostRepository;
 import com._Blog.backend.repository.UserRepository;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
@@ -46,6 +47,7 @@ public class UsersController {
     }
 
 
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/admin/all")
     public ResponseEntity<List<UserViewDTO>> getAllUsersForAdmin(Authentication authentication) {
         User me = userRepository.findByUsername(authentication.getName())
@@ -75,8 +77,8 @@ public class UsersController {
         UserViewDTO dto = new UserViewDTO();
         dto.setId(user.getId());
         dto.setUsername(user.getUsername());
-        dto.setFirstName("");
-        dto.setLastName("");
+        dto.setFirstName(user.getFirstName() != null ? user.getFirstName() : "");
+        dto.setLastName(user.getLastName() != null ? user.getLastName() : "");
         dto.setEmail(user.getEmail());
         dto.setStatus(user.getStatus());
         dto.setBio(user.getBio());

@@ -1,10 +1,8 @@
 import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Router } from '@angular/router';
-import { Observable, throwError } from 'rxjs';
-import { tap, catchError } from 'rxjs/operators';
-import { UserLogin, UserRegister, User } from '../models/user';
-import { ReportResponse } from '../models/report';
+import { Observable, forkJoin, map } from 'rxjs';
+import { User } from '../models/user';
+import { ReportResponse, ReportType } from '../models/report';
 import { environment } from '../../../environments/environment.development';
 
 @Injectable({
@@ -12,38 +10,70 @@ import { environment } from '../../../environments/environment.development';
 })
 export class AdminService {
     private http = inject(HttpClient);
-    private apiUrl = environment.api.reports;
-    private usersApiUrl = environment.api.users;
+    private adminApiUrl = `${environment.apiUrl}/admin`;
 
     getStatus(): Observable<any> {
-         return this.http.get<any>(`${this.apiUrl}/report-status`);
+        return forkJoin({
+            users: this.getAllUsers(),
+            posts: this.http.get<any[]>(`${this.adminApiUrl}/posts`),
+            reports: this.getAllReports()
+        }).pipe(
+            map(({ users, posts, reports }) => ({
+                totalUsers: users.length,
+                totalPosts: posts.length,
+                totalPendingReports: reports.filter(r => r.status === 'PENDING').length
+            }))
+        );
     }
 
     getAllReports(): Observable<ReportResponse[]> {
-        return this.http.get<ReportResponse[]>(this.apiUrl);
+        return this.http.get<any[]>(`${this.adminApiUrl}/reports`).pipe(
+            map((reports) => reports.map((report: any) => ({
+                reportId: String(report.id),
+                reporterId: String(report.reporter?.id ?? ''),
+                reporterUsername: report.reporter?.username ?? '',
+                reportedUserId: String(report.reportedUser?.id ?? ''),
+                reportedUserUsername: report.reportedUser?.username ?? '',
+                reportedPostId: '',
+                reason: report.reason,
+                timestamp: report.createdAt,
+                status: report.status,
+                type: ReportType.USER
+            })))
+        );
     }
 
     putDismiss(reportId: String): Observable<any> {
-        return this.http.put<any>(`${this.apiUrl}/${reportId}/dismiss`, {});
+        return this.http.put<any>(`${this.adminApiUrl}/reports/${reportId}/resolve`, {});
     }
 
-    banUserFromReport(reportId: string, userId: string): Observable<ReportResponse> {
-        return this.http.put<ReportResponse>(`${this.apiUrl}/${userId}/ban/${reportId}`, {});
+    banUserFromReport(reportId: string, userId: string): Observable<any> {
+        return this.http.put<any>(`${this.adminApiUrl}/users/${userId}/ban`, {}).pipe(
+            map(() => ({ reportId, status: 'RESOLVED' }))
+        );
     }
 
-    toggleUserStatus(userId: string): Observable<ReportResponse> {
-        return this.http.put<ReportResponse>(`${this.usersApiUrl}/${userId}/status`, {});
+    toggleUserStatus(userId: string): Observable<any> {
+        return this.http.put<any>(`${this.adminApiUrl}/users/${userId}/ban`, {}).pipe(
+            map(() => ({ status: 'BANNED' }))
+        );
     }
 
     getAllUsers(): Observable<User[]> {
-        return this.http.get<User[]>(`${this.usersApiUrl}/admin/all`);
+        return this.http.get<any[]>(`${this.adminApiUrl}/users`).pipe(
+            map(users => users.map(user => ({
+                ...user,
+                id: String(user.id),
+                avatarUrl: user.avatarUrl ?? user.profilePicUrl ?? ''
+            })))
+        );
     }
 
     deleteUser(userId: string): Observable<any> {
-        return this.http.delete<any>(`${this.usersApiUrl}/${userId}`);
+        return this.http.delete<any>(`${this.adminApiUrl}/users/${userId}`);
     }
 
     deletePost(postId: string): Observable<any> {
-        return this.http.delete<any>(`${environment.api.posts}/${postId}`);
+        return this.http.delete<any>(`${this.adminApiUrl}/posts/${postId}`);
     }
 }

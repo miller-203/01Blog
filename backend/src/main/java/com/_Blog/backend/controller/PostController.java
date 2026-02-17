@@ -7,6 +7,8 @@ import com._Blog.backend.dto.PostResponse;
 import com._Blog.backend.repository.FollowRepository;
 import com._Blog.backend.repository.LikeRepository;
 import com._Blog.backend.repository.PostRepository;
+import com._Blog.backend.repository.CommentRepository;
+import com._Blog.backend.repository.SavedPostRepository;
 import com._Blog.backend.repository.UserBlockRepository;
 import com._Blog.backend.repository.UserRepository;
 import com._Blog.backend.service.FileStorageService;
@@ -41,6 +43,12 @@ public class PostController {
 
     @Autowired
     private PostRepository postRepository;
+
+    @Autowired
+    private CommentRepository commentRepository;
+
+    @Autowired
+    private SavedPostRepository savedPostRepository;
 
     @Autowired
     private FollowRepository followRepository;
@@ -112,8 +120,11 @@ public class PostController {
             resp.setUsername(post.getUser().getUsername());
             
             resp.setLikeCount(likeRepository.countByPost(post));
+            resp.setCommentsCount(commentRepository.findByPostId(post.getId()).size());
+            resp.setSavesCount(savedPostRepository.countByPost(post));
             if (currentUser != null) {
                 resp.setLikedByCurrentUser(likeRepository.findByUserAndPost(currentUser, post).isPresent());
+                resp.setSavedByCurrentUser(savedPostRepository.findByUserAndPost(currentUser, post).isPresent());
             }
             return resp;
         }).collect(Collectors.toList());
@@ -158,7 +169,10 @@ public class PostController {
             resp.setUserId(post.getUser().getId());
             resp.setUsername(post.getUser().getUsername());
             resp.setLikeCount(likeRepository.countByPost(post));
+            resp.setCommentsCount(commentRepository.findByPostId(post.getId()).size());
+            resp.setSavesCount(savedPostRepository.countByPost(post));
             resp.setLikedByCurrentUser(likeRepository.findByUserAndPost(currentUser, post).isPresent());
+            resp.setSavedByCurrentUser(savedPostRepository.findByUserAndPost(currentUser, post).isPresent());
             return resp;
         }).collect(Collectors.toList());
 
@@ -184,8 +198,11 @@ public class PostController {
         resp.setUserId(post.getUser().getId());
         resp.setUsername(post.getUser().getUsername());
         resp.setLikeCount(likeRepository.countByPost(post));
+        resp.setCommentsCount(commentRepository.findByPostId(post.getId()).size());
+        resp.setSavesCount(savedPostRepository.countByPost(post));
         if (currentUser != null) {
             resp.setLikedByCurrentUser(likeRepository.findByUserAndPost(currentUser, post).isPresent());
+            resp.setSavedByCurrentUser(savedPostRepository.findByUserAndPost(currentUser, post).isPresent());
         }
 
         return ResponseEntity.ok(resp);
@@ -208,8 +225,11 @@ public class PostController {
             resp.setUserId(post.getUser().getId());
             resp.setUsername(post.getUser().getUsername());
             resp.setLikeCount(likeRepository.countByPost(post));
+            resp.setCommentsCount(commentRepository.findByPostId(post.getId()).size());
+            resp.setSavesCount(savedPostRepository.countByPost(post));
             if (currentUser != null) {
                 resp.setLikedByCurrentUser(likeRepository.findByUserAndPost(currentUser, post).isPresent());
+                resp.setSavedByCurrentUser(savedPostRepository.findByUserAndPost(currentUser, post).isPresent());
             }
             return resp;
         }).collect(Collectors.toList());

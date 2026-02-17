@@ -98,8 +98,8 @@ public class CommentController {
         data.put("id", comment.getId());
         data.put("content", comment.getContent());
         data.put("authorId", comment.getUser().getId());
-        data.put("authorFirstName", "");
-        data.put("authorLastName", comment.getUser().getUsername());
+        data.put("authorFirstName", comment.getUser().getFirstName() != null ? comment.getUser().getFirstName() : "");
+        data.put("authorLastName", comment.getUser().getLastName() != null ? comment.getUser().getLastName() : comment.getUser().getUsername());
         data.put("owner", comment.getUser().getId().equals(currentUser.getId()));
         data.put("postId", comment.getPost().getId());
         data.put("createdAt", comment.getCreatedAt());

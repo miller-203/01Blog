@@ -15,11 +15,27 @@ export class AuthService {
   constructor(private http: HttpClient, private router: Router) { }
 
   public register(userRegister: UserRegister): Observable<any> {
-    return this.http.post(`${this.apiUrl}/register`, userRegister).pipe(
+    const formData = new FormData();
+    formData.append('username', userRegister.username);
+    formData.append('firstName', userRegister.firstName || '');
+    formData.append('lastName', userRegister.lastName || '');
+    formData.append('email', userRegister.email);
+    formData.append('password', userRegister.password);
+    if (userRegister.avatar) {
+      formData.append('avatar', userRegister.avatar);
+    }
+
+    return this.http.post(`${this.apiUrl}/register`, formData).pipe(
       tap((response: any) => {
         const token = response?.token || response?.accessToken;
         if (token) {
           localStorage.setItem('access_token', token);
+        }
+        if (response?.role) {
+          localStorage.setItem('user_role', response.role);
+        }
+        if (response?.status) {
+          localStorage.setItem('user_status', response.status);
         }
       }),
       catchError(error => throwError(() => error))
@@ -33,6 +49,12 @@ export class AuthService {
         if (token) {
           localStorage.setItem('access_token', token);
         }
+        if (response?.role) {
+          localStorage.setItem('user_role', response.role);
+        }
+        if (response?.status) {
+          localStorage.setItem('user_status', response.status);
+        }
       }),
       catchError(error => throwError(() => error))
     );
@@ -45,6 +67,8 @@ export class AuthService {
   public logout(): void {
     localStorage.removeItem('access_token');
     localStorage.removeItem('refresh_token');
+    localStorage.removeItem('user_role');
+    localStorage.removeItem('user_status');
     this.router.navigate(['/login']);
   }
 
@@ -61,15 +85,7 @@ export class AuthService {
   }
 
   public isAdmin(): boolean {
-    const token = this.getAccessToken();
-    if (!token) return false;
-
-    try {
-      const payload = JSON.parse(atob(token.split('.')[1]));
-      return payload.role === 'ADMIN';
-    } catch {
-      return false;
-    }
+    return localStorage.getItem('user_role') === 'ADMIN' && localStorage.getItem('user_status') === 'ACTIVE';
   }
 
 } 

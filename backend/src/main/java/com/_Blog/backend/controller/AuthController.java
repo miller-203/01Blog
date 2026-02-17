@@ -5,6 +5,7 @@ import com._Blog.backend.domain.model.User;
 import com._Blog.backend.repository.UserRepository;
 import com._Blog.backend.security.JwtUtils;
 import com._Blog.backend.service.AuthService;
+import com._Blog.backend.service.FileStorageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -12,6 +13,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @CrossOrigin(origins = "http://localhost:4200", maxAge = 3600)
 @RestController
@@ -29,6 +31,9 @@ public class AuthController {
 
     @Autowired
     AuthService authService;
+
+    @Autowired
+    FileStorageService fileStorageService;
 
     @PostMapping("/login")
     public ResponseEntity<?> authenticateUser(@RequestBody LoginRequest loginRequest) {
@@ -53,8 +58,25 @@ public class AuthController {
                 user.getStatus()));
     }
 
-    @PostMapping("/register")
-    public ResponseEntity<?> registerUser(@RequestBody RegisterRequest signUpRequest) {
+    @PostMapping(value = "/register", consumes = {"multipart/form-data"})
+    public ResponseEntity<?> registerUser(
+            @RequestParam("username") String username,
+            @RequestParam(value = "firstName", required = false) String firstName,
+            @RequestParam(value = "lastName", required = false) String lastName,
+            @RequestParam("email") String email,
+            @RequestParam("password") String password,
+            @RequestParam(value = "avatar", required = false) MultipartFile avatar) {
+        RegisterRequest signUpRequest = new RegisterRequest();
+        signUpRequest.setUsername(username);
+        signUpRequest.setFirstName(firstName);
+        signUpRequest.setLastName(lastName);
+        signUpRequest.setEmail(email);
+        signUpRequest.setPassword(password);
+
+        if (avatar != null && !avatar.isEmpty()) {
+            signUpRequest.setProfilePicUrl(fileStorageService.saveFile(avatar));
+        }
+
         String result = authService.registerUser(signUpRequest);
 
         if (result.startsWith("Error")) {
