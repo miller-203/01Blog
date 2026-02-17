@@ -38,7 +38,8 @@ export class Login {
       .subscribe({
         next: () => {
           this.popup.show('Login successful.', true);
-          setTimeout(() => this.router.navigate(['/home']), 300);
+          const targetRoute = this.authService.isAdmin() ? '/admin' : '/home';
+          setTimeout(() => this.router.navigate([targetRoute]), 300);
         },
         error: (err) => {
           const errorMessage = ErrorHandler.extractErrorMessage(

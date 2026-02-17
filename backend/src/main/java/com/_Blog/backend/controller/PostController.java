@@ -205,6 +205,10 @@ public class PostController {
         resp.setCreatedAt(post.getCreatedAt());
         resp.setUserId(post.getUser().getId());
         resp.setUsername(post.getUser().getUsername());
+        resp.setAuthorFirstName(post.getUser().getFirstName());
+        resp.setAuthorLastName(post.getUser().getLastName());
+        resp.setAvatarUrl(post.getUser().getProfilePicUrl());
+        resp.setOwner(currentUser != null && post.getUser().getId().equals(currentUser.getId()));
         resp.setLikeCount(likeRepository.countByPost(post));
         resp.setCommentsCount(commentRepository.findByPostId(post.getId()).size());
         resp.setSavesCount(savedPostRepository.countByPost(post));

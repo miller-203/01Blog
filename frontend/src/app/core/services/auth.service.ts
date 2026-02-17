@@ -85,7 +85,9 @@ export class AuthService {
   }
 
   public isAdmin(): boolean {
-    return localStorage.getItem('user_role') === 'ADMIN' && localStorage.getItem('user_status') === 'ACTIVE';
+    const role = (localStorage.getItem('user_role') || '').toUpperCase();
+    const status = (localStorage.getItem('user_status') || '').toUpperCase();
+    return (role === 'ADMIN' || role === 'ROLE_ADMIN') && status === 'ACTIVE';
   }
 
 } 
