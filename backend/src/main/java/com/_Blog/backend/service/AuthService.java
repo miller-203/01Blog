@@ -27,10 +27,13 @@ public class AuthService {
 
         User user = new User();
         user.setUsername(request.getUsername());
+        user.setFirstName(request.getFirstName());
+        user.setLastName(request.getLastName());
         user.setEmail(request.getEmail());
         user.setPassword(encoder.encode(request.getPassword()));
         user.setRole("USER");
         user.setStatus("ACTIVE");
+        user.setProfilePicUrl(request.getProfilePicUrl());
 
         userRepository.save(user);
         return "User registered successfully!";

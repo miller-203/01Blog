@@ -4,11 +4,13 @@ export interface UserRegister {
     lastName: string;
     email: string;
     password: string;
+    avatar?: File | null;
 }
 
 export interface UserLogin {
     username: string;
     password: string;
+    avatar?: File | null;
 }
 
 export interface User {

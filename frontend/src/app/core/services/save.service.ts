@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { map, Observable } from 'rxjs';
 import { environment } from '../../../environments/environment.development';
 import { Post } from '../models/post';
 
@@ -16,6 +16,16 @@ export class SaveService {
   }
 
   getSavedPosts(): Observable<Post[]> {
-    return this.http.get<Post[]>(`${this.apiUrl}/posts`);
+    return this.http.get<Post[]>(`${this.apiUrl}/posts`).pipe(
+      map((posts: any[]) => posts.map(post => ({
+        ...post,
+        authorId: post.authorId ?? post.userId,
+        authorUsername: post.authorUsername ?? post.username,
+        authorName: post.authorName ?? post.username,
+        likesCount: post.likesCount ?? post.likeCount ?? 0,
+        liked: post.liked ?? post.likedByCurrentUser ?? false,
+        saved: post.saved ?? post.savedByCurrentUser ?? true
+      })))
+    );
   }
 }
