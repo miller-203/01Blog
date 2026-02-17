@@ -1,10 +1,11 @@
-import { Component, inject, Input, HostBinding, OnInit, OnDestroy } from '@angular/core';
+import { Component, inject, Input, HostBinding, OnInit, OnDestroy, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ProfileCard } from '../profile-card/profile-card';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { User } from '../../core/models/user';
 import { UserService } from '../../core/services/user.service';
 import { Subject, takeUntil } from 'rxjs';
+import { AuthService } from '../../core/services/auth.service';
 
 @Component({
   selector: 'app-sidebar-left',
@@ -17,9 +18,12 @@ export class SidebarLeft implements OnInit, OnDestroy {
   // Properties
   user?: User;
   isAdmin = false;
+  isOpen = signal(false);
   
   // Input Properties
-  @Input() isOpen = false;
+  @Input() isOpenInput = false;
+
+  private authService = inject(AuthService);
 
   // RxJS Cleanup
   private destroy$ = new Subject<void>();
@@ -30,7 +34,7 @@ export class SidebarLeft implements OnInit, OnDestroy {
   // ===== HOST BINDINGS =====
   @HostBinding('class.open')
   get isOpenClass() {
-    return this.isOpen;
+    return this.isOpenInput || this.isOpen();
   }
 
   // ===== LIFECYCLE HOOKS =====
@@ -58,5 +62,11 @@ export class SidebarLeft implements OnInit, OnDestroy {
           console.error('Error fetching user:', err);
         }
       });
+  }
+  logout() {
+    console.log('Logout clicked');
+    this.isOpen.set(false);
+    console.log('Logging out user');
+    this.authService.logout();
   }
 }
