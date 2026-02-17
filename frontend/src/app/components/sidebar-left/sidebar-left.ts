@@ -50,7 +50,8 @@ export class SidebarLeft implements OnInit, OnDestroy {
       .subscribe({
         next: (user) => {
           this.user = user;
-          this.isAdmin = user.role === "ADMIN";
+          const normalizedRole = (user.role || "").toUpperCase();
+          this.isAdmin = normalizedRole === "ADMIN" || normalizedRole === "ROLE_ADMIN";
           console.log("user ::::::", user);
         },
         error: (err) => {
