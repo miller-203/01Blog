@@ -32,6 +32,15 @@ Frontend default URL: `http://localhost:4200`
 - Start backend first, then start frontend.
 - If you get dependency download errors (Maven/NPM), verify your network/proxy settings and retry installation.
 
+
+#### 4) Admin dashboard access
+
+- The backend now ensures an admin user exists on startup (configurable via properties):
+  - `app.admin.username` (default: `admin`)
+  - `app.admin.email` (default: `admin@01blog.local`)
+  - `app.admin.password` (default: `Admin@123456`)
+- Login with the admin account, and the frontend will redirect automatically to `/admin`.
+
 ### Overview
 
 In this project, you will build a **social blogging platform** called **01Blog**, where students can share their learning experiences, discoveries, and progress throughout their journey. Users can interact with each other’s content, follow one another, and engage in meaningful discussions.
