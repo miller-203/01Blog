@@ -134,12 +134,13 @@ cancelBanUser() {
       next: (updatedReport) => {
         // Update the local list
         this.reports = this.reports.map(r =>
-          r.reportId === updatedReport.reportId ? updatedReport : r
+          r.reportId === updatedReport.reportId ? { ...r, ...updatedReport, status: "RESOLVED" as any } : r
         );
+        this.applyFilters();
       },
       error: (err) => {
         console.error(err);
-        alert('Failed to dismiss report');
+        this.popup.show('Failed to dismiss report', false);
       }
     });
   }

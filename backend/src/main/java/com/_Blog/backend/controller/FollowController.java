@@ -5,6 +5,7 @@ import com._Blog.backend.domain.model.User;
 import com._Blog.backend.repository.FollowRepository;
 import com._Blog.backend.repository.UserBlockRepository;
 import com._Blog.backend.repository.UserRepository;
+import com._Blog.backend.service.NotificationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -27,6 +28,9 @@ public class FollowController {
 
     @Autowired
     private UserBlockRepository userBlockRepository;
+
+    @Autowired
+    private NotificationService notificationService;
 
     @PostMapping("/follow/{userId}")
     public ResponseEntity<?> addFollow(@PathVariable Long userId, Authentication authentication) {
@@ -55,6 +59,8 @@ public class FollowController {
         follow.setFollower(me);
         follow.setFollowed(toFollow);
         followRepository.save(follow);
+
+        notificationService.createNotification(me, toFollow, null, me.getUsername() + " started following you", "USER");
 
         return ResponseEntity.ok("Followed successfully");
     }

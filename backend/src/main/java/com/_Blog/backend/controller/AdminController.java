@@ -64,11 +64,11 @@ public class AdminController {
     }
 
     @PutMapping("/reports/{id}/resolve")
-    public ResponseEntity<?> resolveReport(@PathVariable Long id) {
+    public ResponseEntity<Report> resolveReport(@PathVariable Long id) {
         Report report = reportRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Report not found"));
         report.setStatus("RESOLVED");
         reportRepository.save(report);
-        return ResponseEntity.ok("Report resolved");
+        return ResponseEntity.ok(report);
     }
 }

@@ -112,7 +112,7 @@ export class PostDetail implements OnInit {
 
   onEdit() {
     const postId = this.route.snapshot.paramMap.get('id');
-    this.router.navigate(['/posts/edit', postId]);
+    this.router.navigate(['/edit-post', postId]);
     this.showMenu = false;
   }
 

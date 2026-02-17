@@ -3,6 +3,7 @@ import { SidebarRight } from '../../components/sidebar-right/sidebar-right';
 import { NotificationService, NotificationResponse } from '../../core/services/notification.service';
 import { CommonModule } from '@angular/common';
 import { DateUtilsService } from '../../core/services/utils/DateUtil.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-notifications',
@@ -11,26 +12,22 @@ import { DateUtilsService } from '../../core/services/utils/DateUtil.service';
   styleUrl: './notifications.scss'
 })
 export class Notifications implements OnInit {
-  // Properties
   notifications: NotificationResponse[] = [];
-  unreadCount: number = 0;
+  unreadCount = 0;
 
-  // Dependency Injection
   private notificationService = inject(NotificationService);
   private dateUtils = inject(DateUtilsService);
+  private router = inject(Router);
 
-  // ===== LIFECYCLE HOOKS =====
   ngOnInit() {
     this.loadNotifications();
     this.loadUnreadCount();
   }
 
-  // ===== DATA LOADING =====
   loadNotifications() {
     this.notificationService.getNotifications().subscribe({
       next: (notifications) => {
         this.notifications = notifications;
-        console.log("this.notifications", this.notifications);
       },
       error: (error) => {
         console.error('Error loading notifications:', error);
@@ -49,29 +46,34 @@ export class Notifications implements OnInit {
     });
   }
 
-  // ===== NOTIFICATION ACTIONS =====
-  markAsRead(notificationId: number) {
-    this.notificationService.toggleRead(notificationId).subscribe({
+  onNotificationClick(notification: NotificationResponse) {
+    const navigate = () => {
+      if (notification.type === 'POST' && notification.postId) {
+        this.router.navigate(['/posts', notification.postId]);
+      } else {
+        this.router.navigate(['/profile', notification.actorUsername]);
+      }
+    };
+
+    if (notification.read) {
+      navigate();
+      return;
+    }
+
+    this.notificationService.markAsRead(notification.id).subscribe({
       next: () => {
-        // Update local state
-        const notification = this.notifications.find(n => n.id === notificationId);
-        if (notification) {
-          if (!notification.read) {
-            this.unreadCount = Math.max(0, this.unreadCount - 1);
-          } else {
-            this.unreadCount += 1;
-          }
-          notification.read = !notification.read;
-        }
+        notification.read = true;
+        this.unreadCount = Math.max(0, this.unreadCount - 1);
         this.notificationService.updateUnreadCount(this.unreadCount);
+        navigate();
       },
       error: (error) => {
-        console.error('Error toggling notification read status:', error);
+        console.error('Error marking notification as read:', error);
+        navigate();
       }
     });
   }
 
-  // ===== UTILITY METHODS =====
   formatDate(dateString: string): string {
     return this.dateUtils.formatDate(dateString);
   }
