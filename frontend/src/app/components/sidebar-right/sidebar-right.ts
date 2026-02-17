@@ -11,38 +11,38 @@ import { FormsModule } from '@angular/forms';
   styleUrl: './sidebar-right.scss'
 })
 export class SidebarRight implements OnInit {
-  // Properties
-  searchQuery: string = '';
+  searchQuery = '';
   users: User[] = [];
-  isSearching: boolean = false;
+  isSearching = false;
+  followingUserIds = new Set<string>();
 
-  // Injected Services
   private userService = inject(UserService);
 
-  // ===== LIFECYCLE HOOKS =====
   ngOnInit(): void {
     this.loadDefaultUsers();
   }
 
-  // ===== DATA LOADING =====
   private loadDefaultUsers(): void {
-    // Load default users or popular users
-    // In a real app, you might load popular users or recent users
-    this.users = [];
+    this.onSearch();
   }
 
-  // ===== SEARCH ACTIONS =====
   onSearch(): void {
-    if (!this.searchQuery.trim()) {
-      this.loadDefaultUsers();
-      return;
-    }
-
     this.isSearching = true;
     this.userService.searchUsers(this.searchQuery.trim()).subscribe({
       next: (users) => {
-        this.users = users;
+        this.users = users.filter((u) => !u.currentUser);
         this.isSearching = false;
+        this.users.forEach((user) => {
+          this.userService.isFollowing(user.id).subscribe({
+            next: (isFollowing) => {
+              if (isFollowing) {
+                this.followingUserIds.add(user.id);
+              } else {
+                this.followingUserIds.delete(user.id);
+              }
+            }
+          });
+        });
       },
       error: (err) => {
         console.error('Error searching users:', err);
@@ -53,10 +53,23 @@ export class SidebarRight implements OnInit {
 
   onSearchInput(event: any): void {
     this.searchQuery = event.target.value;
-    if (this.searchQuery.length >= 2) {
-      this.onSearch();
-    } else if (this.searchQuery.length === 0) {
-      this.loadDefaultUsers();
-    }
+    this.onSearch();
+  }
+
+  toggleFollow(user: User, event: MouseEvent): void {
+    event.preventDefault();
+    event.stopPropagation();
+    const isFollowing = this.followingUserIds.has(user.id);
+    const action = isFollowing ? this.userService.unfollow(user.id) : this.userService.follow(user.id);
+    action.subscribe({
+      next: () => {
+        if (isFollowing) {
+          this.followingUserIds.delete(user.id);
+        } else {
+          this.followingUserIds.add(user.id);
+        }
+      },
+      error: (err) => console.error('Follow toggle failed', err)
+    });
   }
 }

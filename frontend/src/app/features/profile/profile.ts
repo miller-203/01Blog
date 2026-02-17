@@ -216,9 +216,9 @@ export class Profile implements OnInit {
 
 
     this.userService.updateProfile(formData).subscribe({
-      next: (updatedUser: User) => {
-        this.user = updatedUser;
+      next: () => {
         this.closeEditPopup();
+        this.loadUserProfile();
         this.popup.show('Profile updated successfully!', true);
       },
       error: (err: any) => {

@@ -12,7 +12,7 @@
           class="notification-item"
           [class.unread]="!notification.read"
           *ngFor="let notification of notifications"
-          (click)="markAsRead(notification.id)"
+          (click)="onNotificationClick(notification)"
         >
           <div class="notification-avatar">
             <img

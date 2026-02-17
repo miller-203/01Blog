@@ -6,28 +6,30 @@ import { parseEditorJsContent } from '../../../core/utils/editorjs-parser';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { Popup } from '../../../components/popup/popup';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-home',
-  imports: [CommonModule, SidebarRight, PostCard, Popup],
+  imports: [CommonModule, FormsModule, SidebarRight, PostCard, Popup],
   templateUrl: './home.html',
   styleUrl: './home.scss'
 })
 export class Home implements OnInit, AfterViewInit {
-  // Properties
   posts: any[] = [];
-  currentPage: number = 0;
-  pageSize: number = 5;
-  isLoading: boolean = false;
-  hasMorePosts: boolean = true;
+  currentPage = 0;
+  pageSize = 5;
+  isLoading = false;
+  hasMorePosts = true;
   currentFilter: 'all' | 'followed' = 'all';
+  showCreatePopup = false;
+  newPostTitle = '';
+  newPostContent = '';
+
   @ViewChild('popup') popup!: Popup;
 
-  // Dependency Injection
   private postService = inject(PostService);
   private route = inject(ActivatedRoute);
 
-  // ===== LIFECYCLE HOOKS =====
   ngOnInit(): void {
     this.loadPosts();
   }
@@ -43,15 +45,15 @@ export class Home implements OnInit, AfterViewInit {
       }
     });
   }
-  // ===== DATA LOADING =====
+
   loadPosts(): void {
     if (this.isLoading || !this.hasMorePosts) return;
 
     this.isLoading = true;
-    const serviceMethod = this.currentFilter === 'followed' 
-      ? this.postService.getFollowedPosts(this.currentPage, this.pageSize) 
+    const serviceMethod = this.currentFilter === 'followed'
+      ? this.postService.getFollowedPosts(this.currentPage, this.pageSize)
       : this.postService.getAllPosts(this.currentPage, this.pageSize);
-      
+
     serviceMethod.subscribe({
       next: (res: any[]) => {
         if (res.length === 0) {
@@ -73,12 +75,10 @@ export class Home implements OnInit, AfterViewInit {
     });
   }
 
-  // ===== PAGINATION ACTIONS =====
   loadMorePosts(): void {
     this.loadPosts();
   }
 
-  // ===== FILTER ACTIONS =====
   switchFilter(filter: 'all' | 'followed'): void {
     if (this.currentFilter === filter) return;
     this.currentFilter = filter;
@@ -86,5 +86,37 @@ export class Home implements OnInit, AfterViewInit {
     this.currentPage = 0;
     this.hasMorePosts = true;
     this.loadPosts();
+  }
+
+  openCreatePopup(): void {
+    this.showCreatePopup = true;
+  }
+
+  closeCreatePopup(): void {
+    this.showCreatePopup = false;
+    this.newPostTitle = '';
+    this.newPostContent = '';
+  }
+
+  createPostFromPopup(): void {
+    if (!this.newPostTitle.trim() || !this.newPostContent.trim()) return;
+
+    this.postService.createPost({
+      title: this.newPostTitle.trim(),
+      content: this.newPostContent.trim()
+    }).subscribe({
+      next: () => {
+        this.closeCreatePopup();
+        this.posts = [];
+        this.currentPage = 0;
+        this.hasMorePosts = true;
+        this.loadPosts();
+        this.popup.show('Post created successfully.', true);
+      },
+      error: (err) => {
+        console.error('Create post failed', err);
+        this.popup.show('Failed to create post.', false);
+      }
+    });
   }
 }

@@ -12,6 +12,10 @@ public class PostResponse {
     private String imageUrl;
     private Long userId;
     private String username;
+    private String authorFirstName;
+    private String authorLastName;
+    private String avatarUrl;
+    private boolean owner;
     private LocalDateTime createdAt;
     private long likeCount;
     private long commentsCount;

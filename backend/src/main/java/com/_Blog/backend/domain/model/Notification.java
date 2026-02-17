@@ -25,11 +25,14 @@ public class Notification {
 
     // FIX 2: Rename variable to 'post' (since it holds the whole object, not just the ID)
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "post_id", nullable = false)
+    @JoinColumn(name = "post_id")
     private Post post; 
 
     @Column(nullable = false)
     private String message;
+
+    @Column(nullable = false)
+    private String type = "POST";
 
     @Column(nullable = false)
     private Boolean isRead = false;

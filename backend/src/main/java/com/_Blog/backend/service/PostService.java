@@ -49,7 +49,8 @@ public class PostService {
                 user,        // Sender
                 follower,    // Recipient
                 savedPost,   // The post (now has an ID!)
-                user.getUsername() + " posted: " + savedPost.getTitle()
+                user.getUsername() + " posted: " + savedPost.getTitle(),
+                "POST"
             );
         }
 

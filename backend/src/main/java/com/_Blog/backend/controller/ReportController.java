@@ -36,6 +36,8 @@ public class ReportController {
                 .orElseThrow(() -> new RuntimeException("Reporter not found"));
 
         User reportedUser;
+        Post reportedPost = null;
+        String reportType = "USER";
         if (request.getReportedUserId() != null) {
             reportedUser = userRepository.findById(request.getReportedUserId())
                     .orElseThrow(() -> new RuntimeException("Reported user not found"));
@@ -43,6 +45,8 @@ public class ReportController {
             Post post = postRepository.findById(request.getReportedPostId())
                     .orElseThrow(() -> new RuntimeException("Reported post not found"));
             reportedUser = post.getUser();
+            reportedPost = post;
+            reportType = "POST";
         } else {
             return ResponseEntity.badRequest().body("reportedUserId or reportedPostId is required");
         }
@@ -54,6 +58,8 @@ public class ReportController {
         Report report = new Report();
         report.setReporter(reporter);
         report.setReportedUser(reportedUser);
+        report.setReportedPost(reportedPost);
+        report.setType(reportType);
         report.setReason(request.getReason().trim());
 
         return ResponseEntity.ok(reportRepository.save(report));

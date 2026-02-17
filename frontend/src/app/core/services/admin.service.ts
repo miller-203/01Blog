@@ -34,11 +34,11 @@ export class AdminService {
                 reporterUsername: report.reporter?.username ?? '',
                 reportedUserId: String(report.reportedUser?.id ?? ''),
                 reportedUserUsername: report.reportedUser?.username ?? '',
-                reportedPostId: '',
+                reportedPostId: report.reportedPost ? String(report.reportedPost.id) : '',
                 reason: report.reason,
                 timestamp: report.createdAt,
-                status: report.status,
-                type: ReportType.USER
+                status: (report.status === "OPEN" ? "PENDING" : report.status),
+                type: report.type === "POST" ? ReportType.POST : ReportType.USER
             })))
         );
     }

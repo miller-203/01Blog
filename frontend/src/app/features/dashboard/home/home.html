@@ -4,7 +4,7 @@
     <main class="main-content">
         <div class="content-wrapper">
             <div class="pills-header">
-                <h1 class="header-title">Explore Articles</h1>
+                <div class="d-flex justify-content-between align-items-center"><h1 class="header-title">Explore Articles</h1><button class="load-more-btn" (click)="openCreatePopup()">New Post</button></div>
                 <div class="category-pills">
                     <div class="pill" [class.active]="currentFilter === 'all'" (click)="switchFilter('all')">All Posts</div>
                     <div class="pill" [class.active]="currentFilter === 'followed'" (click)="switchFilter('followed')">Followed Posts</div>
@@ -42,3 +42,18 @@
 
 <!-- Success Popup -->
 <app-popup #popup></app-popup>
+
+
+<div class="modal" *ngIf="showCreatePopup" style="display:block;background:rgba(0,0,0,.5)">
+  <div class="modal-dialog">
+    <div class="modal-content p-3">
+      <h5>Create New Post</h5>
+      <input class="form-control mb-2" [(ngModel)]="newPostTitle" placeholder="Title" />
+      <textarea class="form-control mb-2" rows="5" [(ngModel)]="newPostContent" placeholder="Content"></textarea>
+      <div class="d-flex justify-content-end gap-2">
+        <button class="btn btn-secondary" (click)="closeCreatePopup()">Cancel</button>
+        <button class="btn btn-primary" (click)="createPostFromPopup()">Create</button>
+      </div>
+    </div>
+  </div>
+</div>

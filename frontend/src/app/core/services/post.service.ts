@@ -61,7 +61,13 @@ export class PostService {
   }
 
   createPost(postData: any): Observable<any> {
-    return this.http.post<any>(this.apiUrl, postData);
+    const formData = new FormData();
+    formData.append('title', postData.title || "");
+    formData.append('content', postData.content || "");
+    if (postData.file) {
+      formData.append('file', postData.file);
+    }
+    return this.http.post<any>(this.apiUrl, formData);
   }
 
   updatePost(id: string, postData: any): Observable<any> {

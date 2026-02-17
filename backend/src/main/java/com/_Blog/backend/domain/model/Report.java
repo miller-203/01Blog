@@ -22,11 +22,18 @@ public class Report {
     @JoinColumn(name = "reported_user_id", nullable = false)
     private User reportedUser;
 
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "reported_post_id")
+    private Post reportedPost;
+
+    @Column(nullable = false)
+    private String type = "USER";
+
     @Column(nullable = false, length = 500)
     private String reason;
 
     @Column(nullable = false)
-    private String status = "OPEN";
+    private String status = "PENDING";
 
     private LocalDateTime createdAt = LocalDateTime.now();
 }

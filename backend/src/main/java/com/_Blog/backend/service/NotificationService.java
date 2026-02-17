@@ -24,12 +24,13 @@ public class NotificationService {
     @Autowired
     private UserRepository userRepository;
 
-    public Notification createNotification(User sender, User recipient, Post post, String message) {
+    public Notification createNotification(User sender, User recipient, Post post, String message, String type) {
         Notification notification = new Notification();
         notification.setSender(sender);
         notification.setRecipient(recipient);
         notification.setPost(post);
         notification.setMessage(message);
+        notification.setType(type);
         return notificationRepository.save(notification);
     }
     public List<Notification> getUserNotifications(User currentUser) {

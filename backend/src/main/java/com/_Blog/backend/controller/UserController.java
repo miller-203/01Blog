@@ -88,18 +88,29 @@ public class UserController {
 
     @PutMapping(value = "/profile", consumes = {"multipart/form-data"})
     public ResponseEntity<User> updateProfile(
+            @RequestParam(value = "firstName", required = false) String firstName,
+            @RequestParam(value = "lastName", required = false) String lastName,
             @RequestParam(value = "bio", required = false) String bio,
             @RequestParam(value = "avatar", required = false) MultipartFile avatar,
             Authentication authentication) {
         User user = userRepository.findByUsername(authentication.getName())
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
+
+        if (firstName != null) {
+            user.setFirstName(firstName);
+        }
+
+        if (lastName != null) {
+            user.setLastName(lastName);
+        }
+
         if (bio != null) {
             user.setBio(bio);
         }
 
         if (avatar != null && !avatar.isEmpty()) {
-            String avatarUrl = fileStorageService.saveFile(avatar);
+            String avatarUrl = fileStorageService.saveFile(avatar, "avatars");
             user.setProfilePicUrl(avatarUrl);
         }
 
