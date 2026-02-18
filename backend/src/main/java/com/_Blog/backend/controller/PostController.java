@@ -29,6 +29,8 @@ import java.util.stream.Collectors;
 @CrossOrigin(origins = "http://localhost:4200")
 public class PostController {
 
+    private static final String HIDDEN_STATUS = "HIDDEN";
+
     @Autowired
     private PostService postService;
 
@@ -106,6 +108,7 @@ public class PostController {
                 : java.util.Collections.emptySet();
 
         List<Post> posts = postService.getAllPosts().stream()
+                .filter(this::isVisiblePost)
                 .filter(post -> !blockedByMe.contains(post.getUser().getId()) && !blockedMe.contains(post.getUser().getId()))
                 .toList();
 
@@ -160,6 +163,7 @@ public class PostController {
         }
 
         List<Post> posts = postService.getAllPosts().stream()
+                .filter(this::isVisiblePost)
                 .filter(post -> followedUsers.stream().anyMatch(user -> user.getId().equals(post.getUser().getId())))
                 .toList();
 
@@ -196,6 +200,9 @@ public class PostController {
                 : null;
 
         Post post = postService.getPostById(id);
+        if (!isVisiblePost(post)) {
+            return ResponseEntity.notFound().build();
+        }
 
         PostResponse resp = new PostResponse();
         resp.setId(post.getId());
@@ -227,7 +234,9 @@ public class PostController {
                 ? userRepository.findByUsername(currentUsername).orElse(null)
                 : null;
 
-        List<PostResponse> responseList = postRepository.findByUserId(userId).stream().map(post -> {
+        List<PostResponse> responseList = postRepository.findByUserId(userId).stream()
+                .filter(this::isVisiblePost)
+                .map(post -> {
             PostResponse resp = new PostResponse();
             resp.setId(post.getId());
             resp.setTitle(post.getTitle());
@@ -280,5 +289,9 @@ public class PostController {
         postService.savePost(post);
         
         return ResponseEntity.ok(post);
+    }
+
+    private boolean isVisiblePost(Post post) {
+        return !HIDDEN_STATUS.equalsIgnoreCase(post.getStatus());
     }
 }
