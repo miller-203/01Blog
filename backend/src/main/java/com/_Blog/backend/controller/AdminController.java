@@ -34,11 +34,12 @@ public class AdminController {
     }
 
     @PutMapping("/users/{id}/ban")
-    public ResponseEntity<?> banUser(@PathVariable Long id) {
+    public ResponseEntity<User> banUser(@PathVariable Long id) {
         User user = userRepository.findById(id).orElseThrow(() -> new RuntimeException("User not found"));
-        user.setStatus("BANNED");
-        userRepository.save(user);
-        return ResponseEntity.ok("User banned");
+        boolean isBanned = "BANNED".equalsIgnoreCase(user.getStatus());
+        user.setStatus(isBanned ? "ACTIVE" : "BANNED");
+        User updatedUser = userRepository.save(user);
+        return ResponseEntity.ok(updatedUser);
     }
 
     @DeleteMapping("/users/{id}")
