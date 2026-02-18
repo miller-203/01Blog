@@ -55,7 +55,7 @@ export class AdminService {
 
     toggleUserStatus(userId: string): Observable<any> {
         return this.http.put<any>(`${this.adminApiUrl}/users/${userId}/ban`, {}).pipe(
-            map(() => ({ status: 'BANNED' }))
+            map((user) => ({ status: user.status }))
         );
     }
 
