@@ -2,6 +2,8 @@ package com._Blog.backend.domain.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 @Entity
 @Data
@@ -16,9 +18,11 @@ public class Like {
 
     @ManyToOne
     @JoinColumn(name = "user_id")
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private User user;
 
     @ManyToOne
     @JoinColumn(name = "post_id")
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private Post post;
 }
