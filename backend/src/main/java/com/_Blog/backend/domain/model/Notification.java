@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
+
 import java.time.LocalDateTime;
 
 @Entity
@@ -15,28 +16,25 @@ public class Notification {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // FIX 1: Change column name to 'recipient_id' to avoid conflict
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "recipient_id", nullable = false) 
+    @JoinColumn(name = "recipient_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     private User recipient;
 
-    // FIX 1: Change column name to 'sender_id'
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "sender_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     private User sender;
 
-    // FIX 2: Rename variable to 'post' (since it holds the whole object, not just the ID)
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "post_id")
     @OnDelete(action = OnDeleteAction.CASCADE)
-    private Post post; 
+    private Post post;
 
     @Column(nullable = false)
     private String message;
 
-    @Column(nullable = false)
+    @Column(name = "notification_type", nullable = false)
     private String type = "POST";
 
     @Column(nullable = false)
