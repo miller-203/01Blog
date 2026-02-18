@@ -15,4 +15,8 @@ public interface UserBlockRepository extends JpaRepository<UserBlock, Long> {
     List<UserBlock> findByBlocker(User blocker);
 
     List<UserBlock> findByBlocked(User blocked);
+
+    void deleteByBlockerId(Long userId);
+    void deleteByBlockedId(Long userId);
 }
+

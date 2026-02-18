@@ -19,6 +19,7 @@ export class Header implements OnInit, OnDestroy {
   isNotificationsOpen = signal(false);
   currentUser = signal<User | null>(null);
   unreadCount = signal(0);
+  isAdmin = signal(false);
 
   // Subscriptions
   private subscription: Subscription = new Subscription();
@@ -58,6 +59,8 @@ export class Header implements OnInit, OnDestroy {
     this.userService.getCurrentUser().subscribe({
       next: (user) => {
         this.currentUser.set(user);
+        const normalizedRole = (user.role || '').toUpperCase();
+        this.isAdmin.set(normalizedRole === 'ADMIN' || normalizedRole === 'ROLE_ADMIN');
       },
       error: (error) => {
         console.error('Error loading current user:', error);

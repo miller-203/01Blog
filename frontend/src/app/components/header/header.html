@@ -44,7 +44,7 @@
                     </a>
 
                     <!-- Create Post Button -->
-                    <a routerLink="/create-post" class="text-decoration-none">
+                    <a *ngIf="!isAdmin()" routerLink="/create-post" class="text-decoration-none">
                         <button class="btn btn-create d-md-flex align-items-center" type="button">
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
                                 <g fill="none" stroke="currentColor" stroke-width="2">

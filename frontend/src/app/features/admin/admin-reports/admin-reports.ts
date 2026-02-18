@@ -105,9 +105,8 @@ confirmBanUser() {
   if (this.userToBan) {
     this.adminService.banUserFromReport(this.userToBan.reportId, this.userToBan.userId).subscribe({
       next: (updatedReport) => {
-        // Update the local list
         this.reports = this.reports.map(r =>
-          r.reportId === updatedReport.reportId ? updatedReport : r
+          r.reportId === updatedReport.reportId ? { ...r, status: 'RESOLVED' as any } : r
         );
         this.applyFilters();
         this.showBanUserPopup = false;
