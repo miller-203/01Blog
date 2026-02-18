@@ -25,6 +25,7 @@ export class Register {
     firstName: '',
     lastName: '',
     email: '',
+    bio: '',
     password: '',
     avatar: null
   };

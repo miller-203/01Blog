@@ -2,14 +2,16 @@ package com._Blog.backend.service;
 
 import com._Blog.backend.domain.model.Post;
 import com._Blog.backend.domain.model.User;
+import com._Blog.backend.repository.CommentLikeRepository;
+import com._Blog.backend.repository.CommentRepository;
+import com._Blog.backend.repository.LikeRepository;
+import com._Blog.backend.repository.NotificationRepository;
 import com._Blog.backend.repository.PostRepository;
+import com._Blog.backend.repository.ReportRepository;
+import com._Blog.backend.repository.SavedPostRepository;
 import com._Blog.backend.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import com._Blog.backend.service.FollowService;
-import com._Blog.backend.service.NotificationService;
-
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 
 import java.util.List;
@@ -30,6 +32,24 @@ public class PostService {
     @Autowired
     private NotificationService notificationService;
 
+    @Autowired
+    private LikeRepository likeRepository;
+
+    @Autowired
+    private CommentRepository commentRepository;
+
+    @Autowired
+    private CommentLikeRepository commentLikeRepository;
+
+    @Autowired
+    private SavedPostRepository savedPostRepository;
+
+    @Autowired
+    private NotificationRepository notificationRepository;
+
+    @Autowired
+    private ReportRepository reportRepository;
+
     public Post createPost(String username, String title, String content) {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("User not found"));
@@ -39,16 +59,14 @@ public class PostService {
         post.setContent(content);
         post.setUser(user);
 
-        // 1. Save the post FIRST so it gets an ID
         Post savedPost = postRepository.save(post);
 
-        // 2. Now handle notifications using the savedPost
         List<User> followers = followService.getFollowersForUser(user);
         for (User follower : followers) {
             notificationService.createNotification(
-                user,        // Sender
-                follower,    // Recipient
-                savedPost,   // The post (now has an ID!)
+                user,
+                follower,
+                savedPost,
                 user.getUsername() + " posted: " + savedPost.getTitle(),
                 "POST"
             );
@@ -60,15 +78,23 @@ public class PostService {
     public List<Post> getAllPosts() {
         return postRepository.findAllByOrderByCreatedAtDesc();
     }
+
     public void savePost(Post post) {
         postRepository.save(post);
     }
+
     public Post getPostById(Long id) {
         return postRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Post not found"));
     }
 
     public void deletePost(Long id) {
+        commentLikeRepository.deleteByCommentPostId(id);
+        likeRepository.deleteByPostId(id);
+        commentRepository.deleteByPostId(id);
+        savedPostRepository.deleteByPostId(id);
+        notificationRepository.deleteByPostId(id);
+        reportRepository.deleteByReportedPostId(id);
         postRepository.deleteById(id);
     }
 }

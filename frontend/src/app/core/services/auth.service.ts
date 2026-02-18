@@ -20,6 +20,7 @@ export class AuthService {
     formData.append('firstName', userRegister.firstName || '');
     formData.append('lastName', userRegister.lastName || '');
     formData.append('email', userRegister.email);
+    formData.append('bio', userRegister.bio || '');
     formData.append('password', userRegister.password);
     if (userRegister.avatar) {
       formData.append('avatar', userRegister.avatar);

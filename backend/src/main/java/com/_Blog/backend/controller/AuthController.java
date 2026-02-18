@@ -63,6 +63,7 @@ public class AuthController {
             @RequestParam("username") String username,
             @RequestParam(value = "firstName", required = false) String firstName,
             @RequestParam(value = "lastName", required = false) String lastName,
+            @RequestParam(value = "bio", required = false) String bio,
             @RequestParam("email") String email,
             @RequestParam("password") String password,
             @RequestParam(value = "avatar", required = false) MultipartFile avatar) {
@@ -70,6 +71,7 @@ public class AuthController {
         signUpRequest.setUsername(username);
         signUpRequest.setFirstName(firstName);
         signUpRequest.setLastName(lastName);
+        signUpRequest.setBio(bio);
         signUpRequest.setEmail(email);
         signUpRequest.setPassword(password);
 

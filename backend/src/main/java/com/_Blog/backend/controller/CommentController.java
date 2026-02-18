@@ -4,6 +4,7 @@ import com._Blog.backend.domain.model.Comment;
 import com._Blog.backend.domain.model.Post;
 import com._Blog.backend.domain.model.User;
 import com._Blog.backend.dto.CommentRequest;
+import com._Blog.backend.repository.CommentLikeRepository;
 import com._Blog.backend.repository.CommentRepository;
 import com._Blog.backend.repository.PostRepository;
 import com._Blog.backend.repository.UserRepository;
@@ -29,6 +30,9 @@ public class CommentController {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private CommentLikeRepository commentLikeRepository;
 
     @PostMapping
     public ResponseEntity<?> addComment(@RequestBody CommentRequest request, Authentication authentication) {
@@ -73,23 +77,56 @@ public class CommentController {
             return ResponseEntity.status(403).build();
         }
 
+        commentLikeRepository.deleteByCommentId(comment.getId());
         commentRepository.delete(comment);
         return ResponseEntity.noContent().build();
     }
 
     @PostMapping("/like")
-    public ResponseEntity<Map<String, Object>> toggleCommentLike() {
+    public ResponseEntity<Map<String, Object>> toggleCommentLike(@RequestBody Map<String, Object> payload, Authentication authentication) {
+        Object commentIdRaw = payload.get("commentId");
+        if (commentIdRaw == null) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        Long commentId = Long.valueOf(String.valueOf(commentIdRaw));
+
+        User user = userRepository.findByUsername(authentication.getName())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        Comment comment = commentRepository.findById(commentId)
+                .orElseThrow(() -> new RuntimeException("Comment not found"));
+
+        boolean liked;
+        var existing = commentLikeRepository.findByUserAndComment(user, comment);
+        if (existing.isPresent()) {
+            commentLikeRepository.delete(existing.get());
+            liked = false;
+        } else {
+            var commentLike = new com._Blog.backend.domain.model.CommentLike();
+            commentLike.setUser(user);
+            commentLike.setComment(comment);
+            commentLikeRepository.save(commentLike);
+            liked = true;
+        }
+
         Map<String, Object> response = new HashMap<>();
-        response.put("liked", false);
-        response.put("likesCount", 0);
+        response.put("liked", liked);
+        response.put("likesCount", commentLikeRepository.countByComment(comment));
         return ResponseEntity.ok(response);
     }
 
     @GetMapping("/like")
-    public ResponseEntity<Map<String, Object>> getCommentLikeStatus() {
+    public ResponseEntity<Map<String, Object>> getCommentLikeStatus(@RequestParam Long commentId, Authentication authentication) {
+        User user = userRepository.findByUsername(authentication.getName())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        Comment comment = commentRepository.findById(commentId)
+                .orElseThrow(() -> new RuntimeException("Comment not found"));
+
         Map<String, Object> response = new HashMap<>();
-        response.put("liked", false);
-        response.put("likesCount", 0);
+        response.put("liked", commentLikeRepository.findByUserAndComment(user, comment).isPresent());
+        response.put("likesCount", commentLikeRepository.countByComment(comment));
         return ResponseEntity.ok(response);
     }
 
@@ -103,8 +140,8 @@ public class CommentController {
         data.put("owner", comment.getUser().getId().equals(currentUser.getId()));
         data.put("postId", comment.getPost().getId());
         data.put("createdAt", comment.getCreatedAt());
-        data.put("liked", false);
-        data.put("likesCount", 0);
+        data.put("liked", commentLikeRepository.findByUserAndComment(currentUser, comment).isPresent());
+        data.put("likesCount", commentLikeRepository.countByComment(comment));
         return data;
     }
 }
