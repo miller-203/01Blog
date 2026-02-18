@@ -2,6 +2,8 @@ package com._Blog.backend.domain.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import java.time.LocalDateTime;
 
@@ -16,14 +18,17 @@ public class Report {
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "reporter_id", nullable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private User reporter;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "reported_user_id", nullable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private User reportedUser;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "reported_post_id")
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private Post reportedPost;
 
     @Column(nullable = false)
