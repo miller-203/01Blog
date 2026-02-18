@@ -3,6 +3,7 @@ export interface UserRegister {
     firstName: string;
     lastName: string;
     email: string;
+    bio?: string;
     password: string;
     avatar?: File | null;
 }
