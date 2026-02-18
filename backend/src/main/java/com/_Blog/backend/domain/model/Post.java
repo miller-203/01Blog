@@ -24,7 +24,8 @@ public class Post {
 
     private LocalDateTime createdAt = LocalDateTime.now();
 
-    // Relationship: Many Posts belong to One User
+    private String status = "ACTIVE";
+
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;

@@ -111,26 +111,26 @@ public class PostController {
 
         List<PostResponse> responseList = posts.stream().map(post -> {
             PostResponse resp = new PostResponse();
-            resp.setId(post.getId());
-            resp.setTitle(post.getTitle());
-            resp.setContent(post.getContent());
-            resp.setImageUrl(post.getImageUrl());
-            resp.setCreatedAt(post.getCreatedAt());
-            resp.setUserId(post.getUser().getId());
-            resp.setUsername(post.getUser().getUsername());
-            resp.setAuthorFirstName(post.getUser().getFirstName());
-            resp.setAuthorLastName(post.getUser().getLastName());
-            resp.setAvatarUrl(post.getUser().getProfilePicUrl());
-            resp.setOwner(currentUser != null && post.getUser().getId().equals(currentUser.getId()));
-            
-            resp.setLikeCount(likeRepository.countByPost(post));
-            resp.setCommentsCount(commentRepository.findByPostId(post.getId()).size());
-            resp.setSavesCount(savedPostRepository.countByPost(post));
-            if (currentUser != null) {
-                resp.setLikedByCurrentUser(likeRepository.findByUserAndPost(currentUser, post).isPresent());
-                resp.setSavedByCurrentUser(savedPostRepository.findByUserAndPost(currentUser, post).isPresent());
-            }
-            return resp;
+                resp.setId(post.getId());
+                resp.setTitle(post.getTitle());
+                resp.setContent(post.getContent());
+                resp.setImageUrl(post.getImageUrl());
+                resp.setCreatedAt(post.getCreatedAt());
+                resp.setUserId(post.getUser().getId());
+                resp.setUsername(post.getUser().getUsername());
+                resp.setAuthorFirstName(post.getUser().getFirstName());
+                resp.setAuthorLastName(post.getUser().getLastName());
+                resp.setAvatarUrl(post.getUser().getProfilePicUrl());
+                resp.setOwner(currentUser != null && post.getUser().getId().equals(currentUser.getId()));
+                
+                resp.setLikeCount(likeRepository.countByPost(post));
+                resp.setCommentsCount(commentRepository.findByPostId(post.getId()).size());
+                resp.setSavesCount(savedPostRepository.countByPost(post));
+                if (currentUser != null) {
+                    resp.setLikedByCurrentUser(likeRepository.findByUserAndPost(currentUser, post).isPresent());
+                    resp.setSavedByCurrentUser(savedPostRepository.findByUserAndPost(currentUser, post).isPresent());
+                }
+                return resp;
         }).collect(Collectors.toList());
 
         return ResponseEntity.ok(responseList);
