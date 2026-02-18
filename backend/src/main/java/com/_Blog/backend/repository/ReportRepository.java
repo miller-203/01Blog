@@ -8,4 +8,9 @@ import java.util.List;
 
 public interface ReportRepository extends JpaRepository<Report, Long> {
     List<Report> findByReportedUser(User reportedUser);
+
+    void deleteByReportedPostId(Long postId);
+    void deleteByReporterId(Long userId);
+    void deleteByReportedUserId(Long userId);
 }
+

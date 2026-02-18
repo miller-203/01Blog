@@ -1,10 +1,10 @@
 import { Component, inject, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { PostService } from '../../../core/services/post.service';
 import { Post } from '../../../core/models/post';
 import { RouterLink } from '@angular/router';
 import { ConfirmDeletePopup } from '../../../components/confirm-delete-popup/confirm-delete-popup';
 import { Popup } from '../../../components/popup/popup';
+import { AdminService } from '../../../core/services/admin.service';
 
 @Component({
   selector: 'app-admin-posts',
@@ -14,7 +14,7 @@ import { Popup } from '../../../components/popup/popup';
 })
 export class AdminPosts implements OnInit {
   @ViewChild('popup') popup!: Popup;
-  private postService = inject(PostService);
+  private adminService = inject(AdminService);
   posts: Post[] = [];
   filteredPosts: Post[] = [];
   displayedPosts: Post[] = [];
@@ -34,14 +34,10 @@ export class AdminPosts implements OnInit {
     if (this.isLoading || !this.hasMorePosts) return;
 
     this.isLoading = true;
-    this.postService.getAllPosts(this.currentPage, this.pageSize).subscribe({
+    this.adminService.getAllPosts().subscribe({
       next: (posts) => {
-        if (posts.length === 0) {
-          this.hasMorePosts = false;
-        } else {
-          this.posts = [...this.posts, ...posts];
-          this.currentPage++;
-        }
+        this.posts = posts;
+        this.hasMorePosts = false;
         this.applyFilters();
         this.isLoading = false;
       },
@@ -68,7 +64,7 @@ export class AdminPosts implements OnInit {
   }
 
   loadMore() {
-    this.loadPosts();
+    // kept for template compatibility (admin list loads all posts at once)
   }
 
   formatDate(dateString: string): string {
@@ -87,7 +83,7 @@ export class AdminPosts implements OnInit {
 
   confirmDeletePost() {
     if (this.postToDelete) {
-      this.postService.deletePost(this.postToDelete.id).subscribe({
+      this.adminService.deletePost(this.postToDelete.id).subscribe({
         next: () => {
           this.posts = this.posts.filter(p => p.id !== this.postToDelete!.id);
           this.applyFilters();
@@ -111,9 +107,9 @@ export class AdminPosts implements OnInit {
   }
 
   togglePostVisibility(post: Post) {
-    this.postService.togglePostVisibility(post.id).subscribe({
-      next: () => {
-        post.hidden = !post.hidden;
+    this.adminService.togglePostVisibility(post.id).subscribe({
+      next: (updatedPost) => {
+        post.hidden = (updatedPost.status ?? '').toUpperCase() === 'HIDDEN';
         const message = post.hidden ? 'Post hidden successfully.' : 'Post unhidden successfully.';
         this.popup.show(message, true);
       },

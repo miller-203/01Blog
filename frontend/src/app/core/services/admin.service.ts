@@ -4,6 +4,7 @@ import { Observable, forkJoin, map } from 'rxjs';
 import { User } from '../models/user';
 import { ReportResponse, ReportType } from '../models/report';
 import { environment } from '../../../environments/environment.development';
+import { Post } from '../models/post';
 
 @Injectable({
     providedIn: 'root'
@@ -15,7 +16,7 @@ export class AdminService {
     getStatus(): Observable<any> {
         return forkJoin({
             users: this.getAllUsers(),
-            posts: this.http.get<any[]>(`${this.adminApiUrl}/posts`),
+            posts: this.getAllPosts(),
             reports: this.getAllReports()
         }).pipe(
             map(({ users, posts, reports }) => ({
@@ -23,6 +24,21 @@ export class AdminService {
                 totalPosts: posts.length,
                 totalPendingReports: reports.filter(r => r.status === 'PENDING').length
             }))
+        );
+    }
+
+    getAllPosts(): Observable<Post[]> {
+        return this.http.get<any[]>(`${this.adminApiUrl}/posts`).pipe(
+            map(posts => posts.map(post => ({
+                id: String(post.id),
+                title: post.title,
+                content: post.content,
+                createdAt: post.createdAt,
+                authorId: String(post.user?.id ?? ''),
+                authorUsername: post.user?.username ?? '',
+                authorName: post.user?.username ?? '',
+                hidden: (post.status ?? '').toUpperCase() === 'HIDDEN'
+            })))
         );
     }
 
@@ -75,5 +91,9 @@ export class AdminService {
 
     deletePost(postId: string): Observable<any> {
         return this.http.delete<any>(`${this.adminApiUrl}/posts/${postId}`);
+    }
+
+    togglePostVisibility(postId: string): Observable<any> {
+        return this.http.put<any>(`${this.adminApiUrl}/posts/${postId}/toggle-hide`, {});
     }
 }
