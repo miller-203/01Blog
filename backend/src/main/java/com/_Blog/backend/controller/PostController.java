@@ -18,6 +18,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -76,7 +77,7 @@ public class PostController {
         String imageUrl = fileStorageService.saveFile(image);
 
         Map<String, Object> file = new HashMap<>();
-        file.put("url", imageUrl);
+        file.put("url", toPublicUploadUrl(imageUrl));
 
         Map<String, Object> response = new HashMap<>();
         response.put("success", 1);
@@ -98,13 +99,34 @@ public class PostController {
         String videoUrl = fileStorageService.saveFile(video);
 
         Map<String, Object> file = new HashMap<>();
-        file.put("url", videoUrl);
+        file.put("url", toPublicUploadUrl(videoUrl));
 
         Map<String, Object> response = new HashMap<>();
         response.put("success", 1);
         response.put("file", file);
 
         return ResponseEntity.ok(response);
+    }
+
+
+    private String toPublicUploadUrl(String storedPath) {
+        if (storedPath == null || storedPath.isBlank()) {
+            return storedPath;
+        }
+
+        if (storedPath.startsWith("http://") || storedPath.startsWith("https://")) {
+            return storedPath;
+        }
+
+        String normalized = storedPath.startsWith("/") ? storedPath.substring(1) : storedPath;
+        if (!normalized.startsWith("uploads/")) {
+            normalized = "uploads/" + normalized;
+        }
+
+        return ServletUriComponentsBuilder.fromCurrentContextPath()
+                .path("/")
+                .path(normalized)
+                .toUriString();
     }
 
     @PostMapping(consumes = {"multipart/form-data"})
@@ -121,7 +143,7 @@ public class PostController {
             if (file.getSize() > MAX_IMAGE_SIZE_BYTES) {
                 return ResponseEntity.status(413).body("Image exceeds 5MB limit");
             }
-            imageUrl = fileStorageService.saveFile(file);
+            imageUrl = toPublicUploadUrl(fileStorageService.saveFile(file));
         }
 
         Post newPost = postService.createPost(username, title, content);
