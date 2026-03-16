@@ -18,9 +18,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -59,6 +62,72 @@ public class PostController {
     private UserBlockRepository userBlockRepository;
 
     private static final long MAX_IMAGE_SIZE_BYTES = 5 * 1024 * 1024;
+    private static final long MAX_VIDEO_SIZE_BYTES = 25 * 1024 * 1024;
+
+    @PostMapping(value = "/upload-image", consumes = {"multipart/form-data"})
+    public ResponseEntity<?> uploadImage(@RequestParam("image") MultipartFile image) {
+        if (image == null || image.isEmpty()) {
+            return ResponseEntity.badRequest().body("Image file is required");
+        }
+
+        if (image.getSize() > MAX_IMAGE_SIZE_BYTES) {
+            return ResponseEntity.status(413).body("Image exceeds 5MB limit");
+        }
+
+        String imageUrl = fileStorageService.saveFile(image);
+
+        Map<String, Object> file = new HashMap<>();
+        file.put("url", toPublicUploadUrl(imageUrl));
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("success", 1);
+        response.put("file", file);
+
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping(value = "/upload-video", consumes = {"multipart/form-data"})
+    public ResponseEntity<?> uploadVideo(@RequestParam("video") MultipartFile video) {
+        if (video == null || video.isEmpty()) {
+            return ResponseEntity.badRequest().body("Video file is required");
+        }
+
+        if (video.getSize() > MAX_VIDEO_SIZE_BYTES) {
+            return ResponseEntity.status(413).body("Video exceeds 25MB limit");
+        }
+
+        String videoUrl = fileStorageService.saveFile(video);
+
+        Map<String, Object> file = new HashMap<>();
+        file.put("url", toPublicUploadUrl(videoUrl));
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("success", 1);
+        response.put("file", file);
+
+        return ResponseEntity.ok(response);
+    }
+
+
+    private String toPublicUploadUrl(String storedPath) {
+        if (storedPath == null || storedPath.isBlank()) {
+            return storedPath;
+        }
+
+        if (storedPath.startsWith("http://") || storedPath.startsWith("https://")) {
+            return storedPath;
+        }
+
+        String normalized = storedPath.startsWith("/") ? storedPath.substring(1) : storedPath;
+        if (!normalized.startsWith("uploads/")) {
+            normalized = "uploads/" + normalized;
+        }
+
+        return ServletUriComponentsBuilder.fromCurrentContextPath()
+                .path("/")
+                .path(normalized)
+                .toUriString();
+    }
 
     @PostMapping(consumes = {"multipart/form-data"})
     public ResponseEntity<?> createPost(
@@ -74,7 +143,7 @@ public class PostController {
             if (file.getSize() > MAX_IMAGE_SIZE_BYTES) {
                 return ResponseEntity.status(413).body("Image exceeds 5MB limit");
             }
-            imageUrl = fileStorageService.saveFile(file);
+            imageUrl = toPublicUploadUrl(fileStorageService.saveFile(file));
         }
 
         Post newPost = postService.createPost(username, title, content);
