@@ -12,7 +12,7 @@ import { ErrorHandler } from '../../../core/utils/error-handler';
   selector: 'app-login',
   imports: [RouterLink, CommonModule, FormsModule, Popup],
   templateUrl: './login.html',
-  styleUrl: '../../../../styles/auth.scss'
+  styleUrls: ['./login.scss']
 })
 export class Login {
   @ViewChild('popup') popup!: Popup;
