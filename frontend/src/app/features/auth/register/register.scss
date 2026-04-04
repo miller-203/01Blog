@@ -1,14 +1,18 @@
-.auth-page {
+.login-page {
   background: #efefef;
   padding-inline: 1rem;
 }
 
-.auth-card {
-  width: min(100%, 540px);
+.login-card {
+  width: min(100%, 490px);
   background: #f7f7f7;
   border-radius: 16px;
   padding: 2rem;
   box-shadow: 0 12px 26px rgba(0, 0, 0, 0.08);
+}
+
+.register-card {
+  width: min(100%, 560px);
 }
 
 .logo-circle {
@@ -34,11 +38,12 @@
 
 .subtitle {
   color: #7a7f85;
-  font-size: 1rem;
+  font-size: 1.2rem;
+  margin-top: 0.25rem;
 }
 
 .form-label {
-  font-size: 0.95rem;
+  font-size: 1.25rem;
   font-weight: 600;
   color: #1f1f1f;
   margin-bottom: 0.45rem;
@@ -49,7 +54,7 @@
   border-radius: 8px;
   background: #f7f7f7;
   padding: 0.75rem 0.95rem;
-  font-size: 0.95rem;
+  font-size: 1rem;
   color: #111;
 }
 
@@ -83,7 +88,7 @@
   background: #0d0f14;
   color: #fff;
   padding: 0.8rem 1rem;
-  font-size: 1rem;
+  font-size: 1.2rem;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.08em;
@@ -93,9 +98,9 @@
   background: #171a20;
 }
 
-.switch-text {
+.signup-text {
   color: #81848b;
-  font-size: 0.95rem;
+  font-size: 1.15rem;
 }
 
 .text-black {
@@ -118,11 +123,21 @@
 }
 
 @media (max-width: 576px) {
-  .auth-card {
+  .login-card {
     padding: 1.5rem 1.1rem;
   }
 
   .logo-text {
     font-size: 1.5rem;
+  }
+
+  .subtitle,
+  .form-label,
+  .signup-text {
+    font-size: 0.95rem;
+  }
+
+  .btn-primary-custom {
+    font-size: 1rem;
   }
 }
