@@ -4,11 +4,88 @@
 }
 
 .login-card {
-  width: min(100%, 490px);
+  width: min(100%, 1000px);
   background: #f7f7f7;
   border-radius: 16px;
-  padding: 2rem;
   box-shadow: 0 12px 26px rgba(0, 0, 0, 0.08);
+}
+
+.split-layout {
+  display: grid;
+  grid-template-columns: 1.35fr 1fr;
+  overflow: hidden;
+}
+
+.info-panel {
+  padding: 2.2rem;
+}
+
+.info-badge {
+  display: inline-block;
+  font-size: 0.72rem;
+  letter-spacing: 0.16em;
+  font-weight: 700;
+  color: #fff;
+  background: #121317;
+  border-radius: 999px;
+  padding: 0.32rem 0.7rem;
+  margin-bottom: 1rem;
+}
+
+.info-title {
+  font-family: 'Poppins', sans-serif;
+  font-size: clamp(2rem, 4vw, 3rem);
+  line-height: 1.1;
+  color: #111;
+  margin-bottom: 1rem;
+}
+
+.info-title em {
+  font-style: italic;
+}
+
+.info-description {
+  color: #555a62;
+  font-size: 1rem;
+  line-height: 1.5;
+  margin-bottom: 1.5rem;
+  max-width: 36ch;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.65rem;
+}
+
+.stat-item {
+  border: 1px solid #dbdde0;
+  border-radius: 12px;
+  padding: 0.9rem 0.95rem;
+  background: #f8f8f8;
+}
+
+.stat-item h3 {
+  margin: 0;
+  color: #0d1014;
+  font-family: 'Poppins', sans-serif;
+  font-weight: 700;
+}
+
+.stat-item p {
+  margin: 0.2rem 0 0;
+  color: #8b9096;
+  font-size: 0.72rem;
+  letter-spacing: 0.18em;
+  font-weight: 700;
+}
+
+.form-panel {
+  border-left: 1px solid #e0e2e4;
+  padding: 2.2rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .logo-circle {
@@ -34,12 +111,12 @@
 
 .subtitle {
   color: #7a7f85;
-  font-size: 1.2rem;
+  font-size: 1.1rem;
   margin-top: 0.25rem;
 }
 
 .form-label {
-  font-size: 1.25rem;
+  font-size: 1.05rem;
   font-weight: 600;
   color: #1f1f1f;
   margin-bottom: 0.45rem;
@@ -96,7 +173,7 @@
 
 .signup-text {
   color: #81848b;
-  font-size: 1.15rem;
+  font-size: 1rem;
 }
 
 .text-black {
@@ -118,9 +195,21 @@
   }
 }
 
+@media (max-width: 900px) {
+  .split-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .form-panel {
+    border-left: 0;
+    border-top: 1px solid #e0e2e4;
+  }
+}
+
 @media (max-width: 576px) {
-  .login-card {
-    padding: 1.5rem 1.1rem;
+  .info-panel,
+  .form-panel {
+    padding: 1.4rem 1.1rem;
   }
 
   .logo-text {
@@ -135,5 +224,9 @@
 
   .btn-primary-custom {
     font-size: 1rem;
+  }
+
+  .stats-grid {
+    grid-template-columns: 1fr;
   }
 }
