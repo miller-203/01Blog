@@ -1,19 +1,7 @@
 <div class="container-fluid d-flex justify-content-center align-items-center min-vh-100 py-4">
       <app-popup #popup></app-popup>
-      
+
   <div class="main-container d-flex position-relative">
-    <!-- Left Section -->
-    <div class="left-section d-flex align-items-center justify-content-center flex-fill">
-      <div class="geometric-shape shape-1"></div>
-      <div class="geometric-shape shape-2"></div>
-      <div class="geometric-shape shape-3"></div>
-
-      <div class="main-circle d-flex align-items-center justify-content-center">
-        <div class="inner-circle d-flex align-items-center justify-content-center"></div>
-      </div>
-    </div>
-
-    <!-- Right Section -->
     <div class="flex-fill d-flex flex-column justify-content-center p-4">
       <div class="d-flex align-items-center mb-3">
         <div class="logo-circle d-flex align-items-center justify-content-center">
@@ -24,9 +12,7 @@
 
       <p class="start-text mb-3">Create Your Account</p>
 
-      <!-- ✅ Angular form -->
       <form (ngSubmit)="onSubmit()">
-        <!-- First Name & Last Name -->
         <div class="row">
           <div class="col-md-6 form-group mb-3">
             <label for="firstName" class="form-label">First Name</label>
@@ -40,14 +26,12 @@
           </div>
         </div>
 
-        <!-- Username -->
         <div class="form-group mb-3">
           <label for="username" class="form-label">Username</label>
           <input type="text" id="username" name="username" class="form-control" 
             [(ngModel)]="userRegister.username" placeholder="Your username" required>
         </div>
 
-        <!-- Email -->
         <div class="form-group mb-3">
           <label for="email" class="form-label">E-Mail</label>
           <input type="email" id="email" name="email" class="form-control" 
@@ -66,7 +50,6 @@
             (change)="onAvatarSelected($event)">
         </div>
 
-        <!-- Password -->
         <div class="form-group mb-3">
           <label for="password" class="form-label">Password</label>
           <div class="password-wrapper">
@@ -82,7 +65,6 @@
           </div>
         </div>
 
-        <!-- Submit -->
         <button type="submit" [disabled]="isSubmitting"
           class="btn-primary-custom d-flex align-items-center justify-content-center mb-3">
           <span *ngIf="!isSubmitting">Sign Up</span>
@@ -90,16 +72,10 @@
         </button>
       </form>
 
-      <!-- Sign In Link -->
       <p class="signup-text text-center mb-2">
         Already have an account?
         <a routerLink="/login" class="text-black fw-medium text-decoration-none">Sign In</a>
       </p>
-
-      <!-- Terms -->
-      <div class="text-center terms-text">
-        By signing up, you agree to our Terms & Privacy Policy
-      </div>
     </div>
   </div>
 </div>

@@ -12,7 +12,7 @@ import { finalize } from 'rxjs';
   selector: 'app-register',
   imports: [FormsModule, CommonModule, RouterLink, Popup],
   templateUrl: './register.html',
-  styleUrl: '../../../../styles/auth.scss'
+  styleUrls: ['./register.scss']
 })
 export class Register {
   @ViewChild('popup') popup!: Popup;
