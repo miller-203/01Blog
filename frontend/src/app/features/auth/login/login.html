@@ -1,60 +1,90 @@
 <div class="login-page d-flex justify-content-center align-items-center min-vh-100 py-4">
   <app-popup #popup></app-popup>
 
-  <div class="login-card">
-    <div class="d-flex align-items-center mb-2">
-      <div class="logo-circle d-flex align-items-center justify-content-center">
-        <div class="logo-inner"></div>
-      </div>
-      <h1 class="logo-text">01Blog</h1>
-    </div>
+  <div class="login-card split-layout">
+    <section class="info-panel">
+      <span class="info-badge">LEARN • SHARE • GROW</span>
+      <h2 class="info-title">Share Your <em>Learning</em> Journey</h2>
+      <p class="info-description">
+        Document your progress, connect with fellow learners, and inspire others with your discoveries.
+        Join a thriving community dedicated to growth and knowledge sharing.
+      </p>
 
-    <p class="subtitle mb-4">Your story starts here</p>
-
-    <form id="loginForm" (ngSubmit)="onSubmit()">
-      <div class="form-group mb-3">
-        <label for="username" class="form-label">Username</label>
-        <input
-          type="text"
-          class="form-control"
-          [(ngModel)]="userLogin.username"
-          id="username"
-          name="username"
-          placeholder="yourname@gmail.com"
-          required
-        >
-      </div>
-
-      <div class="form-group mb-4">
-        <label for="password" class="form-label">Password</label>
-        <div class="password-wrapper">
-          <input
-            [type]="passwordVisible ? 'text' : 'password'"
-            id="password"
-            name="password"
-            class="form-control"
-            [(ngModel)]="userLogin.password"
-            placeholder="••••••••••••"
-            required
-          >
-          <button type="button" class="eye-icon" (click)="togglePassword()" aria-label="Toggle password visibility">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-              <circle cx="12" cy="12" r="3"></circle>
-            </svg>
-          </button>
+      <div class="stats-grid">
+        <div class="stat-item">
+          <h3>10K+</h3>
+          <p>ACTIVE LEARNERS</p>
+        </div>
+        <div class="stat-item">
+          <h3>50K+</h3>
+          <p>POSTS SHARED</p>
+        </div>
+        <div class="stat-item">
+          <h3>100K+</h3>
+          <p>COMMENTS</p>
+        </div>
+        <div class="stat-item">
+          <h3>98%</h3>
+          <p>SATISFACTION</p>
         </div>
       </div>
+    </section>
 
-      <button type="submit" [disabled]="isSubmitting" class="btn-primary-custom d-flex align-items-center justify-content-center mb-3">
-        <span *ngIf="!isSubmitting">Sign In</span>
-        <span *ngIf="isSubmitting" class="spinner"></span>
-      </button>
-    </form>
+    <section class="form-panel">
+      <div class="d-flex align-items-center mb-2">
+        <div class="logo-circle d-flex align-items-center justify-content-center">
+          <div class="logo-inner"></div>
+        </div>
+        <h1 class="logo-text">01Blog</h1>
+      </div>
 
-    <p class="signup-text text-center mb-0">
-      Don't have an account?
-      <a routerLink="/register" class="text-black fw-semibold text-decoration-none">Sign Up</a>
-    </p>
+      <p class="subtitle mb-4">Sign in to continue your journey</p>
+
+      <form id="loginForm" (ngSubmit)="onSubmit()">
+        <div class="form-group mb-3">
+          <label for="username" class="form-label">Username</label>
+          <input
+            type="text"
+            class="form-control"
+            [(ngModel)]="userLogin.username"
+            id="username"
+            name="username"
+            placeholder="yourname@gmail.com"
+            required
+          >
+        </div>
+
+        <div class="form-group mb-4">
+          <label for="password" class="form-label">Password</label>
+          <div class="password-wrapper">
+            <input
+              [type]="passwordVisible ? 'text' : 'password'"
+              id="password"
+              name="password"
+              class="form-control"
+              [(ngModel)]="userLogin.password"
+              placeholder="••••••••••••"
+              required
+            >
+            <button type="button" class="eye-icon" (click)="togglePassword()" aria-label="Toggle password visibility">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                <circle cx="12" cy="12" r="3"></circle>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <button type="submit" [disabled]="isSubmitting" class="btn-primary-custom d-flex align-items-center justify-content-center mb-3">
+          <span *ngIf="!isSubmitting">Sign In</span>
+          <span *ngIf="isSubmitting" class="spinner"></span>
+        </button>
+      </form>
+
+      <p class="signup-text text-center mb-0">
+        Don't have an account?
+        <a routerLink="/register" class="text-black fw-semibold text-decoration-none">Sign Up</a>
+      </p>
+    </section>
   </div>
 </div>
