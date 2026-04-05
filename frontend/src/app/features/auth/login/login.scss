@@ -4,106 +4,70 @@
 
 .login-page {
   padding-inline: 1.25rem;
-  background: radial-gradient(circle at 50% 4%, #f4f4f5 0%, #ececef 45%, #e6e6e8 100%);
+  background: radial-gradient(circle at 50% 4%, #f2f2f3 0%, #e8e8ea 50%, #dfdfe2 100%);
 }
 
 .login-card {
-  width: min(100%, 1100px);
-  background: #f8f8f9;
-  border: 1px solid #dedfe3;
-  border-radius: 18px;
-  box-shadow: 0 22px 45px rgba(0, 0, 0, 0.1);
+  width: min(100%, 1060px);
+  background: rgba(249, 249, 250, 0.95);
+  border: 1px solid #ececf0;
+  border-radius: 16px;
+  box-shadow: 0 26px 50px rgba(0, 0, 0, 0.08);
   overflow: hidden;
+  backdrop-filter: blur(2px);
 }
 
 .split-layout {
   display: grid;
-  grid-template-columns: 1.4fr 1fr;
+  grid-template-columns: 1.45fr 1fr;
 }
 
 .info-panel,
 .form-panel {
-  padding: clamp(1.6rem, 2.5vw, 2.2rem);
+  padding: clamp(1.7rem, 2.8vw, 2.6rem);
 }
 
-.info-badge {
-  display: inline-flex;
-  align-items: center;
-  font-size: 0.68rem;
-  letter-spacing: 0.14em;
-  font-weight: 700;
-  color: #fff;
-  background: #11131a;
-  border-radius: 999px;
-  padding: 0.36rem 0.78rem;
-  margin-bottom: 1rem;
+.info-panel {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.headline-box {
+  border: 2px solid #1b1b1e;
+  border-radius: 7px;
+  padding: clamp(1rem, 2vw, 1.3rem);
+  margin-bottom: 1.5rem;
 }
 
 .info-title {
-  margin: 0 0 0.95rem;
-  color: #0d0f15;
+  margin: 0;
+  color: #101114;
   font-family: 'Poppins', sans-serif;
-  font-size: clamp(2rem, 3.6vw, 3.05rem);
-  line-height: 1.09;
-  letter-spacing: -0.02em;
-  max-width: 13ch;
+  font-size: clamp(2rem, 4.6vw, 4rem);
+  font-weight: 600;
+  line-height: 0.97;
+  letter-spacing: -0.03em;
+  max-width: 10ch;
 }
 
 .info-title em {
   font-style: italic;
+  font-weight: 700;
 }
 
 .info-description {
-  margin: 0 0 1.4rem;
-  color: #1f232b;
-  font-size: clamp(1rem, 1.2vw, 1.05rem);
-  line-height: 1.42;
-  max-width: 34ch;
-}
-
-.stats-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 0.62rem;
-}
-
-.stat-item {
-  border: 1px solid #d9dbe0;
-  border-radius: 10px;
-  padding: 0.72rem 0.9rem;
-  background: #f7f7f8;
-}
-
-.stat-topline {
-  display: flex;
-  align-items: center;
-  gap: 0.55rem;
-}
-
-.stat-icon {
-  font-size: 1.6rem;
-  line-height: 1;
-  filter: grayscale(1) contrast(1.1);
-}
-
-.stat-item h3 {
   margin: 0;
-  color: #10131a;
-  font-size: clamp(1.1rem, 1.8vw, 1.9rem);
-  font-weight: 700;
-  line-height: 1.12;
-}
-
-.stat-item p {
-  margin: 0.3rem 0 0;
-  color: #7c818a;
-  font-size: 0.74rem;
-  letter-spacing: 0.12em;
-  font-weight: 700;
+  color: #23252b;
+  font-size: clamp(0.95rem, 1.1vw, 1.25rem);
+  line-height: 1.45;
+  max-width: 31ch;
+  align-self: flex-end;
+  text-align: left;
 }
 
 .form-panel {
-  border-left: 1px solid #d8dae0;
+  border-left: 1px solid #e2e3e7;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -112,14 +76,14 @@
 .brand-wrap {
   display: flex;
   align-items: center;
-  gap: 0.55rem;
-  margin-bottom: 0.6rem;
+  gap: 0.5rem;
+  margin-bottom: 0.45rem;
 }
 
 .logo-circle {
-  width: 21px;
-  height: 21px;
-  border: 2px solid #191b22;
+  width: 15px;
+  height: 15px;
+  border: 2px solid #111219;
   border-radius: 50%;
   flex: 0 0 auto;
 }
@@ -127,52 +91,52 @@
 .logo-text {
   margin: 0;
   font-family: 'Poppins', sans-serif;
-  font-size: clamp(2rem, 2.8vw, 2.22rem);
+  font-size: clamp(1.7rem, 2.2vw, 2rem);
   font-weight: 700;
-  letter-spacing: -0.03em;
-  color: #0f1117;
+  letter-spacing: -0.02em;
+  color: #0f1116;
 }
 
 .subtitle {
-  color: #848991;
-  font-size: 1.12rem;
-  margin: 0 0 1.35rem;
+  color: #878c96;
+  font-size: 0.98rem;
+  margin: 0 0 1.25rem;
 }
 
 .form-group {
-  margin-bottom: 0.95rem;
+  margin-bottom: 0.9rem;
 }
 
 .password-group {
-  margin-bottom: 1.35rem;
+  margin-bottom: 1.2rem;
 }
 
 .form-label {
   display: block;
-  margin-bottom: 0.42rem;
-  font-size: 1.03rem;
+  margin-bottom: 0.35rem;
+  font-size: 0.95rem;
   font-weight: 600;
   color: #1b1e25;
 }
 
 .form-control {
   width: 100%;
-  border: 1px solid #d2d5db;
-  border-radius: 8px;
-  background: #f8f8f9;
-  padding: 0.76rem 0.95rem;
-  font-size: 1.02rem;
+  border: 1px solid #d7d9de;
+  border-radius: 6px;
+  background: #fafafb;
+  padding: 0.72rem 0.9rem;
+  font-size: 0.95rem;
   color: #111318;
 }
 
 .form-control::placeholder {
-  color: #9aa0a8;
+  color: #9ca1ab;
 }
 
 .form-control:focus {
-  border-color: #1c1f27;
+  border-color: #171923;
   box-shadow: none;
-  background: #fbfbfc;
+  background: #fff;
 }
 
 .password-wrapper {
@@ -181,7 +145,7 @@
 
 .eye-icon {
   position: absolute;
-  right: 0.74rem;
+  right: 0.62rem;
   top: 50%;
   transform: translateY(-50%);
   border: 0;
@@ -191,36 +155,31 @@
 }
 
 .eye-icon svg {
-  width: 22px;
-  height: 22px;
+  width: 18px;
+  height: 18px;
 }
 
 .btn-primary-custom {
   width: 100%;
-  min-height: 3rem;
+  min-height: 2.65rem;
   border: none;
-  border-radius: 10px;
-  background: linear-gradient(90deg, #0d0f16 0%, #050814 48%, #0b1020 100%);
+  border-radius: 7px;
+  background: linear-gradient(90deg, #0f121b 0%, #070a14 48%, #11172a 100%);
   color: #fff;
-  font-size: 1.22rem;
+  font-size: 1.04rem;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.04em;
-  margin-bottom: 0.9rem;
+  letter-spacing: 0.03em;
+  margin-bottom: 0.8rem;
 }
 
 .btn-primary-custom:hover {
   filter: brightness(1.06);
 }
 
-.btn-primary-custom span {
-  font-size: 1.14rem;
-  line-height: 1;
-}
-
 .signup-text {
-  color: #8a8f97;
-  font-size: 1.08rem;
+  color: #888d96;
+  font-size: 0.96rem;
 }
 
 .text-black {
@@ -228,8 +187,8 @@
 }
 
 .spinner {
-  width: 1.1rem;
-  height: 1.1rem;
+  width: 1.05rem;
+  height: 1.05rem;
   border: 3px solid rgba(255, 255, 255, 0.6);
   border-top-color: #fff;
   border-radius: 50%;
@@ -249,23 +208,28 @@
 
   .form-panel {
     border-left: 0;
-    border-top: 1px solid #dfe1e5;
+    border-top: 1px solid #e1e2e7;
+  }
+
+  .info-description {
+    align-self: flex-start;
+    margin-top: 0.5rem;
   }
 }
 
 @media (max-width: 576px) {
   .info-panel,
   .form-panel {
-    padding: 1.35rem 1.05rem;
+    padding: 1.25rem 1rem;
   }
 
-  .logo-text {
-    font-size: 1.7rem;
+  .headline-box {
+    margin-bottom: 1rem;
   }
 
   .subtitle,
   .form-label,
   .signup-text {
-    font-size: 0.96rem;
+    font-size: 0.92rem;
   }
 }
