@@ -1,5 +1,4 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { SidebarRight } from '../../components/sidebar-right/sidebar-right';
 import { NotificationService, NotificationResponse } from '../../core/services/notification.service';
 import { CommonModule } from '@angular/common';
 import { DateUtilsService } from '../../core/services/utils/DateUtil.service';
@@ -7,7 +6,7 @@ import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-notifications',
-  imports: [SidebarRight, CommonModule],
+  imports: [CommonModule],
   templateUrl: './notifications.html',
   styleUrl: './notifications.scss'
 })
