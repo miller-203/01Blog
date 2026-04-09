@@ -4,8 +4,9 @@
   --popup-progress: rgba(255, 255, 255, 0.95);
 
   position: fixed;
-  right: clamp(14px, 2vw, 24px);
-  bottom: clamp(14px, 2vw, 24px);
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   z-index: 999999;
 
   width: min(92vw, 390px);
@@ -83,18 +84,18 @@
 @keyframes popup-enter {
   from {
     opacity: 0;
-    transform: translateY(10px) scale(0.98);
+    transform: translate(-50%, -46%) scale(0.96);
   }
   to {
     opacity: 1;
-    transform: translateY(0) scale(1);
+    transform: translate(-50%, -50%) scale(1);
   }
 }
 
 @keyframes popup-exit {
   to {
     opacity: 0;
-    transform: translateY(8px) scale(0.985);
+    transform: translate(-50%, -53%) scale(0.98);
   }
 }
 
