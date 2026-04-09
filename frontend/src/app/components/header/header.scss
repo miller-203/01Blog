@@ -48,13 +48,28 @@
     opacity: 0.85;
 }
 
+.brand-wrap {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.45rem;
+}
+
 .logo-circle {
   width: 15px;
   height: 15px;
   border: 2px solid #111219;
   border-radius: 50%;
   flex: 0 0 auto;
-  margin-right: 8px;
+}
+
+.logo-text {
+  margin: 0;
+  font-family: 'Poppins', sans-serif;
+  font-size: clamp(1.7rem, 2.2vw, 2rem);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: #0f1116;
 }
 
 .logo-inner {
