@@ -1,21 +1,135 @@
 .popup {
+  --popup-bg: linear-gradient(135deg, #2b8a3e 0%, #2f9e44 100%);
+  --popup-shadow: rgba(47, 158, 68, 0.35);
+  --popup-progress: rgba(255, 255, 255, 0.95);
+
   position: fixed;
-  bottom: 20px;
-  right: 20px;
-  padding: 12px 20px;
-  border-radius: 8px;
+  right: clamp(14px, 2vw, 24px);
+  bottom: clamp(14px, 2vw, 24px);
+  z-index: 999999;
+
+  width: min(92vw, 390px);
+  min-height: 72px;
+  padding: 12px 14px 14px;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  background: var(--popup-bg);
   color: #fff;
-  font-weight: 500;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-  z-index: 99999999999999;
-  animation: fadeInOut 3s ease-in-out;
+
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  box-shadow:
+    0 14px 30px -16px var(--popup-shadow),
+    0 10px 18px -18px rgba(10, 14, 20, 0.6);
+
+  animation: popup-enter 240ms ease-out, popup-exit 260ms ease-in 2.75s forwards;
+  backdrop-filter: blur(4px);
 }
 
-.popup.success { background: #28a745; }
-.popup.error { background: #dc3545; }
+.popup.error {
+  --popup-bg: linear-gradient(135deg, #b42318 0%, #d92d20 100%);
+  --popup-shadow: rgba(217, 45, 32, 0.36);
+}
 
-@keyframes fadeInOut {
-  0% { opacity: 0; transform: translateY(10px); }
-  10%, 90% { opacity: 1; transform: translateY(0); }
-  100% { opacity: 0; transform: translateY(10px); }
+.popup-icon {
+  width: 34px;
+  height: 34px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.17);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+
+  display: grid;
+  place-items: center;
+
+  font-size: 1.1rem;
+  font-weight: 800;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.popup-message {
+  margin: 0;
+  flex: 1;
+  font-size: 0.95rem;
+  line-height: 1.4;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  text-wrap: balance;
+}
+
+.popup-progress {
+  position: absolute;
+  left: 12px;
+  right: 12px;
+  bottom: 7px;
+  height: 3px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.25);
+  overflow: hidden;
+}
+
+.popup-progress::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: var(--popup-progress);
+  transform-origin: left center;
+  animation: popup-timer 3s linear forwards;
+}
+
+@keyframes popup-enter {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes popup-exit {
+  to {
+    opacity: 0;
+    transform: translateY(8px) scale(0.985);
+  }
+}
+
+@keyframes popup-timer {
+  from {
+    transform: scaleX(1);
+  }
+  to {
+    transform: scaleX(0);
+  }
+}
+
+@media (max-width: 480px) {
+  .popup {
+    width: min(94vw, 360px);
+    min-height: 68px;
+    padding: 11px 12px 13px;
+    border-radius: 14px;
+    gap: 10px;
+  }
+
+  .popup-icon {
+    width: 32px;
+    height: 32px;
+    font-size: 1rem;
+  }
+
+  .popup-message {
+    font-size: 0.9rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .popup,
+  .popup-progress::after {
+    animation: none;
+  }
 }
