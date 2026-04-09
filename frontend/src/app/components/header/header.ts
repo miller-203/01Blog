@@ -1,11 +1,12 @@
 import { Component, HostListener, inject, signal, Output, EventEmitter, OnInit, OnDestroy } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../core/services/auth.service';
-import { NotificationService } from '../../core/services/notification.service';
+import { NotificationService, NotificationResponse } from '../../core/services/notification.service';
 import { UserService } from '../../core/services/user.service';
 import { User } from '../../core/models/user';
 import { Subscription } from 'rxjs';
+import { DateUtilsService } from '../../core/services/utils/DateUtil.service';
 
 @Component({
   selector: 'app-header',
@@ -14,25 +15,25 @@ import { Subscription } from 'rxjs';
   styleUrl: './header.scss'
 })
 export class Header implements OnInit, OnDestroy {
-  // Signal States
   isOpen = signal(false);
   isNotificationsOpen = signal(false);
   currentUser = signal<User | null>(null);
   unreadCount = signal(0);
   isAdmin = signal(false);
 
-  // Subscriptions
+  notifications = signal<NotificationResponse[]>([]);
+  isLoadingNotifications = signal(false);
+
   private subscription: Subscription = new Subscription();
 
-  // Output Events
   @Output() toggleSidebar = new EventEmitter<void>();
 
-  // Injected Services
   private authService = inject(AuthService);
   private notificationService = inject(NotificationService);
   private userService = inject(UserService);
+  private dateUtils = inject(DateUtilsService);
+  private router = inject(Router);
 
-  // ===== LIFECYCLE HOOKS =====
   ngOnInit() {
     this.loadUnreadCount();
     this.loadCurrentUser();
@@ -43,7 +44,6 @@ export class Header implements OnInit, OnDestroy {
     this.subscription.unsubscribe();
   }
 
-  // ===== DATA LOADING =====
   private loadUnreadCount() {
     this.notificationService.getUnreadCount().subscribe({
       next: (count) => {
@@ -76,54 +76,91 @@ export class Header implements OnInit, OnDestroy {
     );
   }
 
-  refreshUnreadCount() {
-    this.loadUnreadCount();
+  private loadNotifications() {
+    this.isLoadingNotifications.set(true);
+    this.notificationService.getNotifications().subscribe({
+      next: (notifications) => {
+        this.notifications.set(notifications);
+        this.isLoadingNotifications.set(false);
+      },
+      error: (error) => {
+        this.isLoadingNotifications.set(false);
+        console.error('Error loading notifications:', error);
+      }
+    });
   }
 
-  // ===== UI TOGGLE ACTIONS =====
+  formatDate(dateString: string): string {
+    return this.dateUtils.formatDate(dateString);
+  }
+
+  onNotificationClick(notification: NotificationResponse): void {
+    const navigate = () => {
+      if (notification.type === 'POST' && notification.postId) {
+        this.router.navigate(['/posts', notification.postId]);
+      } else {
+        this.router.navigate(['/profile', notification.actorUsername]);
+      }
+      this.isNotificationsOpen.set(false);
+    };
+
+    if (notification.read) {
+      navigate();
+      return;
+    }
+
+    this.notificationService.markAsRead(notification.id).subscribe({
+      next: () => {
+        const updated = this.notifications().map(item => item.id === notification.id ? { ...item, read: true } : item);
+        this.notifications.set(updated);
+        const count = Math.max(0, this.unreadCount() - 1);
+        this.unreadCount.set(count);
+        this.notificationService.updateUnreadCount(count);
+        navigate();
+      },
+      error: (error) => {
+        console.error('Error marking notification as read:', error);
+        navigate();
+      }
+    });
+  }
+
   toggleDropdown() {
     this.isOpen.update((v: boolean) => !v);
-    // Close notifications when opening profile dropdown
     if (this.isOpen()) {
       this.isNotificationsOpen.set(false);
     }
-    console.log(this.isOpen());
   }
 
-  toggleNotifications() {
+  toggleNotifications(event: MouseEvent) {
+    event.stopPropagation();
     this.isNotificationsOpen.update((v: boolean) => !v);
-    // Close profile dropdown when opening notifications
     if (this.isNotificationsOpen()) {
       this.isOpen.set(false);
+      this.loadNotifications();
+      this.loadUnreadCount();
     }
-    console.log('Notifications open:', this.isNotificationsOpen());
   }
 
   onToggleSidebar() {
     this.toggleSidebar.emit();
   }
 
-  // ===== EVENT HANDLERS =====
   @HostListener('document:click', ['$event'])
   closeDropdown(event: MouseEvent) {
     const target = event.target as HTMLElement;
 
-    // Close profile dropdown if click is outside
     if (!target.closest('.dropdown')) {
       this.isOpen.set(false);
     }
 
-    // Close notifications dropdown if click is outside
     if (!target.closest('.notifications-dropdown')) {
       this.isNotificationsOpen.set(false);
     }
   }
 
-  // ===== AUTHENTICATION ACTIONS =====
   logout() {
-    console.log('Logout clicked');
     this.isOpen.set(false);
-    console.log('Logging out user');
     this.authService.logout();
   }
 }
