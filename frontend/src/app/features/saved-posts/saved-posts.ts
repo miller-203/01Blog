@@ -1,5 +1,4 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { SidebarRight } from '../../components/sidebar-right/sidebar-right';
 import { CommonModule } from '@angular/common';
 import { PostCard } from '../../components/post-card/post-card';
 import { SaveService } from '../../core/services/save.service';
@@ -7,7 +6,7 @@ import { Post } from '../../core/models/post';
 
 @Component({
   selector: 'app-saved-posts',
-  imports: [SidebarRight, CommonModule, PostCard],
+  imports: [CommonModule, PostCard],
   templateUrl: './saved-posts.html',
   styleUrl: './saved-posts.scss'
 })

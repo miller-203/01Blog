@@ -1,5 +1,4 @@
 import { Component, OnInit, AfterViewInit, ViewChild, inject } from '@angular/core';
-import { SidebarRight } from '../../../components/sidebar-right/sidebar-right';
 import { PostService } from '../../../core/services/post.service';
 import { PostCard } from '../../../components/post-card/post-card';
 import { parseEditorJsContent } from '../../../core/utils/editorjs-parser';
@@ -10,7 +9,7 @@ import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-home',
-  imports: [CommonModule, FormsModule, SidebarRight, PostCard, Popup],
+  imports: [CommonModule, FormsModule, PostCard, Popup],
   templateUrl: './home.html',
   styleUrl: './home.scss'
 })

@@ -1,6 +1,14 @@
 .main-container {
     height: calc(100vh - 59px);
     position: relative;
+    display: flex;
+    background: #f8f9fa;
+}
+
+.content-area {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
 }
 
 /* Sidebar Overlay */
@@ -33,6 +41,10 @@
     .main-container {
         margin-left: 0;
         width: 100%;
+    }
+
+    app-sidebar-right {
+        display: none;
     }
 }
 

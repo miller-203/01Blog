@@ -1,7 +1,6 @@
 import { Component, inject, Input, OnInit, ViewChild } from '@angular/core';
 import { UserService } from '../../core/services/user.service';
 import { User } from '../../core/models/user';
-import { SidebarRight } from '../../components/sidebar-right/sidebar-right';
 import { ReportUserPopup } from '../../components/report-user-popup/report-user-popup';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterLinkActive, Router } from '@angular/router';
@@ -16,7 +15,7 @@ import { ErrorHandler } from '../../core/utils/error-handler';
 
 @Component({
   selector: 'app-profile',
-  imports: [SidebarRight, ReportUserPopup, CommonModule, FormsModule, PostCard, Popup],
+  imports: [ReportUserPopup, CommonModule, FormsModule, PostCard, Popup],
   templateUrl: './profile.html',
   styleUrl: './profile.scss'
 })
