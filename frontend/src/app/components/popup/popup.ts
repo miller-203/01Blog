@@ -13,12 +13,21 @@ export class Popup {
   type: 'success' | 'error' = 'success';
   visible = false;
 
+  private hideTimeout: ReturnType<typeof setTimeout> | null = null;
+
   // ===== PUBLIC API =====
   show(message: string, type: boolean): void {
     this.message = message;
     this.type = type ? 'success' : 'error';
     this.visible = true;
 
-    setTimeout(() => this.visible = false, 3000);
+    if (this.hideTimeout) {
+      clearTimeout(this.hideTimeout);
+    }
+
+    this.hideTimeout = setTimeout(() => {
+      this.visible = false;
+      this.hideTimeout = null;
+    }, 3000);
   }
 }
