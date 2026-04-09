@@ -5,6 +5,7 @@ export interface Comment {
   authorFirstName: string;
   authorLastName: string;
   owner: boolean;
+  canDelete?: boolean;
   postId: string;
   createdAt: string;
   liked?: boolean;

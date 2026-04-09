@@ -86,11 +86,11 @@ export class AdminService {
     }
 
     deleteUser(userId: string): Observable<any> {
-        return this.http.delete<any>(`${this.adminApiUrl}/users/${userId}`);
+        return this.http.delete(`${this.adminApiUrl}/users/${userId}`, { responseType: 'text' });
     }
 
     deletePost(postId: string): Observable<any> {
-        return this.http.delete<any>(`${this.adminApiUrl}/posts/${postId}`);
+        return this.http.delete(`${this.adminApiUrl}/posts/${postId}`, { responseType: 'text' });
     }
 
     togglePostVisibility(postId: string): Observable<any> {
