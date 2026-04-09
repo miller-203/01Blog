@@ -73,7 +73,7 @@ public class CommentController {
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new RuntimeException("Comment not found"));
 
-        if (!comment.getUser().getId().equals(currentUser.getId())) {
+        if (!canDeleteComment(comment, currentUser)) {
             return ResponseEntity.status(403).build();
         }
 
@@ -138,10 +138,21 @@ public class CommentController {
         data.put("authorFirstName", comment.getUser().getFirstName() != null ? comment.getUser().getFirstName() : "");
         data.put("authorLastName", comment.getUser().getLastName() != null ? comment.getUser().getLastName() : comment.getUser().getUsername());
         data.put("owner", comment.getUser().getId().equals(currentUser.getId()));
+        data.put("canDelete", canDeleteComment(comment, currentUser));
         data.put("postId", comment.getPost().getId());
         data.put("createdAt", comment.getCreatedAt());
         data.put("liked", commentLikeRepository.findByUserAndComment(currentUser, comment).isPresent());
         data.put("likesCount", commentLikeRepository.countByComment(comment));
         return data;
+    }
+
+    private boolean canDeleteComment(Comment comment, User currentUser) {
+        boolean isCommentOwner = comment.getUser().getId().equals(currentUser.getId());
+        boolean isPostOwner = comment.getPost() != null
+                && comment.getPost().getUser() != null
+                && comment.getPost().getUser().getId().equals(currentUser.getId());
+        String normalizedRole = currentUser.getRole() == null ? "" : currentUser.getRole().toUpperCase();
+        boolean isAdmin = "ADMIN".equals(normalizedRole) || "ROLE_ADMIN".equals(normalizedRole);
+        return isCommentOwner || isPostOwner || isAdmin;
     }
 }

@@ -238,7 +238,10 @@ export class PostDetail implements OnInit {
   }
 
   canDeleteComment(comment: Comment): boolean {
-    return comment.owner || (!!this.currentUserId && comment.authorId === this.currentUserId);
+    if (typeof comment.canDelete === 'boolean') {
+      return comment.canDelete;
+    }
+    return comment.owner || (!!this.currentUserId && String(comment.authorId) === String(this.currentUserId));
   }
 
   // ===== REPORT ACTIONS =====
