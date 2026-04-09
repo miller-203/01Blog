@@ -15,6 +15,7 @@ import { ReportUserPopup } from '../../../components/report-user-popup/report-us
 import { ConfirmDeletePopup } from '../../../components/confirm-delete-popup/confirm-delete-popup';
 import { Popup } from '../../../components/popup/popup';
 import { ErrorHandler } from '../../../core/utils/error-handler';
+import { UserService } from '../../../core/services/user.service';
 
 @Component({
   selector: 'app-post-detail',
@@ -45,9 +46,17 @@ export class PostDetail implements OnInit {
   router = inject(Router);
   dateUtils = inject(DateUtilsService);
   reportService = inject(ReportService);
+  userService = inject(UserService);
+
+  currentUserId: string | null = null;
 
   // Lifecycle Hook
   ngOnInit() {
+    this.userService.getCurrentUser().subscribe({
+      next: (user) => this.currentUserId = user.id,
+      error: (error) => console.error('Error loading current user in post detail:', error)
+    });
+
     const postId = this.route.snapshot.paramMap.get('id');
     if (!postId) {
       this.router.navigate(['/home']);
@@ -229,7 +238,7 @@ export class PostDetail implements OnInit {
   }
 
   canDeleteComment(comment: Comment): boolean {
-    return comment.owner;
+    return comment.owner || (!!this.currentUserId && comment.authorId === this.currentUserId);
   }
 
   // ===== REPORT ACTIONS =====
