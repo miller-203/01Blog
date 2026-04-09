@@ -18,25 +18,30 @@ export class MainLayout {
 
   private router = inject(Router);
 
-  showLeftSidebar = computed(() => {
+  showNavSidebar = computed(() => {
     const url = this.currentUrl();
     return url === '/home' || url.startsWith('/home/');
   });
 
+
+  showRightSidebar = computed(() => {
+    const url = this.currentUrl();
+    return !url.startsWith('/admin');
+  });
   constructor() {
     this.currentUrl.set(this.router.url);
     this.router.events
       .pipe(filter((event): event is NavigationEnd => event instanceof NavigationEnd))
       .subscribe((event) => {
         this.currentUrl.set(event.urlAfterRedirects);
-        if (!this.showLeftSidebar()) {
+        if (!this.showNavSidebar()) {
           this.closeSidebar();
         }
       });
   }
 
   toggleSidebar() {
-    if (!this.showLeftSidebar()) {
+    if (!this.showNavSidebar()) {
       return;
     }
     this.isSidebarOpen.update(v => !v);
