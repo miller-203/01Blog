@@ -19,7 +19,5 @@ public class PostResponse {
     private LocalDateTime createdAt;
     private long likeCount;
     private long commentsCount;
-    private long savesCount;
     private boolean likedByCurrentUser;
-    private boolean savedByCurrentUser;
 }

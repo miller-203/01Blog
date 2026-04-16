@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit, ViewChild, inject } from '@angular/core';
+import { Component, OnInit, AfterViewInit, ViewChild, ElementRef, inject } from '@angular/core';
 import { PostService } from '../../../core/services/post.service';
 import { PostCard } from '../../../components/post-card/post-card';
 import { parseEditorJsContent } from '../../../core/utils/editorjs-parser';
@@ -23,8 +23,10 @@ export class Home implements OnInit, AfterViewInit {
   showCreatePopup = false;
   newPostTitle = '';
   newPostContent = '';
+  private scrollObserver?: IntersectionObserver;
 
   @ViewChild('popup') popup!: Popup;
+  @ViewChild('loadMoreTrigger') loadMoreTrigger?: ElementRef<HTMLDivElement>;
 
   private postService = inject(PostService);
   private route = inject(ActivatedRoute);
@@ -43,6 +45,22 @@ export class Home implements OnInit, AfterViewInit {
         this.popup.show('Post not found or access denied.', false);
       }
     });
+
+    this.setupScrollObserver();
+  }
+
+  private setupScrollObserver(): void {
+    if (!this.loadMoreTrigger) return;
+    this.scrollObserver?.disconnect();
+
+    this.scrollObserver = new IntersectionObserver((entries) => {
+      const visible = entries.some(entry => entry.isIntersecting);
+      if (visible) {
+        this.loadMorePosts();
+      }
+    }, { rootMargin: '300px 0px' });
+
+    this.scrollObserver.observe(this.loadMoreTrigger.nativeElement);
   }
 
   loadPosts(): void {
@@ -64,6 +82,7 @@ export class Home implements OnInit, AfterViewInit {
           }));
           this.posts = [...this.posts, ...newPosts];
           this.currentPage++;
+          this.hasMorePosts = res.length === this.pageSize;
         }
         this.isLoading = false;
       },

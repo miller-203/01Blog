@@ -7,11 +7,11 @@
       </p>
 
       <!-- SHOW LIST IF THERE ARE NOTIFICATIONS -->
-      <ul class="notification-list" *ngIf="notifications.length > 0">
+      <ul class="notification-list" *ngIf="visibleNotifications.length > 0">
         <li
           class="notification-item"
           [class.unread]="!notification.read"
-          *ngFor="let notification of notifications"
+          *ngFor="let notification of visibleNotifications"
           (click)="onNotificationClick(notification)"
         >
           <div class="notification-avatar">
@@ -29,6 +29,8 @@
           <div class="notification-toggle" *ngIf="!notification.read"></div>
         </li>
       </ul>
+
+      <div #loadMoreTrigger class="scroll-trigger" *ngIf="hasMoreNotifications"></div>
 
       <!-- SHOW EMPTY STATE WHEN THERE ARE ZERO NOTIFICATIONS -->
       <div *ngIf="notifications.length === 0" class="no-notifications">

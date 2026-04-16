@@ -9,7 +9,6 @@ import { AdminLayout } from './layouts/admin-layout/admin-layout';
 import { AdminUsers } from './features/admin/admin-users/admin-users';
 import { AdminPosts } from './features/admin/admin-posts/admin-posts';
 import { AdminReports } from './features/admin/admin-reports/admin-reports';
-import { SavedPosts } from './features/saved-posts/saved-posts';
 import { Notifications } from './features/notifications/notifications';
 import { authGuard } from './core/guard/auth-guard';
 import { adminGuard } from './core/guard/admin-guard';
@@ -36,7 +35,6 @@ export const routes: Routes = [
     children: [
       { path: 'home', component: Home },
       { path: 'home/fallowd-posts', component: Home },
-      { path: 'saved-posts', component: SavedPosts },
       { path: 'notifications', component: Notifications },
       { path: 'create-post', component: CreatePost },
       { path: 'edit-post/:id', component: CreatePost },

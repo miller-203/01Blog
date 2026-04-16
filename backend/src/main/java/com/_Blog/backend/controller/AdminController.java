@@ -10,7 +10,6 @@ import com._Blog.backend.repository.LikeRepository;
 import com._Blog.backend.repository.NotificationRepository;
 import com._Blog.backend.repository.PostRepository;
 import com._Blog.backend.repository.ReportRepository;
-import com._Blog.backend.repository.SavedPostRepository;
 import com._Blog.backend.repository.UserBlockRepository;
 import com._Blog.backend.repository.UserRepository;
 import org.springframework.http.ResponseEntity;
@@ -32,7 +31,6 @@ public class AdminController {
     private final LikeRepository likeRepository;
     private final CommentRepository commentRepository;
     private final CommentLikeRepository commentLikeRepository;
-    private final SavedPostRepository savedPostRepository;
     private final NotificationRepository notificationRepository;
     private final FollowRepository followRepository;
     private final UserBlockRepository userBlockRepository;
@@ -44,7 +42,6 @@ public class AdminController {
             LikeRepository likeRepository,
             CommentRepository commentRepository,
             CommentLikeRepository commentLikeRepository,
-            SavedPostRepository savedPostRepository,
             NotificationRepository notificationRepository,
             FollowRepository followRepository,
             UserBlockRepository userBlockRepository
@@ -55,7 +52,6 @@ public class AdminController {
         this.likeRepository = likeRepository;
         this.commentRepository = commentRepository;
         this.commentLikeRepository = commentLikeRepository;
-        this.savedPostRepository = savedPostRepository;
         this.notificationRepository = notificationRepository;
         this.followRepository = followRepository;
         this.userBlockRepository = userBlockRepository;
@@ -100,7 +96,6 @@ public class AdminController {
         commentLikeRepository.deleteByUserId(id);
         commentRepository.deleteByUserId(id);
         likeRepository.deleteByUserId(id);
-        savedPostRepository.deleteByUserId(id);
 
         postRepository.deleteByUserId(id);
         userRepository.delete(user);
@@ -152,7 +147,6 @@ public class AdminController {
         likeRepository.deleteByPostId(postId);
         commentLikeRepository.deleteByCommentPostId(postId);
         commentRepository.deleteByPostId(postId);
-        savedPostRepository.deleteByPostId(postId);
         notificationRepository.deleteByPostId(postId);
         reportRepository.deleteByReportedPostId(postId);
     }
