@@ -20,21 +20,24 @@ export class PostService {
       authorAvatar: post.authorAvatar ?? post.avatarUrl,
       likesCount: post.likesCount ?? post.likeCount ?? 0,
       commentsCount: post.commentsCount ?? 0,
-      savesCount: post.savesCount ?? 0,
-      liked: post.liked ?? post.likedByCurrentUser ?? false,
-      saved: post.saved ?? post.savedByCurrentUser ?? false
+      liked: post.liked ?? post.likedByCurrentUser ?? false
     };
   }
 
+  private paginate(posts: any[], page: number, size: number): any[] {
+    const start = Math.max(0, page * size);
+    return posts.slice(start, start + size);
+  }
+
   getAllPosts(page: number = 0, size: number = 10): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}?page=${page}&size=${size}`).pipe(
-      map(posts => posts.map(post => this.mapPost(post)))
+    return this.http.get<any[]>(this.apiUrl).pipe(
+      map(posts => this.paginate(posts, page, size).map(post => this.mapPost(post)))
     );
   }
 
   getFollowedPosts(page: number = 0, size: number = 10): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/feed?page=${page}&size=${size}`).pipe(
-      map(posts => posts.map(post => this.mapPost(post)))
+    return this.http.get<any[]>(`${this.apiUrl}/feed`).pipe(
+      map(posts => this.paginate(posts, page, size).map(post => this.mapPost(post)))
     );
   }
 
@@ -62,8 +65,8 @@ export class PostService {
 
   createPost(postData: any): Observable<any> {
     const formData = new FormData();
-    formData.append('title', postData.title || "");
-    formData.append('content', postData.content || "");
+    formData.append('title', postData.title || '');
+    formData.append('content', postData.content || '');
     if (postData.file) {
       formData.append('file', postData.file);
     }

@@ -7,7 +7,6 @@ export const environment = {
     comments: 'http://localhost:8080/api/comments',
     auth: 'http://localhost:8080/api/auth',
     users: 'http://localhost:8080/api/users',
-    saved: 'http://localhost:8080/api/saveds',
     notifications: 'http://localhost:8080/api/notifications',
     reports: 'http://localhost:8080/api/reports'
   }

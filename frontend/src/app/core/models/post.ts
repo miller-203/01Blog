@@ -17,10 +17,8 @@ export interface Post {
 
   likesCount?: number;
   commentsCount?: number;
-  savesCount?: number;
   reportsCount?: number;
 
   liked?: boolean;
-  saved?: boolean;
   hidden?: boolean;
 }

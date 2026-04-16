@@ -8,7 +8,6 @@ import com._Blog.backend.repository.LikeRepository;
 import com._Blog.backend.repository.NotificationRepository;
 import com._Blog.backend.repository.PostRepository;
 import com._Blog.backend.repository.ReportRepository;
-import com._Blog.backend.repository.SavedPostRepository;
 import com._Blog.backend.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -40,9 +39,6 @@ public class PostService {
 
     @Autowired
     private CommentLikeRepository commentLikeRepository;
-
-    @Autowired
-    private SavedPostRepository savedPostRepository;
 
     @Autowired
     private NotificationRepository notificationRepository;
@@ -92,7 +88,6 @@ public class PostService {
         commentLikeRepository.deleteByCommentPostId(id);
         likeRepository.deleteByPostId(id);
         commentRepository.deleteByPostId(id);
-        savedPostRepository.deleteByPostId(id);
         notificationRepository.deleteByPostId(id);
         reportRepository.deleteByReportedPostId(id);
         postRepository.deleteById(id);

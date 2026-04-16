@@ -2,7 +2,6 @@ import { Component, inject, Input, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { LikeService } from '../../core/services/like.service';
 import { Post } from '../../core/models/post';
-import { SaveService } from '../../core/services/save.service';
 import { DateUtilsService } from '../../core/services/utils/DateUtil.service';
 import { Router, RouterLink } from '@angular/router';
 
@@ -26,7 +25,6 @@ export class PostCard implements OnInit {
   // Injected Services
   private router = inject(Router);
   private likeService = inject(LikeService);
-  private saveService = inject(SaveService);
   private dateUtils = inject(DateUtilsService);
 
   // ===== LIFECYCLE HOOKS =====
@@ -97,19 +95,6 @@ export class PostCard implements OnInit {
         }
       },
       error: (err) => console.error('Like error', err)
-    });
-  }
-
-  onSive(): void {
-    if (!this.post) return;
-    this.saveService.toggleSave(this.post.id).subscribe({
-      next: (res: any) => {
-        if (this.post) {
-          this.post.saved = res.saved;
-          this.post.savesCount = res.savesCount;
-        }
-      },
-      error: (err) => console.error('Save error', err)
     });
   }
 

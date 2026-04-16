@@ -3,7 +3,6 @@ import { PostService } from '../../../core/services/post.service';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { Post } from '../../../core/models/post';
 import { LikeService } from '../../../core/services/like.service';
-import { SaveService } from '../../../core/services/save.service';
 import { CommentService } from '../../../core/services/comment.service';
 import { CommonModule } from '@angular/common';
 import { DateUtilsService } from '../../../core/services/utils/DateUtil.service';
@@ -40,7 +39,6 @@ export class PostDetail implements OnInit {
   // Injected Services
   postService = inject(PostService);
   likeService = inject(LikeService);
-  saveService = inject(SaveService);
   commentService = inject(CommentService);
   route = inject(ActivatedRoute);
   router = inject(Router);
@@ -98,22 +96,6 @@ export class PostDetail implements OnInit {
       },
       error: (err) => {
         console.error('Like error', err);
-        this.popup.show(ErrorHandler.extractErrorMessage(err), false);
-      }
-    });
-  }
-
-  onSive(): void {
-    if (!this.post) return;
-    this.saveService.toggleSave(this.post.id).subscribe({
-      next: (res: any) => {
-        if (this.post) {
-          this.post.saved = res.saved;
-          this.post.savesCount = res.savesCount;
-        }
-      },
-      error: (err) => {
-        console.error('Save error', err);
         this.popup.show(ErrorHandler.extractErrorMessage(err), false);
       }
     });
