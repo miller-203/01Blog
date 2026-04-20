@@ -1,13 +1,17 @@
-FROM node:20-alpine
-
+# Stage 1: build Angular app
+FROM node:20-alpine AS build
 WORKDIR /app
 
 COPY package*.json ./
-RUN npm install --legacy-peer-deps
-RUN npm install -g @angular/cli
+RUN npm ci --legacy-peer-deps
 
 COPY . .
+RUN npm run build
 
-EXPOSE 4200
+# Stage 2: serve static files with nginx
+FROM nginx:1.27-alpine
+COPY nginx.conf /etc/nginx/nginx.conf
+COPY --from=build /app/dist/01blog-frontend/browser /usr/share/nginx/html
 
-CMD ["ng", "serve", "--host", "0.0.0.0"]
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]

@@ -1,5 +1,30 @@
 ## 01Blog
 
+## Run with Docker + Neon PostgreSQL
+
+1) Create a `.env` file in the project root from this template:
+
+```bash
+cp .env.example .env
+```
+
+2) Update Neon credentials in `.env`:
+
+- `SPRING_DATASOURCE_URL` (Neon connection string, include `sslmode=require`)
+- `SPRING_DATASOURCE_USERNAME`
+- `SPRING_DATASOURCE_PASSWORD`
+
+3) Start containers:
+
+```bash
+docker compose up --build
+```
+
+- Frontend: `http://localhost:4200`
+- Backend API: `http://localhost:8080`
+
+The frontend container proxies `/api/*` requests to the backend service inside Docker.
+
 ### How to run the project
 
 #### 1) Backend (Spring Boot)
