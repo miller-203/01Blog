@@ -1,12 +1,12 @@
 <app-header (toggleSidebar)="toggleSidebar()"></app-header>
 <main class="main-container d-flex">
-    <app-sidebar-right *ngIf="showRightSidebar()"></app-sidebar-right>
-
     <section class="content-area">
         <router-outlet></router-outlet>
     </section>
 
     <app-sidebar-left *ngIf="showNavSidebar()" [isOpenInput]="isSidebarOpen()"></app-sidebar-left>
+    <app-sidebar-right></app-sidebar-right>
+
     <!-- Overlay for mobile sidebar -->
     <div class="sidebar-overlay" *ngIf="showNavSidebar() && isSidebarOpen() && isMobile()" (click)="closeSidebar()"></div>
 </main>
