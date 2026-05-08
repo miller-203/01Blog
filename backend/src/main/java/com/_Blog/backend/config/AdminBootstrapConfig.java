@@ -20,14 +20,14 @@ public class AdminBootstrapConfig {
             @Value("${app.admin.password}") String adminPassword
     ) {
         return args -> {
-            if (userRepository.existsByUsername(adminUsername)) {
-                return;
+            User admin = userRepository.findByUsername(adminUsername).orElseGet(User::new);
+
+            if (admin.getId() == null) {
+                admin.setUsername(adminUsername);
+                admin.setFirstName("System");
+                admin.setLastName("Admin");
             }
 
-            User admin = new User();
-            admin.setUsername(adminUsername);
-            admin.setFirstName("System");
-            admin.setLastName("Admin");
             admin.setEmail(adminEmail);
             admin.setPassword(passwordEncoder.encode(adminPassword));
             admin.setRole("ADMIN");
