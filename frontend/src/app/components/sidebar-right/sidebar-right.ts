@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, HostBinding, Input, inject, OnInit } from '@angular/core';
 import { UserService } from '../../core/services/user.service';
 import { User } from '../../core/models/user';
 import { CommonModule } from '@angular/common';
@@ -11,6 +11,13 @@ import { FormsModule } from '@angular/forms';
   styleUrl: './sidebar-right.scss'
 })
 export class SidebarRight implements OnInit {
+  @Input() isOpenInput = false;
+
+  @HostBinding('class.open')
+  get isOpenClass() {
+    return this.isOpenInput;
+  }
+
   searchQuery = '';
   users: User[] = [];
   isSearching = false;

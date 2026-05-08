@@ -11,6 +11,7 @@
     overflow: hidden;
 }
 
+app-sidebar-left,
 app-sidebar-right {
     position: sticky;
     top: 0;
@@ -34,17 +35,8 @@ app-sidebar-right {
     .sidebar-overlay {
         display: block;
     }
-}
 
-/* Desktop: Sidebar always visible */
-@media (min-width: 1024px) {
-    .main-container {
-        margin-left: 0;
-    }
-}
-
-/* Tablet/Mobile: Sidebar hidden by default, full width */
-@media (max-width: 1023px) {
+    app-sidebar-left,
     app-sidebar-right {
         position: static;
         height: auto;
@@ -53,9 +45,5 @@ app-sidebar-right {
     .main-container {
         margin-left: 0;
         width: 100%;
-    }
-
-    app-sidebar-left {
-        display: none;
     }
 }
