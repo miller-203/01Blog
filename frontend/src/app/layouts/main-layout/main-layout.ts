@@ -18,7 +18,7 @@ export class MainLayout {
 
   private router = inject(Router);
 
-  showNavSidebar = computed(() => {
+  showUsersSidebar = computed(() => {
     const url = this.currentUrl();
     return url === '/home';
   });
@@ -29,14 +29,14 @@ export class MainLayout {
       .pipe(filter((event): event is NavigationEnd => event instanceof NavigationEnd))
       .subscribe((event) => {
         this.currentUrl.set(event.urlAfterRedirects);
-        if (!this.showNavSidebar()) {
+        if (!this.showUsersSidebar()) {
           this.closeSidebar();
         }
       });
   }
 
   toggleSidebar() {
-    if (!this.showNavSidebar()) {
+    if (!this.showUsersSidebar()) {
       return;
     }
     this.isSidebarOpen.update(v => !v);
