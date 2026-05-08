@@ -6,8 +6,6 @@ import { catchError, switchMap, throwError } from 'rxjs';
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const authService = inject(AuthService);
   
-  // console.log('🔵 [INTERCEPTOR] Request URL:', req.url);
-
   // Skip auth endpoints
   if (req.url.includes('/auth/login') ||
     req.url.includes('/auth/register') ||
@@ -49,9 +47,7 @@ return next(req).pipe(
               const refreshErrorType = refreshError.error?.error || '';
               
               if (refreshErrorType === 'REFRESH_TOKEN_EXPIRED') {
-                console.log("🔴 [INTERCEPTOR] Refresh token expired - logging out");
               } else {
-                console.log("🔴 [INTERCEPTOR] Refresh failed - logging out");
               }
               
               // Logout user
@@ -62,7 +58,6 @@ return next(req).pipe(
         } 
         // If JWT is invalid or any other 401 error
         else {
-          console.log("🔴 [INTERCEPTOR] Invalid token - logging out");
           authService.logout();
           return throwError(() => error);
         }

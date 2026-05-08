@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, forkJoin, map } from 'rxjs';
 import { User } from '../models/user';
 import { ReportResponse, ReportType } from '../models/report';
-import { environment } from '../../../environments/environment.development';
+import { environment } from '../../../environments/environment';
 import { Post } from '../models/post';
 
 @Injectable({
