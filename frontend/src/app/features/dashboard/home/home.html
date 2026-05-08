@@ -4,7 +4,7 @@
     <main class="main-content">
         <div class="content-wrapper">
             <div class="pills-header">
-                <div class="d-flex justify-content-between align-items-center"><h1 class="header-title">Explore Articles</h1><button class="load-more-btn" (click)="openCreatePopup()">New Post</button></div>
+                <div class="d-flex justify-content-between align-items-center"><h1 class="header-title">Explore Articles</h1></div>
                 <div class="category-pills">
                     <div class="pill" [class.active]="currentFilter === 'all'" (click)="switchFilter('all')">All Posts</div>
                     <div class="pill" [class.active]="currentFilter === 'followed'" (click)="switchFilter('followed')">Followed Posts</div>
