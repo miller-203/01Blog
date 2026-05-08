@@ -56,8 +56,8 @@ export class Notifications implements OnInit, AfterViewInit {
         this.currentPage = 0;
         this.visibleNotifications = [];
         this.hasMoreNotifications = notifications.length > 0;
-        this.loadMoreNotifications();
         this.isLoading = false;
+        this.loadMoreNotifications();
       },
       error: (error) => {
         console.error('Error loading notifications:', error);

@@ -32,6 +32,13 @@
 
       <div #loadMoreTrigger class="scroll-trigger" *ngIf="hasMoreNotifications"></div>
 
+      <div class="load-more-container" *ngIf="hasMoreNotifications">
+        <button class="btn btn-outline-dark btn-sm" (click)="loadMoreNotifications()" [disabled]="isLoading">
+          {{ isLoading ? 'Loading...' : 'Load More Notifications' }}
+        </button>
+      </div>
+
+
       <!-- SHOW EMPTY STATE WHEN THERE ARE ZERO NOTIFICATIONS -->
       <div *ngIf="notifications.length === 0" class="no-notifications">
         <svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 24 24">

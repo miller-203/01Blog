@@ -144,3 +144,21 @@
     font-size: 1rem;
   }
 }
+
+
+:host {
+  min-height: 100dvh;
+  display: block;
+}
+
+.login-page {
+  min-height: 100dvh;
+  overflow-y: auto;
+  align-items: flex-start !important;
+}
+
+@media (max-width: 900px) {
+  .login-page {
+    padding-block: 1rem;
+  }
+}

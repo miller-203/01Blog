@@ -20,7 +20,7 @@ export class MainLayout {
 
   showUsersSidebar = computed(() => {
     const url = this.currentUrl();
-    return url === '/home';
+    return url === '/home' || url.startsWith('/home/');
   });
 
   constructor() {
