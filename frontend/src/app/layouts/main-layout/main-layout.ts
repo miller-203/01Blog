@@ -23,8 +23,6 @@ export class MainLayout {
     return url === '/home';
   });
 
-
-  showRightSidebar = computed(() => true);
   constructor() {
     this.currentUrl.set(this.router.url);
     this.router.events
