@@ -24,10 +24,7 @@ export class MainLayout {
   });
 
 
-  showRightSidebar = computed(() => {
-    const url = this.currentUrl();
-    return !url.startsWith('/admin');
-  });
+  showRightSidebar = computed(() => true);
   constructor() {
     this.currentUrl.set(this.router.url);
     this.router.events
