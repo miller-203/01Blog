@@ -15,9 +15,9 @@ public class AdminBootstrapConfig {
     CommandLineRunner ensureAdminUser(
             UserRepository userRepository,
             PasswordEncoder passwordEncoder,
-            @Value("${app.admin.username:admin}") String adminUsername,
-            @Value("${app.admin.email:admin@01blog.local}") String adminEmail,
-            @Value("${app.admin.password:Admin@123456}") String adminPassword
+            @Value("${app.admin.username}") String adminUsername,
+            @Value("${app.admin.email}") String adminEmail,
+            @Value("${app.admin.password}") String adminPassword
     ) {
         return args -> {
             if (userRepository.existsByUsername(adminUsername)) {
