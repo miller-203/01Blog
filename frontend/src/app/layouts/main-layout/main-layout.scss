@@ -11,6 +11,13 @@
     overflow: hidden;
 }
 
+app-sidebar-right {
+    position: sticky;
+    top: 0;
+    align-self: flex-start;
+    height: calc(100vh - 59px);
+}
+
 /* Sidebar Overlay */
 .sidebar-overlay {
     position: fixed;
@@ -38,6 +45,11 @@
 
 /* Tablet/Mobile: Sidebar hidden by default, full width */
 @media (max-width: 1023px) {
+    app-sidebar-right {
+        position: static;
+        height: auto;
+    }
+
     .main-container {
         margin-left: 0;
         width: 100%;
@@ -47,4 +59,3 @@
         display: none;
     }
 }
-

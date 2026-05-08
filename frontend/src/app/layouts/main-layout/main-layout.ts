@@ -20,7 +20,7 @@ export class MainLayout {
 
   showNavSidebar = computed(() => {
     const url = this.currentUrl();
-    return url === '/home' || url.startsWith('/home/');
+    return url === '/home';
   });
 
 
