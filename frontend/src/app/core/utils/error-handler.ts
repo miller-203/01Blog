@@ -1,5 +1,13 @@
 export class ErrorHandler {
   static extractErrorMessage(err: any, defaultMessage = 'An error occurred. Please try again.'): string {
+    if (typeof err?.error === 'string' && err.error.trim()) {
+      return err.error;
+    }
+
+    if (err?.status === 0) {
+      return 'Cannot reach server. Check backend URL/CORS settings and try again.';
+    }
+
     // Case 1: Direct message in err.error.message
     if (err?.error?.message && typeof err.error.message === 'string') {
       return err.error.message;
