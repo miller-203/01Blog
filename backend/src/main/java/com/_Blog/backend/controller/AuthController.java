@@ -37,14 +37,17 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<?> authenticateUser(@RequestBody LoginRequest loginRequest) {
+        String loginValue = loginRequest.getUsername() == null ? "" : loginRequest.getUsername().trim();
         Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
+                new UsernamePasswordAuthenticationToken(loginValue, loginRequest.getPassword()));
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         String jwt = jwtUtils.generateJwtToken(authentication);
 
-        User user = userRepository.findByUsername(loginRequest.getUsername()).orElseThrow();
+        User user = userRepository.findByUsername(loginValue)
+                .or(() -> userRepository.findByEmail(loginValue))
+                .orElseThrow();
 
         if ("BANNED".equalsIgnoreCase(user.getStatus())) {
             return ResponseEntity.status(403).body("Your account is banned");
