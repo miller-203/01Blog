@@ -43,6 +43,7 @@ export class AdminPosts implements OnInit {
       },
       error: (error) => {
         console.error('Error loading posts:', error);
+        this.popup.show('Failed to load posts. Please try again.', false);
         this.isLoading = false;
       }
     });
