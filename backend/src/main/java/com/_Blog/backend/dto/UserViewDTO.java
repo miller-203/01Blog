@@ -13,6 +13,7 @@ public class UserViewDTO {
     private String bio;
     private String role;
     private String avatarUrl;
+    private String coverUrl;
     private long followersCount;
     private long followingCount;
     private int postsCount;

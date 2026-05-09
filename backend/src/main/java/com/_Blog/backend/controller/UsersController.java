@@ -83,12 +83,23 @@ public class UsersController {
         dto.setStatus(user.getStatus());
         dto.setBio(user.getBio());
         dto.setRole(user.getRole());
-        dto.setAvatarUrl(user.getProfilePicUrl());
+        dto.setAvatarUrl(toPublicUploadUrl(user.getProfilePicUrl()));
+        dto.setCoverUrl(toPublicUploadUrl(user.getCoverUrl()));
         dto.setFollowersCount(followRepository.countByFollowed(user));
         dto.setFollowingCount(followRepository.countByFollower(user));
         dto.setPostsCount(postRepository.findByUserId(user.getId()).size());
         dto.setCurrentUser(user.getId().equals(me.getId()));
         dto.setCreatedAt(user.getCreatedAt() != null ? user.getCreatedAt().toString() : null);
         return dto;
+    }
+
+    private String toPublicUploadUrl(String storedPath) {
+        if (storedPath == null || storedPath.isBlank()) {
+            return "";
+        }
+        if (storedPath.startsWith("http://") || storedPath.startsWith("https://") || storedPath.startsWith("/")) {
+            return storedPath;
+        }
+        return "/uploads/" + storedPath;
     }
 }
