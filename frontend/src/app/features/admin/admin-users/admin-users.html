@@ -37,9 +37,11 @@
                 <tbody>
                     <tr *ngFor="let user of displayedUsers" [class.banned-row]="user.role === 'BANNED'">
                         <td>
+                            <div class="d-flex align-items-center gap-2">
+                            <img [src]="user.avatarUrl || '/assets/avatar-placeholder.png'" width="28" height="28" class="rounded-circle" alt="avatar">
                             <a [href]="'/profile/' + user.username" class="username-link">
                                 @{{ user.username }}
-                            </a>
+                            </a></div>
                         </td>
                         <td>{{ user.email }}</td>
                         <td>{{ formatDate(user.createdAt) }}</td>
@@ -51,15 +53,15 @@
                         </td>
 
                         <td class="text-end">
-                            <button *ngIf="user.status !== 'BANNED'" class="btn action-btn btn-ban me-1"
+                            <button *ngIf="user.id !== currentUserId && user.status !== 'BANNED'" class="btn action-btn btn-ban me-1"
                                 (click)="banUser(user)">
                                 Ban
                             </button>
-                            <button *ngIf="user.status === 'BANNED'" class="btn action-btn btn-unban me-1"
+                            <button *ngIf="user.id !== currentUserId && user.status === 'BANNED'" class="btn action-btn btn-unban me-1"
                                 (click)="toggleUserStatus(user)">
                                 Unban
                             </button>
-                            <button class="btn action-btn btn-delete" (click)="deleteUser(user)">
+                            <button *ngIf="user.id !== currentUserId" class="btn action-btn btn-delete" (click)="deleteUser(user)">
                                 Delete
                             </button>
                         </td>

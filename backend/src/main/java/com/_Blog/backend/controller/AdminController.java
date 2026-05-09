@@ -15,6 +15,7 @@ import com._Blog.backend.repository.UserRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -63,7 +64,13 @@ public class AdminController {
     }
 
     @PutMapping("/users/{id}/ban")
-    public ResponseEntity<User> banUser(@PathVariable Long id) {
+    public ResponseEntity<?> banUser(@PathVariable Long id, Authentication authentication) {
+        User currentAdmin = userRepository.findByUsername(authentication.getName())
+                .orElseThrow(() -> new RuntimeException("Admin not found"));
+        if (currentAdmin.getId().equals(id)) {
+            return ResponseEntity.badRequest().body("Admin cannot ban themselves");
+        }
+
         User user = userRepository.findById(id).orElseThrow(() -> new RuntimeException("User not found"));
         boolean isBanned = "BANNED".equalsIgnoreCase(user.getStatus());
         user.setStatus(isBanned ? "ACTIVE" : "BANNED");
@@ -73,7 +80,13 @@ public class AdminController {
 
     @DeleteMapping("/users/{id}")
     @Transactional
-    public ResponseEntity<?> deleteUser(@PathVariable Long id) {
+    public ResponseEntity<?> deleteUser(@PathVariable Long id, Authentication authentication) {
+        User currentAdmin = userRepository.findByUsername(authentication.getName())
+                .orElseThrow(() -> new RuntimeException("Admin not found"));
+        if (currentAdmin.getId().equals(id)) {
+            return ResponseEntity.badRequest().body("Admin cannot delete themselves");
+        }
+
         User user = userRepository.findById(id).orElseThrow(() -> new RuntimeException("User not found"));
 
         List<Post> userPosts = postRepository.findByUserId(id);

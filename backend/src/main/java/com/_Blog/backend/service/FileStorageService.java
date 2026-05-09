@@ -19,6 +19,7 @@ public class FileStorageService {
         try {
             Files.createDirectories(rootLocation);
             Files.createDirectories(rootLocation.resolve("avatars"));
+            Files.createDirectories(rootLocation.resolve("covers"));
             Files.createDirectories(rootLocation.resolve("posts"));
         } catch (IOException e) {
             throw new RuntimeException("Could not initialize folder for upload!");

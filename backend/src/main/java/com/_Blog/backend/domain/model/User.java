@@ -35,5 +35,7 @@ public class User {
 
     private String profilePicUrl;
 
+    private String coverUrl;
+
     private LocalDateTime createdAt = LocalDateTime.now();
 }

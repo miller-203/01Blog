@@ -6,7 +6,7 @@
     <main class="main-content pt-4">
         <div class="content-wrapper">
             <div class="container">
-                <div class="cover-photo"></div>
+                <div class="cover-photo" [style.background-image]="(user as any).coverUrl ? 'url(' + (user as any).coverUrl + ' )' : null"></div>
                 <div class="profile-image-wrapper">
                     <div class="profile-image">
                         <img src="{{user.avatarUrl}}" alt="Profile image">
@@ -23,7 +23,7 @@
                             </svg>
                         </button>
                         <div class="dots-menu" *ngIf="showMenu">
-                            <div class="dots-menu-item" (click)="onShareClick()">
+                            <div class="dots-menu-item" *ngIf="false" (click)="onShareClick()">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
                                     <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.5">
                                         <path
@@ -121,6 +121,11 @@
                             </div>
                         </ng-template>
                     </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="cover">Cover Photo</label>
+                    <input type="file" id="cover" (change)="onCoverChange($event)" name="cover" accept="image/*">
                 </div>
 
                 <div class="form-group">

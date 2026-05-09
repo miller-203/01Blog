@@ -37,7 +37,9 @@ export class Profile implements OnInit {
     lastName: '',
     bio: '',
     avatar: null as File | null,
-    avatarPreview: ''
+    avatarPreview: '',
+    cover: null as File | null,
+    coverPreview: ''
   };
 
 
@@ -165,7 +167,9 @@ export class Profile implements OnInit {
         lastName: this.user.lastName,
         bio: this.user.bio || '',
         avatar: null,
-        avatarPreview: this.user.avatarUrl || ''
+        avatarPreview: this.user.avatarUrl || '',
+        cover: null,
+        coverPreview: (this.user as any).coverUrl || ''
       };
     }
     this.showEditPopup = true;
@@ -209,9 +213,8 @@ export class Profile implements OnInit {
 
 
     // Add avatar if present
-    if (this.editForm.avatar) {
-      formData.append('avatar', this.editForm.avatar);
-    }
+    if (this.editForm.avatar) formData.append('avatar', this.editForm.avatar);
+    if (this.editForm.cover) formData.append('cover', this.editForm.cover);
 
 
     this.userService.updateProfile(formData).subscribe({
@@ -235,6 +238,16 @@ export class Profile implements OnInit {
     this.showMenu = !this.showMenu;
   }
 
+
+  onCoverChange(event: any) {
+    const file = event.target.files[0];
+    if (file) {
+      this.editForm.cover = file;
+      const reader = new FileReader();
+      reader.onload = (e) => this.editForm.coverPreview = e.target?.result as string;
+      reader.readAsDataURL(file);
+    }
+  }
 
   onShareClick() {
     const link = window.location.href;
