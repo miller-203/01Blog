@@ -105,6 +105,10 @@ export class AdminUsers implements OnInit {
   }
 
   deleteUser(user: User) {
+    if (user.id === this.currentUserId) {
+      this.popup.show('You cannot delete your own admin account.', false);
+      return;
+    }
     this.userToDelete = user;
     this.showDeletePopup = true;
   }
@@ -137,6 +141,10 @@ export class AdminUsers implements OnInit {
   }
 
   banUser(user: User) {
+    if (user.id === this.currentUserId) {
+      this.popup.show('You cannot ban your own admin account.', false);
+      return;
+    }
     this.userToBan = user;
     this.showBanPopup = true;
   }
@@ -154,5 +162,4 @@ export class AdminUsers implements OnInit {
     this.userToBan = null;
   }
 }
-
 

@@ -180,6 +180,8 @@ export class Profile implements OnInit {
     this.showEditPopup = false;
     this.editForm.avatar = null;
     this.editForm.avatarPreview = '';
+    this.editForm.cover = null;
+    this.editForm.coverPreview = '';
   }
 
 
