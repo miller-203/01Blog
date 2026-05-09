@@ -40,6 +40,13 @@ export class SidebarLeft implements OnInit, OnDestroy {
   // ===== LIFECYCLE HOOKS =====
   ngOnInit(): void {
     this.loadCurrentUser();
+    this.userService.followCountChanges$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((delta) => {
+        if (this.user) {
+          this.user.followingCount = Math.max(0, this.user.followingCount + delta);
+        }
+      });
   }
 
   ngOnDestroy(): void {

@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { map, Observable } from 'rxjs';
+import { map, Observable, Subject } from 'rxjs';
 import { User } from '../models/user';
 import { environment } from '../../../environments/environment';
 
@@ -10,6 +10,13 @@ import { environment } from '../../../environments/environment';
 export class UserService {
   private readonly apiUrl = environment.api.users;
   private http = inject(HttpClient);
+
+  private followCountChangesSubject = new Subject<number>();
+  followCountChanges$ = this.followCountChangesSubject.asObservable();
+
+  notifyFollowCountChange(delta: number): void {
+    this.followCountChangesSubject.next(delta);
+  }
 
   getCurrentUser(): Observable<User> {
     return this.http.get<User>(`${this.apiUrl}/me`).pipe(
@@ -35,8 +42,10 @@ export class UserService {
     return this.http.get<boolean>(`${environment.apiUrl}/follows/${userId}/status`);
   }
 
-  getFollowingIds(): Observable<number[]> {
-    return this.http.get<number[]>(`${environment.apiUrl}/follows/following/ids`);
+  getFollowingIds(): Observable<string[]> {
+    return this.http.get<Array<string | number>>(`${environment.apiUrl}/follows/following/ids`).pipe(
+      map((ids) => ids.map((id) => String(id)))
+    );
   }
 
   searchUsers(username: string): Observable<User[]> {
