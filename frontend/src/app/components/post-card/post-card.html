@@ -2,7 +2,8 @@
     <a [routerLink]="['/profile', post.authorUsername]" class="authorUsername text-decoration-none">
         <div class="author-section">
             <ng-container *ngIf="authorAvatar; else avatarPlaceholder">
-                <img [src]="authorAvatar" alt="Avatar" class="author-avatar">
+                <!-- <img [src]="post.authorAvatar" alt="Avatar" class="author-avatar"> -->
+                <img [src]="authorAvatar" [alt]="post.authorName" class="author-avatar">
             </ng-container>
             <ng-template #avatarPlaceholder>
                 <div class="author-avatar"></div>
@@ -18,7 +19,8 @@
         </div>
     </a>
 
-    <br><div class="line-1"></div><br>
+    <br>
+    <div class="line-1"></div><br>
 
     <div class="card-content">
         <div class="text-content">

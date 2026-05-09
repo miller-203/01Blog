@@ -32,7 +32,7 @@ export class NotificationService {
       map((notifications) =>
         notifications.map((notification) => ({
           ...notification,
-          actorAvatar: this.toAbsoluteUrl(notification.actorAvatar)
+          actorAvatar: this.toAbsoluteUrl("uploads/" + notification.actorAvatar)
         }))
       )
     );

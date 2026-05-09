@@ -41,6 +41,7 @@ export class PostCard implements OnInit {
     const last = this.post.authorLastName ?? '';
     this.authorName = `${first} ${last}`.trim() || (this.post.authorName ?? '');
     this.authorAvatar = this.post.authorAvatar ?? this.post.authorImage ?? null;
+    // this.authorAvatar = "http://localhost:8080/uploads/" + this.authorAvatar;  
     this.createdAt = this.dateUtils.getTimeAgo(this.post.createdAt);
   }
 
