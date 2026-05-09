@@ -27,7 +27,17 @@ export class SidebarRight implements OnInit {
   private userService = inject(UserService);
 
   ngOnInit(): void {
+    this.loadFollowingIds();
     this.loadDefaultUsers();
+  }
+
+  private loadFollowingIds(): void {
+    this.userService.getFollowingIds().subscribe({
+      next: (ids) => {
+        this.followingUserIds = new Set(ids.map((id) => id.toString()));
+      },
+      error: (err) => console.error('Error loading following ids:', err)
+    });
   }
 
   private loadDefaultUsers(): void {
@@ -40,17 +50,6 @@ export class SidebarRight implements OnInit {
       next: (users) => {
         this.users = users.filter((u) => !u.currentUser);
         this.isSearching = false;
-        this.users.forEach((user) => {
-          this.userService.isFollowing(user.id).subscribe({
-            next: (isFollowing) => {
-              if (isFollowing) {
-                this.followingUserIds.add(user.id);
-              } else {
-                this.followingUserIds.delete(user.id);
-              }
-            }
-          });
-        });
       },
       error: (err) => {
         console.error('Error searching users:', err);
