@@ -92,6 +92,7 @@ public class UserController {
             @RequestParam(value = "lastName", required = false) String lastName,
             @RequestParam(value = "bio", required = false) String bio,
             @RequestParam(value = "avatar", required = false) MultipartFile avatar,
+            @RequestParam(value = "cover", required = false) MultipartFile cover,
             Authentication authentication) {
         User user = userRepository.findByUsername(authentication.getName())
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
@@ -112,6 +113,11 @@ public class UserController {
         if (avatar != null && !avatar.isEmpty()) {
             String avatarUrl = fileStorageService.saveFile(avatar, "avatars");
             user.setProfilePicUrl(avatarUrl);
+        }
+
+        if (cover != null && !cover.isEmpty()) {
+            String coverUrl = fileStorageService.saveFile(cover, "covers");
+            user.setCoverUrl(coverUrl);
         }
 
         return ResponseEntity.ok(userRepository.save(user));
