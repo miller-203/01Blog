@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, BehaviorSubject } from 'rxjs';
+import { Observable, BehaviorSubject, map } from 'rxjs';
 import { environment } from '../../../environments/environment';
 
 export interface NotificationResponse {
@@ -28,7 +28,14 @@ export class NotificationService {
   constructor(private http: HttpClient) {}
 
   getNotifications(): Observable<NotificationResponse[]> {
-    return this.http.get<NotificationResponse[]>(this.apiUrl);
+    return this.http.get<NotificationResponse[]>(this.apiUrl).pipe(
+      map((notifications) =>
+        notifications.map((notification) => ({
+          ...notification,
+          actorAvatar: this.toAbsoluteUrl(notification.actorAvatar)
+        }))
+      )
+    );
   }
 
   getUnreadCount(): Observable<number> {
@@ -41,5 +48,13 @@ export class NotificationService {
 
   updateUnreadCount(count: number): void {
     this.unreadCountSubject.next(count);
+  }
+
+  private toAbsoluteUrl(url?: string): string {
+    if (!url) return '';
+    if (url.startsWith('http://') || url.startsWith('https://')) return url;
+
+    const apiBase = new URL(this.apiUrl, window.location.origin);
+    return new URL(url, apiBase.origin).toString();
   }
 }
