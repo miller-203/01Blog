@@ -20,7 +20,7 @@ export class MainLayout {
 
   showUsersSidebar = computed(() => {
     const url = this.currentUrl();
-    return url === '/home';
+     return !['/', '/login', '/register'].includes(url);
   });
 
   constructor() {
