@@ -123,9 +123,11 @@ export class Profile implements OnInit {
         // Update follower count
         if (this.isFollowing) {
           this.user!.followersCount++;
+          this.userService.notifyFollowCountChange(1);
           this.popup.show('Successfully followed!', true);
         } else {
           this.user!.followersCount--;
+          this.userService.notifyFollowCountChange(-1);
           this.popup.show('Successfully unfollowed!', true);
         }
         this.isLoading = false;

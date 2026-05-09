@@ -82,16 +82,30 @@ export class SidebarRight implements OnInit {
     const action = isFollowing ? this.userService.unfollow(userId) : this.userService.follow(userId);
     action.subscribe({
       next: () => {
+        this.userService.notifyFollowCountChange(isFollowing ? -1 : 1);
         this.followActionInProgress.delete(userId);
       },
       error: (err) => {
-        // rollback optimistic update
-        if (isFollowing) {
-          this.followingUserIds.add(userId);
-        } else {
-          this.followingUserIds.delete(userId);
-        }
-        this.followActionInProgress.delete(userId);
+        this.userService.isFollowing(userId).subscribe({
+          next: (serverIsFollowing) => {
+            if (serverIsFollowing) {
+              this.followingUserIds.add(userId);
+            } else {
+              this.followingUserIds.delete(userId);
+            }
+          },
+          error: () => {
+            // fallback rollback if status check fails
+            if (isFollowing) {
+              this.followingUserIds.add(userId);
+            } else {
+              this.followingUserIds.delete(userId);
+            }
+          },
+          complete: () => {
+            this.followActionInProgress.delete(userId);
+          }
+        });
         console.error('Follow toggle failed', err);
       }
     });
