@@ -32,6 +32,9 @@ public class AdminBootstrapConfig {
             admin.setPassword(passwordEncoder.encode(adminPassword));
             admin.setRole("ADMIN");
             admin.setStatus("ACTIVE");
+            admin.setProfilePicUrl("avatars/avatar_admin.jpg");
+            admin.setCoverUrl("covers/cover_admin.jpg");
+            admin.setBio("Passionate website admin focused on managing content, monitoring security, supporting users, and ensuring smooth website performance. Dedicated to keeping the platform organized, secure, user-friendly, and providing the best experience for all visitors.");
 
             userRepository.save(admin);
         };
