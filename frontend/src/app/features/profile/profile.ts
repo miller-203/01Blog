@@ -253,20 +253,6 @@ export class Profile implements OnInit {
     }
   }
 
-  onShareClick() {
-    const link = window.location.href;
-
-
-    navigator.clipboard.writeText(link).then(() => {
-      this.popup.show('Link copied to clipboard!', true);
-      this.showMenu = false;
-    }).catch(err => {
-      console.error('Failed to copy link:', err);
-      this.popup.show('Failed to copy link. Please try again.', false);
-    });
-  }
-
-
   onReportClick() {
     this.showReportPopup = true;
     this.showMenu = false;

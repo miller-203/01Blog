@@ -4,15 +4,12 @@
   <div class="container">
     <article class="card" *ngIf="post">
 
-      <!-- Title -->
-      <h1 class="title">{{ post.title }}</h1>
-
       <!-- Author -->
       <div class="header-auther d-flex justify-content-between">
 
 
         <div class="author">
-          <img src="{{ post.authorAvatar }}" alt="Author" class="avatar">
+          <img src="{{ post.avatarUrl }}" alt="Author" class="avatar">
           <div class="info">
             <div class="name">{{ post.authorFirstName + " " + post.authorLastName }}</div>
             <div class="date">{{ createdAt }}</div>
@@ -63,6 +60,9 @@
       </div>
 
       <div class="line-1"></div>
+
+      <!-- Title -->
+      <br><h1 class="title">{{ post.title }}</h1>
 
       <!-- Content -->
       <div class="content">
