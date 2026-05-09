@@ -33,6 +33,8 @@
   border-radius: 10px;
   position: relative;
   overflow: hidden;
+  background-position: center;
+  background-size: cover;
 }
 
 .cover-photo::after {

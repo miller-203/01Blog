@@ -1,5 +1,5 @@
 <div class="small-profile mb-4" *ngIf="user">
-  <div class="profile-cover"></div>
+  <div class="profile-cover" [style.background-image]="user.coverUrl ? 'url(' + user.coverUrl + ')' : null"></div>
 
   <div class="profile-avatar">
     <img
