@@ -35,8 +35,10 @@ export class UserService {
     return this.http.get<boolean>(`${environment.apiUrl}/follows/${userId}/status`);
   }
 
-  getFollowingIds(): Observable<number[]> {
-    return this.http.get<number[]>(`${environment.apiUrl}/follows/following/ids`);
+  getFollowingIds(): Observable<string[]> {
+    return this.http.get<Array<string | number>>(`${environment.apiUrl}/follows/following/ids`).pipe(
+      map((ids) => ids.map((id) => String(id)))
+    );
   }
 
   searchUsers(username: string): Observable<User[]> {
