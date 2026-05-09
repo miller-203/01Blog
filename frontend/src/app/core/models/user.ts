@@ -24,6 +24,7 @@ export interface User {
   bio: string
   role: string;
   avatarUrl: string;
+  coverUrl?: string;
   followersCount: number;
   followingCount: number;
   postsCount: number;

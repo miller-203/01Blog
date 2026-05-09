@@ -14,7 +14,7 @@ import { Popup } from '../../../components/popup/popup';
 export class AdminUsers implements OnInit {
   @ViewChild('popup') popup!: Popup;
   private adminService = inject(AdminService);
-  currentUserId = Number(localStorage.getItem('user_id') || 0);
+  currentUserId = localStorage.getItem('user_id') || '';
   users: User[] = [];
   filteredUsers: User[] = [];
   displayedUsers: User[] = [];

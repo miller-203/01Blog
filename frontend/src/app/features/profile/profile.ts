@@ -169,7 +169,7 @@ export class Profile implements OnInit {
         avatar: null,
         avatarPreview: this.user.avatarUrl || '',
         cover: null,
-        coverPreview: (this.user as any).coverUrl || ''
+        coverPreview: this.user.coverUrl || ''
       };
     }
     this.showEditPopup = true;
