@@ -40,6 +40,7 @@ export class AdminUsers implements OnInit {
       },
       error: (error) => {
         console.error('Error loading users:', error);
+        this.popup.show('Failed to load users. Please try again.', false);
       }
     });
   }
@@ -162,4 +163,3 @@ export class AdminUsers implements OnInit {
     this.userToBan = null;
   }
 }
-

@@ -37,6 +37,7 @@ export class AdminReports implements OnInit {
       },
       error: (error) => {
         console.error('Error loading reports:', error);
+        this.popup.show('Failed to load reports. Please try again.', false);
       }
     });
   }
@@ -136,6 +137,7 @@ cancelBanUser() {
           r.reportId === updatedReport.reportId ? { ...r, ...updatedReport, status: "RESOLVED" as any } : r
         );
         this.applyFilters();
+        this.popup.show('Report dismissed successfully.', true);
       },
       error: (err) => {
         console.error(err);
