@@ -13,9 +13,19 @@ export class UserService {
 
   private followCountChangesSubject = new Subject<number>();
   followCountChanges$ = this.followCountChangesSubject.asObservable();
+  private followStateChangesSubject = new Subject<{ userId: string; isFollowing: boolean; delta: number }>();
+  followStateChanges$ = this.followStateChangesSubject.asObservable();
 
   notifyFollowCountChange(delta: number): void {
     this.followCountChangesSubject.next(delta);
+  }
+
+  notifyFollowStateChange(userId: string, isFollowing: boolean): void {
+    this.followStateChangesSubject.next({
+      userId: String(userId),
+      isFollowing,
+      delta: isFollowing ? 1 : -1
+    });
   }
 
   getCurrentUser(): Observable<User> {

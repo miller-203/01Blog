@@ -11,6 +11,7 @@ import { PostCard } from '../../components/post-card/post-card';
 import { parseEditorJsContent } from '../../core/utils/editorjs-parser';
 import { Popup } from '../../components/popup/popup';
 import { ErrorHandler } from '../../core/utils/error-handler';
+import { Subject, takeUntil } from 'rxjs';
 
 
 @Component({
@@ -30,6 +31,7 @@ export class Profile implements OnInit {
   showMenu: boolean = false;
   showReportPopup: boolean = false;
   posts: any[] = [];
+  private destroy$ = new Subject<void>();
 
 
   editForm = {
@@ -58,6 +60,19 @@ export class Profile implements OnInit {
 
   // ===== LIFECYCLE HOOKS =====
   ngOnInit(): void {
+    this.userService.followStateChanges$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(({ userId, isFollowing, delta }) => {
+        if (!this.user) return;
+        if (String(this.user.id) === userId) {
+          this.isFollowing = isFollowing;
+          this.user.followersCount += delta;
+        }
+        if (this.user.currentUser) {
+          this.user.followingCount += delta;
+        }
+      });
+
     this.route.paramMap.subscribe(params => {
       this.currentUsername = params.get('username') || '';
 
@@ -65,6 +80,11 @@ export class Profile implements OnInit {
         this.loadUserProfile();
       }
     });
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
 
@@ -125,10 +145,12 @@ export class Profile implements OnInit {
         if (this.isFollowing) {
           this.user!.followersCount++;
           this.userService.notifyFollowCountChange(1);
+          this.userService.notifyFollowStateChange(this.user!.id, true);
           this.popup.show('Successfully followed!', true);
         } else {
           this.user!.followersCount--;
           this.userService.notifyFollowCountChange(-1);
+          this.userService.notifyFollowStateChange(this.user!.id, false);
           this.popup.show('Successfully unfollowed!', true);
         }
         this.isLoading = false;

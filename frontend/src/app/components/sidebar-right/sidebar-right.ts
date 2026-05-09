@@ -1,8 +1,9 @@
-import { Component, HostBinding, Input, inject, OnInit } from '@angular/core';
+import { Component, HostBinding, Input, OnDestroy, inject, OnInit } from '@angular/core';
 import { UserService } from '../../core/services/user.service';
 import { User } from '../../core/models/user';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Subject, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-sidebar-right',
@@ -10,7 +11,7 @@ import { FormsModule } from '@angular/forms';
   templateUrl: './sidebar-right.html',
   styleUrl: './sidebar-right.scss'
 })
-export class SidebarRight implements OnInit {
+export class SidebarRight implements OnInit, OnDestroy {
   @Input() isOpenInput = false;
 
   @HostBinding('class.open')
@@ -23,12 +24,27 @@ export class SidebarRight implements OnInit {
   isSearching = false;
   followingUserIds = new Set<string>();
   followActionInProgress = new Set<string>();
+  private destroy$ = new Subject<void>();
 
   private userService = inject(UserService);
 
   ngOnInit(): void {
     this.loadFollowingIds();
     this.loadDefaultUsers();
+    this.userService.followStateChanges$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(({ userId, isFollowing }) => {
+        if (isFollowing) {
+          this.followingUserIds.add(userId);
+        } else {
+          this.followingUserIds.delete(userId);
+        }
+      });
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   private loadFollowingIds(): void {
@@ -83,6 +99,7 @@ export class SidebarRight implements OnInit {
     action.subscribe({
       next: () => {
         this.userService.notifyFollowCountChange(isFollowing ? -1 : 1);
+        this.userService.notifyFollowStateChange(userId, !isFollowing);
         this.followActionInProgress.delete(userId);
       },
       error: (err) => {
