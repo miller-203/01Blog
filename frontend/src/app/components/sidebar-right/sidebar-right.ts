@@ -22,6 +22,7 @@ export class SidebarRight implements OnInit {
   users: User[] = [];
   isSearching = false;
   followingUserIds = new Set<string>();
+  followActionInProgress = new Set<string>();
 
   private userService = inject(UserService);
 
@@ -66,17 +67,32 @@ export class SidebarRight implements OnInit {
   toggleFollow(user: User, event: MouseEvent): void {
     event.preventDefault();
     event.stopPropagation();
+    if (this.followActionInProgress.has(user.id)) return;
+
     const isFollowing = this.followingUserIds.has(user.id);
+    // optimistic UI update for real-time toggle
+    if (isFollowing) {
+      this.followingUserIds.delete(user.id);
+    } else {
+      this.followingUserIds.add(user.id);
+    }
+    this.followActionInProgress.add(user.id);
+
     const action = isFollowing ? this.userService.unfollow(user.id) : this.userService.follow(user.id);
     action.subscribe({
       next: () => {
-        if (isFollowing) {
-          this.followingUserIds.delete(user.id);
-        } else {
-          this.followingUserIds.add(user.id);
-        }
+        this.followActionInProgress.delete(user.id);
       },
-      error: (err) => console.error('Follow toggle failed', err)
+      error: (err) => {
+        // rollback optimistic update
+        if (isFollowing) {
+          this.followingUserIds.add(user.id);
+        } else {
+          this.followingUserIds.delete(user.id);
+        }
+        this.followActionInProgress.delete(user.id);
+        console.error('Follow toggle failed', err);
+      }
     });
   }
 }

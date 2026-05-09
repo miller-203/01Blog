@@ -52,7 +52,7 @@
                 <h3 class="name">{{ user.firstName }} {{ user.lastName }}</h3>
                 <div class="user-name">@{{ user.username }}</div>
             </div>
-                        <button class="btn btn-sm btn-outline-primary" (click)="toggleFollow(user, $event)">
+                        <button class="btn btn-sm btn-outline-primary" (click)="toggleFollow(user, $event)" [disabled]="followActionInProgress.has(user.id)">
                 {{ followingUserIds.has(user.id) ? 'Unfollow' : 'Follow' }}
             </button>
         </a>

@@ -125,7 +125,12 @@
 
                 <div class="form-group">
                     <label for="cover">Cover Photo</label>
-                    <input type="file" id="cover" (change)="onCoverChange($event)" name="cover" accept="image/*">
+                    <input type="file" id="cover" (change)="onCoverChange($event)" name="cover" accept="image/*"
+                        #coverInput style="display: none;">
+                    <div class="cover-upload" (click)="coverInput.click()">
+                        <img *ngIf="editForm.coverPreview" [src]="editForm.coverPreview" alt="Cover preview">
+                        <div *ngIf="!editForm.coverPreview" class="cover-placeholder">Click to upload cover</div>
+                    </div>
                 </div>
 
                 <div class="form-group">
