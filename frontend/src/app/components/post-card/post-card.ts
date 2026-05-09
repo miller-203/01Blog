@@ -4,6 +4,7 @@ import { LikeService } from '../../core/services/like.service';
 import { Post } from '../../core/models/post';
 import { DateUtilsService } from '../../core/services/utils/DateUtil.service';
 import { Router, RouterLink } from '@angular/router';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-post-card',
@@ -40,7 +41,8 @@ export class PostCard implements OnInit {
     const first = this.post.authorFirstName ?? '';
     const last = this.post.authorLastName ?? '';
     this.authorName = `${first} ${last}`.trim() || (this.post.authorName ?? '');
-    this.authorAvatar = this.post.authorAvatar ?? this.post.authorImage ?? null;
+    const rawAvatar = this.post.authorAvatar ?? this.post.authorImage ?? null;
+    this.authorAvatar = this.normalizeAvatar(rawAvatar);
     // this.authorAvatar = "http://localhost:8080/uploads/" + this.authorAvatar;  
     this.createdAt = this.dateUtils.getTimeAgo(this.post.createdAt);
   }
@@ -106,5 +108,18 @@ export class PostCard implements OnInit {
   // ===== UTILITY METHODS =====
   private stripHtml(s: string): string {
     return String(s).replace(/<[^>]*>/g, '');
+  }
+   private normalizeAvatar(value: unknown): string | null {
+    const avatar = String(value ?? '').trim();
+    if (!avatar || avatar.toLowerCase() === 'false' || avatar.toLowerCase() === 'null') {
+      return null;
+    }
+    if (/^https?:\/\//i.test(avatar) || avatar.startsWith('/')) {
+      return avatar;
+    }
+
+    const origin = environment.apiUrl.replace(/\/api\/?$/, '');
+    const normalizedPath = avatar.startsWith('uploads/') ? avatar : `uploads/${avatar}`;
+    return `${origin}/${normalizedPath}`;
   }
 }

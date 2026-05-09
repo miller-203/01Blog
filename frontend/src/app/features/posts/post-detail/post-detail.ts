@@ -15,6 +15,7 @@ import { ConfirmDeletePopup } from '../../../components/confirm-delete-popup/con
 import { Popup } from '../../../components/popup/popup';
 import { ErrorHandler } from '../../../core/utils/error-handler';
 import { UserService } from '../../../core/services/user.service';
+import { environment } from '../../../../environments/environment';
 
 @Component({
   selector: 'app-post-detail',
@@ -35,6 +36,7 @@ export class PostDetail implements OnInit {
   showDeletePopup: boolean = false;
   postToDelete: Post | null = null;
   reportForm = { reason: '' };
+  authorAvatar: string | null = null;
 
   // Injected Services
   postService = inject(PostService);
@@ -74,6 +76,7 @@ export class PostDetail implements OnInit {
           ...post,
           parsedContent: parseEditorJsContent(post.content)
         };
+        this.authorAvatar = this.normalizeAvatar(this.post.authorAvatar ?? this.post.authorImage ?? this.post.avatarUrl ?? null);
         this.createdAt = this.dateUtils.formatDate(post.createdAt);
         console.log('Post details:', this.post);
       },
@@ -254,5 +257,18 @@ export class PostDetail implements OnInit {
         this.popup.show(ErrorHandler.extractErrorMessage(err), false);
       }
     });
+  }
+  private normalizeAvatar(value: unknown): string | null {
+    const avatar = String(value ?? '').trim();
+    if (!avatar || avatar.toLowerCase() === 'false' || avatar.toLowerCase() === 'null') {
+      return null;
+    }
+    if (/^https?:\/\//i.test(avatar) || avatar.startsWith('/')) {
+      return avatar;
+    }
+
+    const origin = environment.apiUrl.replace(/\/api\/?$/, '');
+    const normalizedPath = avatar.startsWith('uploads/') ? avatar : `uploads/${avatar}`;
+    return `${origin}/${normalizedPath}`;
   }
 }
