@@ -79,7 +79,7 @@ public class AuthController {
         signUpRequest.setPassword(password);
 
         if (avatar != null && !avatar.isEmpty()) {
-            signUpRequest.setProfilePicUrl(fileStorageService.saveFile(avatar));
+            signUpRequest.setProfilePicUrl(fileStorageService.saveFile(avatar, "avatars"));
         }
 
         String result = authService.registerUser(signUpRequest);
