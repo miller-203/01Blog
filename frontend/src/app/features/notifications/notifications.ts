@@ -123,4 +123,13 @@ export class Notifications implements OnInit, AfterViewInit {
   formatDate(dateString: string): string {
     return this.dateUtils.formatDate(dateString);
   }
+
+  getNotificationAvatar(notification: NotificationResponse): string {
+    return notification.actorAvatar || '';
+  }
+
+  onAvatarError(event: Event): void {
+    const img = event.target as HTMLImageElement;
+    img.style.display = 'none';
+  }
 }

@@ -84,6 +84,15 @@ export class PostDetail implements OnInit {
     });
   }
 
+  getAuthorAvatar(): string {
+    return this.post?.authorAvatar || this.post?.avatarUrl || '';
+  }
+
+  onAvatarError(event: Event): void {
+    const img = event.target as HTMLImageElement;
+    img.style.display = 'none';
+  }
+
   // ===== POST ACTIONS =====
   onLike(): void {
     if (!this.post) return;

@@ -9,7 +9,12 @@
 
 
         <div class="author">
-          <img src="{{ post.avatarUrl }}" alt="Author" class="avatar">
+          <ng-container *ngIf="getAuthorAvatar(); else authorAvatarPlaceholder">
+            <img [src]="getAuthorAvatar()" alt="Author" class="avatar" (error)="onAvatarError($event)">
+          </ng-container>
+          <ng-template #authorAvatarPlaceholder>
+            <div class="avatar"></div>
+          </ng-template>
           <div class="info">
             <div class="name">{{ post.authorFirstName + " " + post.authorLastName }}</div>
             <div class="date">{{ createdAt }}</div>

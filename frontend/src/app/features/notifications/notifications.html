@@ -15,10 +15,16 @@
           (click)="onNotificationClick(notification)"
         >
           <div class="notification-avatar">
-            <img
-              [src]="notification.actorAvatar"
-              [alt]="notification.actorFirstName + ' ' + notification.actorLastName"
-            />
+            <ng-container *ngIf="getNotificationAvatar(notification); else notificationAvatarPlaceholder">
+              <img
+                [src]="getNotificationAvatar(notification)"
+                [alt]="notification.actorFirstName + ' ' + notification.actorLastName"
+                (error)="onAvatarError($event)"
+              />
+            </ng-container>
+            <ng-template #notificationAvatarPlaceholder>
+              <div></div>
+            </ng-template>
           </div>
 
           <div class="notification-content">
