@@ -36,6 +36,6 @@ export class UserService {
   }
 
   updateProfile(formData: FormData): Observable<User> {
-    return this.http.put<User>(`${this.apiUrl}/profile`, formData);
+    return this.http.put<User>(`${environment.apiUrl}/user/profile`, formData);
   }
 }
