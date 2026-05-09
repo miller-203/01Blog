@@ -58,12 +58,13 @@ export class Profile implements OnInit {
 
   // ===== LIFECYCLE HOOKS =====
   ngOnInit(): void {
-    this.currentUsername = this.route.snapshot.paramMap.get('username') || '';
+    this.route.paramMap.subscribe(params => {
+      this.currentUsername = params.get('username') || '';
 
-
-    if (this.currentUsername) {
-      this.loadUserProfile();
-    }
+      if (this.currentUsername) {
+        this.loadUserProfile();
+      }
+    });
   }
 
 
