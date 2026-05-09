@@ -1,34 +1,35 @@
 <div class="blog-card">
     <a [routerLink]="['/profile', post.authorUsername]" class="authorUsername text-decoration-none">
-    <div class="author-section">
-        <ng-container *ngIf="authorAvatar; else avatarPlaceholder">
-            <img [src]="authorAvatar" alt="Avatar" class="author-avatar">
-        </ng-container>
-        <ng-template #avatarPlaceholder>
-            <div class="author-avatar"></div>
-        </ng-template>
+        <div class="author-section">
+            <ng-container *ngIf="authorAvatar; else avatarPlaceholder">
+                <img [src]="authorAvatar" alt="Avatar" class="author-avatar">
+            </ng-container>
+            <ng-template #avatarPlaceholder>
+                <div class="author-avatar"></div>
+            </ng-template>
 
-        <span class="author-name">{{ authorName }}</span>
-        
-    </div>
+            <div style="display: flex; flex-direction: column;">
+                <span class="author-name">{{ authorName }}</span>
+                <div class="card-meta">
+                    <span>{{ createdAt }}</span>
+                </div>
+            </div>
+
+        </div>
     </a>
+
+    <br><div class="line-1"></div><br>
 
     <div class="card-content">
         <div class="text-content">
             <a [routerLink]="['/posts', post.id]" class="text-decoration-none">
-            <h2 class="card-title">{{ post.title }}</h2>
-            <p class="card-excerpt">
-                {{ excerpt }}
-            </p>
+                <h2 class="card-title">{{ post.title }}</h2>
+                <p class="card-excerpt">
+                    {{ excerpt }}
+                </p>
             </a>
 
             <div class="card-footer">
-                <div class="card-meta">
-                    <span>{{ createdAt }}</span>
-                    <div class="meta-dot"></div>
-                    <span class="card-category" >Blog</span>
-                </div>
-
                 <div class="card-actions">
                     <!-- keep the same markup for actions -->
                     <div class="action-item like" [class.liked]="post.liked" (click)="onLike()">
@@ -41,7 +42,7 @@
 
 
                     <!-- other actions kept the same (no style change) -->
-                    <div class="action-item" (click)="onComments()" >
+                    <div class="action-item" (click)="onComments()">
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
                             <g fill="none">
                                 <path fill="currentColor"
@@ -53,7 +54,7 @@
                         <span class="action-count">{{ post.commentsCount ?? 0 }}</span>
                     </div>
 
-                    
+
                 </div>
             </div>
         </div>
