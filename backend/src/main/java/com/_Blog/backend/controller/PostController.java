@@ -135,6 +135,10 @@ public class PostController {
         String username = authentication.getName();
         String imageUrl = null;
 
+        if (username == null || username.isEmpty()) {
+            return ResponseEntity.status(401).body("Authentication required");
+        }
+
         if (file != null && !file.isEmpty()) {
             if (file.getSize() > MAX_IMAGE_SIZE_BYTES) {
                 return ResponseEntity.status(413).body("Image exceeds 5MB limit");
@@ -322,10 +326,14 @@ public class PostController {
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deletePost(@PathVariable Long id, Authentication authentication) {
         String username = authentication.getName();
+        User currentUser = userRepository.findByUsername(username).orElse(null);
         Post post = postService.getPostById(id);
-        
-        if (!post.getUser().getUsername().equals(username)) {
+
+        if (currentUser == null || !post.getUser().getId().equals(currentUser.getId())) {
             return ResponseEntity.status(403).body("You can only delete your own posts!");
+        }
+        if (post.getUser().getStatus().equalsIgnoreCase("BANNED")) {
+            return ResponseEntity.status(403).body("You cannot delete posts while your account is banned!");
         }
 
         postService.deletePost(id);
@@ -335,10 +343,15 @@ public class PostController {
     @PutMapping("/{id}")
     public ResponseEntity<?> updatePost(@PathVariable Long id, @RequestBody PostRequest request, Authentication authentication) {
         String username = authentication.getName();
+        User currentUser = userRepository.findByUsername(username).orElse(null);
         Post post = postService.getPostById(id);
         
-        if (!post.getUser().getUsername().equals(username)) {
+        if (currentUser == null || !post.getUser().getId().equals(currentUser.getId())) {
             return ResponseEntity.status(403).body("You can only edit your own posts!");
+        }
+
+        if (post.getUser().getStatus().equalsIgnoreCase("BANNED")) {
+            return ResponseEntity.status(403).body("You cannot edit posts while your account is banned!");
         }
 
         post.setTitle(request.getTitle());

@@ -132,6 +132,7 @@ export class Profile implements OnInit {
           this.popup.show('Successfully unfollowed!', true);
         }
         this.isLoading = false;
+        this.loadUserProfile();
       },
       error: (err) => {
         console.error('Error following/unfollowing user:', err);
