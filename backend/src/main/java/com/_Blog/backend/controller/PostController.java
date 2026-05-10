@@ -332,7 +332,8 @@ public class PostController {
         if (currentUser == null || !post.getUser().getId().equals(currentUser.getId())) {
             return ResponseEntity.status(403).body("You can only delete your own posts!");
         }
-        if (post.getUser().getStatus().equalsIgnoreCase("BANNED")) {
+        String accountStatus = post.getUser().getStatus();
+        if (accountStatus != null && accountStatus.equalsIgnoreCase("BANNED")) {
             return ResponseEntity.status(403).body("You cannot delete posts while your account is banned!");
         }
 
@@ -350,7 +351,8 @@ public class PostController {
             return ResponseEntity.status(403).body("You can only edit your own posts!");
         }
 
-        if (post.getUser().getStatus().equalsIgnoreCase("BANNED")) {
+        String accountStatus = post.getUser().getStatus();
+        if (accountStatus != null && accountStatus.equalsIgnoreCase("BANNED")) {
             return ResponseEntity.status(403).body("You cannot edit posts while your account is banned!");
         }
 
