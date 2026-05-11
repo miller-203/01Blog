@@ -38,12 +38,13 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<?> authenticateUser(@RequestBody LoginRequest loginRequest) {
         String loginValue = loginRequest.getUsername() == null ? "" : loginRequest.getUsername().trim();
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(loginValue, loginRequest.getPassword()));
+        // Authentication authentication = authenticationManager.authenticate(
+        // new UsernamePasswordAuthenticationToken(loginValue,
+        // loginRequest.getPassword()));
 
-        SecurityContextHolder.getContext().setAuthentication(authentication);
+        // SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        String jwt = jwtUtils.generateJwtToken(authentication);
+        // String jwt = jwtUtils.generateJwtToken(authentication);
 
         User user = userRepository.findByUsername(loginValue)
                 .or(() -> userRepository.findByEmail(loginValue))
@@ -53,15 +54,26 @@ public class AuthController {
             return ResponseEntity.status(403).body("Your account is banned");
         }
 
-        return ResponseEntity.ok(new JwtResponse(jwt, 
-                user.getId(), 
-                user.getUsername(), 
-                user.getEmail(), 
+        // return ResponseEntity.ok(new JwtResponse(jwt,
+        // user.getId(),
+        // user.getUsername(),
+        // user.getEmail(),
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(user.getUsername(), loginRequest.getPassword()));
+
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        String jwt = jwtUtils.generateJwtToken(authentication);
+
+        return ResponseEntity.ok(new JwtResponse(jwt,
+                user.getId(),
+                user.getUsername(),
+                user.getEmail(),
                 user.getRole(),
                 user.getStatus()));
     }
 
-    @PostMapping(value = "/register", consumes = {"multipart/form-data"})
+    @PostMapping(value = "/register", consumes = { "multipart/form-data" })
     public ResponseEntity<?> registerUser(
             @RequestParam("username") String username,
             @RequestParam(value = "firstName", required = false) String firstName,
