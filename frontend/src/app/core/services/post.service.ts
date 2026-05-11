@@ -51,8 +51,8 @@ export class PostService {
     );
   }
 
-  deletePost(id: string): Observable<any> {
-    return this.http.delete<any>(`${this.apiUrl}/${id}`);
+  deletePost(id: string): Observable<string> {
+    return this.http.delete(`${this.apiUrl}/${id}`, { responseType: 'text' });
   }
 
   togglePostVisibility(id: string): Observable<any> {
@@ -60,7 +60,7 @@ export class PostService {
   }
 
   deletePostFromUser(id: string): Observable<any> {
-    return this.http.delete<any>(`${this.apiUrl}/${id}`);
+    return this.http.delete(`${this.apiUrl}/${id}`, { responseType: 'text' });
   }
 
   createPost(postData: any): Observable<any> {

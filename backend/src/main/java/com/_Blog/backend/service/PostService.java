@@ -85,8 +85,8 @@ public class PostService {
     }
 
     public void deletePost(Long id) {
-        commentLikeRepository.deleteByCommentPostId(id);
         likeRepository.deleteByPostId(id);
+        commentLikeRepository.deleteByCommentPostId(id);
         commentRepository.deleteByPostId(id);
         notificationRepository.deleteByPostId(id);
         reportRepository.deleteByReportedPostId(id);

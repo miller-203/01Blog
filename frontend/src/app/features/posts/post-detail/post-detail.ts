@@ -118,7 +118,7 @@ export class PostDetail implements OnInit {
 
   confirmDeletePost() {
     if (this.postToDelete) {
-      this.postService.deletePostFromUser(this.postToDelete.id).subscribe({
+      this.postService.deletePost(this.postToDelete.id).subscribe({
         next: () => {
           this.showDeletePopup = false;
           this.postToDelete = null;
