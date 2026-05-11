@@ -19,6 +19,7 @@ import java.util.Optional;
 @RequestMapping("/api/likes")
 @CrossOrigin(origins = "http://localhost:4200")
 public class LikeController {
+    private static final String BANNED_STATUS = "BANNED";
 
     @Autowired
     private LikeRepository likeRepository;
@@ -33,6 +34,9 @@ public class LikeController {
         
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("User not found"));
+        if (isBanned(user)) {
+            return ResponseEntity.status(403).body("You cannot like posts while your account is banned!");
+        }
         
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new RuntimeException("Post not found"));
@@ -59,5 +63,9 @@ public class LikeController {
         response.put("count", likeRepository.countByPost(post));
         
         return ResponseEntity.ok(response);
+    }
+
+    private boolean isBanned(User user) {
+        return user != null && BANNED_STATUS.equalsIgnoreCase(user.getStatus());
     }
 }

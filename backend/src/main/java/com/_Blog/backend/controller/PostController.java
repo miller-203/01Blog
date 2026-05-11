@@ -32,6 +32,7 @@ import java.util.stream.Collectors;
 public class PostController {
 
     private static final String HIDDEN_STATUS = "HIDDEN";
+    private static final String BANNED_STATUS = "BANNED";
 
     @Autowired
     private PostService postService;
@@ -61,7 +62,12 @@ public class PostController {
     private static final long MAX_VIDEO_SIZE_BYTES = 25 * 1024 * 1024;
 
     @PostMapping(value = "/upload-image", consumes = {"multipart/form-data"})
-    public ResponseEntity<?> uploadImage(@RequestParam("image") MultipartFile image) {
+    public ResponseEntity<?> uploadImage(@RequestParam("image") MultipartFile image, Authentication authentication) {
+        ResponseEntity<?> bannedResponse = bannedActionResponse(authentication, "You cannot upload images while your account is banned!");
+        if (bannedResponse != null) {
+            return bannedResponse;
+        }
+
         if (image == null || image.isEmpty()) {
             return ResponseEntity.badRequest().body("Image file is required");
         }
@@ -83,7 +89,12 @@ public class PostController {
     }
 
     @PostMapping(value = "/upload-video", consumes = {"multipart/form-data"})
-    public ResponseEntity<?> uploadVideo(@RequestParam("video") MultipartFile video) {
+    public ResponseEntity<?> uploadVideo(@RequestParam("video") MultipartFile video, Authentication authentication) {
+        ResponseEntity<?> bannedResponse = bannedActionResponse(authentication, "You cannot upload videos while your account is banned!");
+        if (bannedResponse != null) {
+            return bannedResponse;
+        }
+
         if (video == null || video.isEmpty()) {
             return ResponseEntity.badRequest().body("Video file is required");
         }
@@ -137,6 +148,10 @@ public class PostController {
 
         if (username == null || username.isEmpty()) {
             return ResponseEntity.status(401).body("Authentication required");
+        }
+        ResponseEntity<?> bannedResponse = bannedActionResponse(authentication, "You cannot create posts while your account is banned!");
+        if (bannedResponse != null) {
+            return bannedResponse;
         }
 
         if (file != null && !file.isEmpty()) {
@@ -365,5 +380,16 @@ public class PostController {
 
     private boolean isVisiblePost(Post post) {
         return !HIDDEN_STATUS.equalsIgnoreCase(post.getStatus());
+    }
+
+    private ResponseEntity<?> bannedActionResponse(Authentication authentication, String message) {
+        if (authentication == null || authentication.getName() == null || authentication.getName().isBlank()) {
+            return ResponseEntity.status(401).body("Authentication required");
+        }
+        User user = userRepository.findByUsername(authentication.getName()).orElse(null);
+        if (user != null && BANNED_STATUS.equalsIgnoreCase(user.getStatus())) {
+            return ResponseEntity.status(403).body(message);
+        }
+        return null;
     }
 }
