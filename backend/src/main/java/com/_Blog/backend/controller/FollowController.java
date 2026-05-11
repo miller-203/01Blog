@@ -19,6 +19,7 @@ import java.util.stream.Collectors;
 @RequestMapping("/api/follows")
 @CrossOrigin(origins = "http://localhost:4200")
 public class FollowController {
+    private static final String BANNED_STATUS = "BANNED";
 
     @Autowired
     private UserRepository userRepository;
@@ -37,6 +38,9 @@ public class FollowController {
         String currentUsername = authentication.getName();
         User me = userRepository.findByUsername(currentUsername)
                 .orElseThrow(() -> new RuntimeException("Current user not found"));
+        if (isBanned(me)) {
+            return ResponseEntity.status(403).body("You cannot follow users while your account is banned!");
+        }
 
         User toFollow = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User to follow not found"));
@@ -71,6 +75,9 @@ public class FollowController {
 
         User me = userRepository.findByUsername(currentUsername)
                 .orElseThrow(() -> new RuntimeException("Current user not found"));
+        if (isBanned(me)) {
+            return ResponseEntity.status(403).body("You cannot unfollow users while your account is banned!");
+        }
 
         User toFollow = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User to unfollow not found"));
@@ -129,5 +136,9 @@ public class FollowController {
                 .map(Follow::getFollower)
                 .toList();
         return ResponseEntity.ok(followers);
+    }
+
+    private boolean isBanned(User user) {
+        return user != null && BANNED_STATUS.equalsIgnoreCase(user.getStatus());
     }
 }

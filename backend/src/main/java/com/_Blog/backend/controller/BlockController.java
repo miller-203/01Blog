@@ -15,6 +15,7 @@ import java.util.List;
 @RequestMapping("/api/blocks")
 @CrossOrigin(origins = "http://localhost:4200")
 public class BlockController {
+    private static final String BANNED_STATUS = "BANNED";
 
     private final UserRepository userRepository;
     private final UserBlockRepository userBlockRepository;
@@ -30,6 +31,9 @@ public class BlockController {
     public ResponseEntity<?> blockUser(@PathVariable Long userId, Authentication authentication) {
         User me = userRepository.findByUsername(authentication.getName())
                 .orElseThrow(() -> new RuntimeException("Current user not found"));
+        if (isBanned(me)) {
+            return ResponseEntity.status(403).body("You cannot block users while your account is banned!");
+        }
         User userToBlock = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User to block not found"));
 
@@ -56,6 +60,9 @@ public class BlockController {
     public ResponseEntity<?> unblockUser(@PathVariable Long userId, Authentication authentication) {
         User me = userRepository.findByUsername(authentication.getName())
                 .orElseThrow(() -> new RuntimeException("Current user not found"));
+        if (isBanned(me)) {
+            return ResponseEntity.status(403).body("You cannot unblock users while your account is banned!");
+        }
         User blockedUser = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User to unblock not found"));
 
@@ -77,5 +84,9 @@ public class BlockController {
                 .toList();
 
         return ResponseEntity.ok(blockedIds);
+    }
+
+    private boolean isBanned(User user) {
+        return user != null && BANNED_STATUS.equalsIgnoreCase(user.getStatus());
     }
 }

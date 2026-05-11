@@ -21,6 +21,7 @@ import java.util.Map;
 @RequestMapping("/api/comments")
 @CrossOrigin(origins = "http://localhost:4200")
 public class CommentController {
+    private static final String BANNED_STATUS = "BANNED";
 
     @Autowired
     private CommentRepository commentRepository;
@@ -40,6 +41,9 @@ public class CommentController {
 
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("User not found"));
+        if (isBanned(user)) {
+            return ResponseEntity.status(403).body("You cannot comment while your account is banned!");
+        }
 
         Post post = postRepository.findById(request.getPostId())
                 .orElseThrow(() -> new RuntimeException("Post not found"));
@@ -69,6 +73,9 @@ public class CommentController {
     public ResponseEntity<Void> deleteComment(@PathVariable Long commentId, Authentication authentication) {
         User currentUser = userRepository.findByUsername(authentication.getName())
                 .orElseThrow(() -> new RuntimeException("User not found"));
+        if (isBanned(currentUser)) {
+            return ResponseEntity.status(403).build();
+        }
 
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new RuntimeException("Comment not found"));
@@ -93,6 +100,9 @@ public class CommentController {
 
         User user = userRepository.findByUsername(authentication.getName())
                 .orElseThrow(() -> new RuntimeException("User not found"));
+        if (isBanned(user)) {
+            return ResponseEntity.status(403).build();
+        }
 
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new RuntimeException("Comment not found"));
@@ -154,5 +164,9 @@ public class CommentController {
         String normalizedRole = currentUser.getRole() == null ? "" : currentUser.getRole().toUpperCase();
         boolean isAdmin = "ADMIN".equals(normalizedRole) || "ROLE_ADMIN".equals(normalizedRole);
         return isCommentOwner || isPostOwner || isAdmin;
+    }
+
+    private boolean isBanned(User user) {
+        return user != null && BANNED_STATUS.equalsIgnoreCase(user.getStatus());
     }
 }
