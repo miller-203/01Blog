@@ -5,6 +5,7 @@
   aria-live="polite"
   [class.success]="type === 'success'"
   [class.error]="type === 'error'"
+  [class.sidebar-left]="position === 'sidebar-left'"
 >
   <div class="popup-icon" aria-hidden="true">
     <span *ngIf="type === 'success'">✓</span>

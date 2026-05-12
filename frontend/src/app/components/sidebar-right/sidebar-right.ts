@@ -1,22 +1,21 @@
-import { Component, HostBinding, Input, inject, OnInit, ViewChild } from '@angular/core';
+import { Component, HostBinding, Input, OnDestroy, inject, OnInit } from '@angular/core';
 import { UserService } from '../../core/services/user.service';
 import { User } from '../../core/models/user';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Popup } from '../../components/popup/popup';
+import { Subject, takeUntil } from 'rxjs';
 
 
 
 
 @Component({
   selector: 'app-sidebar-right',
-  imports: [CommonModule, FormsModule, Popup],
+  imports: [CommonModule, FormsModule],
   templateUrl: './sidebar-right.html',
   styleUrl: './sidebar-right.scss'
 })
-export class SidebarRight implements OnInit {
+export class SidebarRight implements OnInit, OnDestroy {
   @Input() isOpenInput = false;
-  @ViewChild('popup') popup!: Popup;
 
   @HostBinding('class.open')
   get isOpenClass() {
@@ -28,6 +27,7 @@ export class SidebarRight implements OnInit {
   isSearching = false;
   followingUserIds = new Set<string>();
   followActionInProgress = new Set<string>();
+  private destroy$ = new Subject<void>();
 
 
   private userService = inject(UserService);
@@ -35,6 +35,20 @@ export class SidebarRight implements OnInit {
   ngOnInit(): void {
     this.loadFollowingIds();
     this.loadDefaultUsers();
+    this.userService.followStatusChanges$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(({ userId, isFollowing }) => {
+        if (isFollowing) {
+          this.followingUserIds.add(String(userId));
+        } else {
+          this.followingUserIds.delete(String(userId));
+        }
+      });
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   private loadFollowingIds(): void {
@@ -90,12 +104,14 @@ export class SidebarRight implements OnInit {
           this.followingUserIds.delete(userId);
           user.followersCount = Math.max(0, (user.followersCount ?? 0) - 1);
           this.userService.notifyFollowCountChange(-1);
-          this.popup.show('Successfully unfollowed!', true);
+          this.userService.notifyFollowStatusChange(userId, false);
+          this.userService.notifyFollowToast('Successfully unfollowed!', true);
         } else {
           this.followingUserIds.add(userId);
           user.followersCount = (user.followersCount ?? 0) + 1;
           this.userService.notifyFollowCountChange(1);
-          this.popup.show('Successfully followed!', true);
+          this.userService.notifyFollowStatusChange(userId, true);
+          this.userService.notifyFollowToast('Successfully followed!', true);
         }
         this.followActionInProgress.delete(userId);
       },

@@ -28,6 +28,15 @@
   backdrop-filter: blur(4px);
 }
 
+.popup.sidebar-left {
+  position: absolute;
+  right: 12px;
+  left: 12px;
+  bottom: 12px;
+  width: auto;
+  z-index: 110;
+}
+
 .popup.error {
   --popup-bg: linear-gradient(135deg, #b42318 0%, #d92d20 100%);
   --popup-shadow: rgba(217, 45, 32, 0.36);

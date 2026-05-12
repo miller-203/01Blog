@@ -1,4 +1,5 @@
 <aside class="sidebar p-3 pt-4 sidebar-left d-flex flex-column justify-content-between" [class.open]="isOpenInput || isOpen()">
+  <app-popup #popup></app-popup>
   <div class="sidebar-content">
 
     <app-profile-card [user]="user"></app-profile-card>
