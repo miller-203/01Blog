@@ -28,6 +28,8 @@ export class PostDetail implements OnInit {
   post!: any;
   createdAt?: string;
   comments: Comment[] = [];
+  visibleComments: Comment[] = [];
+  commentsDisplayCount = 10;
   @ViewChild('popup') popup!: Popup;
   newCommentContent: string = '';
   showComments: boolean = false;
@@ -152,6 +154,8 @@ export class PostDetail implements OnInit {
     this.commentService.getCommentsByPostId(postId!).subscribe({
       next: (comments) => {
         this.comments = comments;
+        this.commentsDisplayCount = 10;
+        this.visibleComments = this.comments.slice(0, this.commentsDisplayCount);
         this.comments.forEach(comment => {
           this.commentService.getCommentLikeStatus(comment.id).subscribe({
             next: (likeStatus) => {
@@ -184,6 +188,7 @@ export class PostDetail implements OnInit {
     this.commentService.createComment(postId!, commentRequest).subscribe({
       next: (newComment) => {
         this.comments.unshift(newComment);
+        this.visibleComments = this.comments.slice(0, this.commentsDisplayCount);
         newComment.owner = true;
         this.newCommentContent = '';
         if (this.post) {
@@ -217,6 +222,7 @@ export class PostDetail implements OnInit {
       this.commentService.deleteComment(this.commentToDelete.id).subscribe({
         next: () => {
           this.comments = this.comments.filter(c => c.id !== this.commentToDelete!.id);
+          this.visibleComments = this.comments.slice(0, this.commentsDisplayCount);
           if (this.post) {
             this.post.commentsCount = (this.post.commentsCount || 0) - 1;
           }
@@ -230,6 +236,11 @@ export class PostDetail implements OnInit {
         }
       });
     }
+  }
+
+  loadMoreComments(): void {
+    this.commentsDisplayCount += 10;
+    this.visibleComments = this.comments.slice(0, this.commentsDisplayCount);
   }
 
   cancelDeleteComment() {

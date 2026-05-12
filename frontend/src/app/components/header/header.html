@@ -51,7 +51,7 @@
                                 <button
                                     class="notification-item"
                                     [class.unread]="!notification.read"
-                                    *ngFor="let notification of notifications()"
+                                    *ngFor="let notification of visibleNotifications()"
                                     (click)="onNotificationClick(notification)">
                                     <img [src]="notification.actorAvatar" [alt]="notification.actorFirstName" />
                                     <div class="notification-item-content">
@@ -68,6 +68,11 @@
 
                                 <div class="empty-notifications" *ngIf="notifications().length === 0">
                                     No notifications yet.
+                                </div>
+                                <div class="text-center mt-2" *ngIf="visibleNotifications().length < notifications().length">
+                                    <button class="mark-all-btn" type="button" (click)="loadMoreNotifications()">
+                                        Load more
+                                    </button>
                                 </div>
                             </div>
                         </div>
