@@ -28,6 +28,6 @@ export class Popup {
     this.hideTimeout = setTimeout(() => {
       this.visible = false;
       this.hideTimeout = null;
-    }, 3000);
+    }, 2000);
   }
 }

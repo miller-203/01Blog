@@ -100,7 +100,11 @@ export class AdminUsers implements OnInit {
       },
       error: (err) => {
         console.error('Error unbanning user:', err);
-        this.popup.show(err.error.message, false);
+        if (user.role === 'ADMIN') {
+          this.popup.show('You cannot ban admin.', false);
+        } else {
+          this.popup.show("Failed to ban user.", false);
+        }
       }
     });
   }
@@ -127,10 +131,9 @@ export class AdminUsers implements OnInit {
           this.popup.show('User deleted successfully.', true);
         },
         error: (err) => {
-          console.error('Error deleting user:', err);
           this.showDeletePopup = false;
           this.userToDelete = null;
-          this.popup.show(err.error.message, false);
+          this.popup.show("Failed to delete user.", false);
         }
       });
     }

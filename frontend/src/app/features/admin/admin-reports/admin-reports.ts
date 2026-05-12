@@ -124,7 +124,6 @@ confirmBanUser() {
         this.popup.show('User banned successfully.', true);
       },
       error: (err) => {
-        console.error(err);
         this.showBanUserPopup = false;
         this.userToBan = null;
         this.popup.show('Failed to ban user.', false);
