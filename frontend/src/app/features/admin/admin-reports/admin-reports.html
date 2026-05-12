@@ -35,7 +35,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr *ngFor="let report of filteredReports">
+                    <tr *ngFor="let report of displayedReports">
                         <td>
                             <a [href]="'/profile/' + report.reporterUsername" class="user-link">@{{
                                 report.reporterUsername }}</a>
@@ -89,6 +89,9 @@
                     </tr>
                 </tbody>
             </table>
+        </div>
+        <div class="text-center py-3" *ngIf="displayedReports.length < filteredReports.length">
+            <button class="btn action-btn btn-view" type="button" (click)="loadMoreReports()">Load more</button>
         </div>
     </div>
 

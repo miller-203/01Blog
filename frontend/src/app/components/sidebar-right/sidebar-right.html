@@ -43,7 +43,7 @@
                 <p>Searching...</p>
             </div>
         </ng-container>
-        <a *ngFor="let user of users" [href]="'/profile/' + user.username" class="user-item">
+        <a *ngFor="let user of displayedUsers" [href]="'/profile/' + user.username" class="user-item">
             <div class="user-avatar">
                 <img [src]="user.avatarUrl || '/assets/avatar-placeholder.png'" [alt]="user.firstName">
             </div>
@@ -60,6 +60,9 @@
                 {{ isFollowing(user) ? 'Unfollow' : 'Follow' }}
             </button>
         </a>
+        <div class="text-center mt-3" *ngIf="displayedUsers.length < users.length">
+            <button class="follow-btn" type="button" (click)="loadMoreUsers()">Load more</button>
+        </div>
     </div>
 
 </aside>

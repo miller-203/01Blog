@@ -26,6 +26,9 @@ export class SidebarRight implements OnInit, OnDestroy {
 
   searchQuery = '';
   users: User[] = [];
+  displayedUsers: User[] = [];
+  displayedCount = 10;
+  readonly pageSize = 10;
   isSearching = false;
   followingUserIds = new Set<string>();
   followActionInProgress = new Set<string>();
@@ -65,6 +68,8 @@ export class SidebarRight implements OnInit, OnDestroy {
     this.userService.searchUsers(this.searchQuery.trim()).subscribe({
       next: (users) => {
         this.users = users.filter((u) => !u.currentUser);
+        this.displayedCount = this.pageSize;
+        this.displayedUsers = this.users.slice(0, this.displayedCount);
         this.isSearching = false;
       },
       error: (err) => {
@@ -77,6 +82,11 @@ export class SidebarRight implements OnInit, OnDestroy {
   onSearchInput(event: any): void {
     this.searchQuery = event.target.value;
     this.onSearch();
+  }
+
+  loadMoreUsers(): void {
+    this.displayedCount += this.pageSize;
+    this.displayedUsers = this.users.slice(0, this.displayedCount);
   }
 
   isFollowing(user: User): boolean {

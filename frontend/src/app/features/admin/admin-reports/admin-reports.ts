@@ -15,6 +15,8 @@ export class AdminReports implements OnInit {
   @ViewChild('popup') popup!: Popup;
   reports: ReportResponse[] = [];
   filteredReports: ReportResponse[] = [];
+  displayedReports: ReportResponse[] = [];
+  displayedCount = 10;
   selectedReport: ReportResponse | null = null;
   selectedStatus = 'All Reports';
   private adminService = inject(AdminService);
@@ -54,6 +56,13 @@ export class AdminReports implements OnInit {
     } else {
       this.filteredReports = this.reports.filter(report => report.status === this.selectedStatus.toUpperCase());
     }
+    this.displayedCount = 10;
+    this.displayedReports = this.filteredReports.slice(0, this.displayedCount);
+  }
+
+  loadMoreReports(): void {
+    this.displayedCount += 10;
+    this.displayedReports = this.filteredReports.slice(0, this.displayedCount);
   }
 
   onViewClick(report: ReportResponse) {

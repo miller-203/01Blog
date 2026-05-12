@@ -23,6 +23,8 @@ export class Header implements OnInit, OnDestroy {
   allRead = signal(true);
 
   notifications = signal<NotificationResponse[]>([]);
+  visibleNotifications = signal<NotificationResponse[]>([]);
+  notificationLimit = signal(10);
   isLoadingNotifications = signal(false);
 
   private subscription: Subscription = new Subscription();
@@ -82,6 +84,7 @@ export class Header implements OnInit, OnDestroy {
     this.notificationService.getNotifications().subscribe({
       next: (notifications) => {
         this.notifications.set(notifications);
+        this.resetNotificationPagination();
         this.isLoadingNotifications.set(false);
       },
       error: (error) => {
@@ -89,6 +92,17 @@ export class Header implements OnInit, OnDestroy {
         console.error('Error loading notifications:', error);
       }
     });
+  }
+
+  private resetNotificationPagination(): void {
+    this.notificationLimit.set(10);
+    this.visibleNotifications.set(this.notifications().slice(0, this.notificationLimit()));
+  }
+
+  loadMoreNotifications(): void {
+    const nextLimit = this.notificationLimit() + 10;
+    this.notificationLimit.set(nextLimit);
+    this.visibleNotifications.set(this.notifications().slice(0, nextLimit));
   }
 
   formatDate(dateString: string): string {
@@ -114,6 +128,7 @@ export class Header implements OnInit, OnDestroy {
       next: () => {
         const updated = this.notifications().map(item => item.id === notification.id ? { ...item, read: true } : item);
         this.notifications.set(updated);
+        this.visibleNotifications.set(updated.slice(0, this.notificationLimit()));
         const count = Math.max(0, this.unreadCount() - 1);
         this.unreadCount.set(count);
         this.notificationService.updateUnreadCount(count);
@@ -140,6 +155,7 @@ export class Header implements OnInit, OnDestroy {
           item.id === notification.id ? { ...item, read: targetReadState } : item
         );
         this.notifications.set(updated);
+        this.visibleNotifications.set(updated.slice(0, this.notificationLimit()));
         const countDelta = targetReadState ? -1 : 1;
         const nextCount = Math.max(0, this.unreadCount() + countDelta);
         this.unreadCount.set(nextCount);
@@ -183,6 +199,7 @@ export class Header implements OnInit, OnDestroy {
       next: () => {
         const updated = this.notifications().map(n => ({ ...n, read: !allRead }));
         this.notifications.set(updated);
+        this.visibleNotifications.set(updated.slice(0, this.notificationLimit()));
         const newCount = allRead ? this.unreadCount() + request$.length : Math.max(0, this.unreadCount() - request$.length);
         this.unreadCount.set(newCount);
         this.notificationService.updateUnreadCount(newCount);

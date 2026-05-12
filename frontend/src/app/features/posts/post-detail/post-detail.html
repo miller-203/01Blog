@@ -144,7 +144,7 @@
 
       <!-- Comments List -->
       <div class="comments-list">
-        <div class="comment" *ngFor="let comment of comments">
+        <div class="comment" *ngFor="let comment of visibleComments">
           <div class="comment-header">
             <div class="comment-author">
               <strong>{{ comment.authorFirstName }} {{ comment.authorLastName }}</strong>
@@ -172,6 +172,9 @@
               </svg>
             </div>
           </div>
+        </div>
+        <div class="text-center mt-3" *ngIf="visibleComments.length < comments.length">
+          <button class="submit-btn" type="button" (click)="loadMoreComments()">Load more comments</button>
         </div>
       </div>
     </section>
