@@ -26,9 +26,23 @@
 :root {
   --text-color: #1a1a1a;
   --bg-white: #ffffff;
+  --bg-page: #f8f9fa;
+  --surface-muted: #f3f4f6;
   --border-light: #e5e5e5;
   --accent-purple: #667eea;
   --accent-purple-dark: #764ba2;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --text-color: #e5e7eb;
+    --bg-white: #0f1116;
+    --bg-page: #090b10;
+    --surface-muted: #171a22;
+    --border-light: #2a2f3a;
+    --accent-purple: #8ea2ff;
+    --accent-purple-dark: #a687d6;
+  }
 }
 
 
@@ -54,9 +68,73 @@ html {
 body {
   font-family: 'Poppins', sans-serif;
   font-weight: 400;
-  color: #1a1a1a;
-  background: #f8f9fa;
+  color: var(--text-color);
+  background: var(--bg-page);
   margin: 0;
+}
+
+a,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+span,
+label,
+small,
+strong,
+li,
+th,
+td {
+  color: inherit;
+}
+
+input,
+textarea,
+select,
+.card,
+.modal-content,
+.dropdown-menu,
+.offcanvas,
+pre,
+code,
+table,
+.table {
+  background-color: var(--bg-white) !important;
+  color: var(--text-color) !important;
+  border-color: var(--border-light) !important;
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: color-mix(in srgb, var(--text-color) 55%, transparent);
+}
+
+@media (prefers-color-scheme: dark) {
+  .btn-outline-dark {
+    background: #171a22;
+    color: #e5e7eb;
+    border-color: #2a2f3a;
+    box-shadow: none;
+  }
+
+  .btn-outline-dark:hover {
+    background: #202634;
+    color: #f9fafb;
+    border-color: #8ea2ff;
+  }
+
+  .btn-primary {
+    background: linear-gradient(135deg, var(--accent-purple) 0%, var(--accent-purple-dark) 100%);
+    color: #0f1116;
+  }
+
+  .btn-primary:hover {
+    background: linear-gradient(135deg, #9cb0ff 0%, #b39be0 100%);
+    box-shadow: 0 5px 12px rgba(0, 0, 0, 0.45);
+  }
 }
 
 app-home,
@@ -172,7 +250,7 @@ app-profile {
 .category-select {
   border: none;
   outline: none;
-  background: #f3f4f6;
+  background: var(--surface-muted);
   color: var(--text-color);
   padding: 0.5rem 1rem;
   border-radius: 20px;
@@ -183,7 +261,7 @@ app-profile {
 }
 
 .category-select:focus {
-  background: #e5e7eb;
+  background: color-mix(in srgb, var(--surface-muted) 80%, var(--border-light));
 }
 
 
