@@ -9,7 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
-import com._Blog.backend.repository.NotificationRepository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -28,10 +28,6 @@ public class FollowController {
 
     @Autowired
     private NotificationService notificationService;
-
-    @Autowired
-
-    private NotificationRepository notificationRepository;
 
     @PostMapping("/follow/{userId}")
     public ResponseEntity<?> addFollow(@PathVariable Long userId, Authentication authentication) {
@@ -64,6 +60,7 @@ public class FollowController {
     }
 
     @PostMapping("/unfollow/{userId}")
+    @Transactional
     public ResponseEntity<?> removeFollow(@PathVariable Long userId, Authentication authentication) {
         String currentUsername = authentication.getName();
 
@@ -83,8 +80,7 @@ public class FollowController {
         return followRepository.findByFollowerAndFollowed(me, toFollow)
                 .map(follow -> {
                     followRepository.delete(follow);
-                    notificationRepository.deleteBySenderAndRecipientAndType(me, toFollow, "USER");
-                    // notificationService.deleteFollowNotification(me, toFollow);
+                    notificationService.deleteFollowNotification(me, toFollow);
                     return ResponseEntity.ok().build();
                 })
                 .orElseGet(() -> ResponseEntity.badRequest().body("Not currently following this user"));
