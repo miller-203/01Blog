@@ -1,17 +1,17 @@
 <div
   *ngIf="visible"
-  class="popup"
+  class="toast-popup"
   role="status"
   aria-live="polite"
   [class.success]="type === 'success'"
   [class.error]="type === 'error'"
 >
-  <div class="popup-icon" aria-hidden="true">
+  <div class="toast-popup-icon" aria-hidden="true">
     <span *ngIf="type === 'success'">✓</span>
     <span *ngIf="type === 'error'">!</span>
   </div>
 
-  <p class="popup-message">{{ message }}</p>
+  <p class="toast-popup-message">{{ message }}</p>
 
-  <div class="popup-progress"></div>
+  <div class="toast-popup-progress"></div>
 </div>
