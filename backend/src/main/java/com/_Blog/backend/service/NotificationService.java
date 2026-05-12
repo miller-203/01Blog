@@ -18,12 +18,6 @@ public class NotificationService {
     @Autowired
     private NotificationRepository notificationRepository;
 
-    @Autowired
-    private PostRepository postRepository;
-
-    @Autowired
-    private UserRepository userRepository;
-
     public Notification createNotification(User sender, User recipient, Post post, String message, String type) {
         Notification notification = new Notification();
         notification.setSender(sender);
@@ -41,5 +35,9 @@ public class NotificationService {
                 .orElseThrow(() -> new RuntimeException("Notification not found"));
         notification.setIsRead(true);
         notificationRepository.save(notification);
+    }
+
+    public void deleteFollowNotification(User sender, User recipient) {
+        notificationRepository.deleteBySenderAndRecipientAndType(sender, recipient, "USER");
     }
 }
