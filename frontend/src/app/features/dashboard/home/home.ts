@@ -88,6 +88,7 @@ export class Home implements OnInit, AfterViewInit {
       },
       error: (err) => {
         console.error('Failed to fetch posts', err);
+        this.popup.show('Failed to load posts. Please try again.', false);
         this.isLoading = false;
       }
     });
@@ -117,7 +118,10 @@ export class Home implements OnInit, AfterViewInit {
   }
 
   createPostFromPopup(): void {
-    if (!this.newPostTitle.trim() || !this.newPostContent.trim()) return;
+    if (!this.newPostTitle.trim() || !this.newPostContent.trim()) {
+      this.popup.show('Please add both a title and content before posting.', false);
+      return;
+    }
 
     this.postService.createPost({
       title: this.newPostTitle.trim(),

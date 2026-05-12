@@ -267,7 +267,11 @@ export class Profile implements OnInit {
 
 
   submitReportUser() {
-    if (!this.user || !this.reportForm.reason.trim()) return;
+    if (!this.user) return;
+    if (!this.reportForm.reason.trim()) {
+      this.popup.show('Please provide a reason before submitting the report.', false);
+      return;
+    }
 
 
     console.log("Report submitted");
