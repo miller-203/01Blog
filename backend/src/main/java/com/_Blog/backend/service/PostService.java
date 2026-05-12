@@ -11,6 +11,7 @@ import com._Blog.backend.repository.ReportRepository;
 import com._Blog.backend.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 
 import java.util.List;
@@ -84,12 +85,19 @@ public class PostService {
                 .orElseThrow(() -> new RuntimeException("Post not found"));
     }
 
+    @Transactional
     public void deletePost(Long id) {
-        // likeRepository.deleteByPostId(id);
+        if (!postRepository.existsById(id)) {
+            throw new RuntimeException("Post not found");
+        }
+
+        // Delete dependent rows first to avoid FK constraint violations.
         commentLikeRepository.deleteByCommentPostId(id);
-        // commentRepository.deleteByPostId(id);
-        // notificationRepository.deleteByPostId(id);
-        // reportRepository.deleteByReportedPostId(id);
-        // postRepository.deleteById(id);
+        commentRepository.deleteByPostId(id);
+        likeRepository.deleteByPostId(id);
+        notificationRepository.deleteByPostId(id);
+        reportRepository.deleteByReportedPostId(id);
+
+        postRepository.deleteById(id);
     }
 }
