@@ -104,6 +104,7 @@ export class SidebarRight implements OnInit, OnDestroy {
       },
       error: (err) => {
         console.error('Error following/unfollowing user:', err);
+        this.popup.show('Error following user!', false);
         this.followActionInProgress.delete(userId);
       }
     });

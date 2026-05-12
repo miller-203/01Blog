@@ -143,6 +143,8 @@ export class Profile implements OnInit, OnDestroy {
           this.user!.followersCount++;
           this.userService.notifyFollowCountChange(1);
           this.userService.notifyFollowStateChange({ targetUserId: String(this.user!.id), isFollowing: true });
+          this.user!.followersCount--;
+          this.userService.notifyFollowCountChange(-1);
           this.popup.show('Successfully followed!', true);
         } else {
           this.user!.followersCount--;
