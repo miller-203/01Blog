@@ -5,7 +5,7 @@ import { AuthService } from '../../core/services/auth.service';
 import { NotificationService, NotificationResponse } from '../../core/services/notification.service';
 import { UserService } from '../../core/services/user.service';
 import { User } from '../../core/models/user';
-import { Subscription } from 'rxjs';
+import { forkJoin, Subscription } from 'rxjs';
 import { DateUtilsService } from '../../core/services/utils/DateUtil.service';
 
 @Component({
@@ -20,6 +20,7 @@ export class Header implements OnInit, OnDestroy {
   currentUser = signal<User | null>(null);
   unreadCount = signal(0);
   isAdmin = signal(false);
+  allRead = signal(true);
 
   notifications = signal<NotificationResponse[]>([]);
   isLoadingNotifications = signal(false);
@@ -127,6 +128,7 @@ export class Header implements OnInit, OnDestroy {
 
   toggleReadState(event: MouseEvent, notification: NotificationResponse): void {
     event.stopPropagation();
+
     const targetReadState = !notification.read;
     const request$ = targetReadState
       ? this.notificationService.markAsRead(notification.id)
@@ -164,6 +166,32 @@ export class Header implements OnInit, OnDestroy {
       this.loadNotifications();
       this.loadUnreadCount();
     }
+  }
+
+  toggleAllNotifications( event: MouseEvent) {
+    event.stopPropagation();
+    const allRead = this.notifications().every(n => n.read);
+    const request$ = allRead
+      ? this.notifications().filter(n => n.read).map(n => this.notificationService.markAsUnread(n.id))
+      : this.notifications().filter(n => !n.read).map(n => this.notificationService.markAsRead(n.id));
+
+    if (request$.length === 0) {
+      return;
+    }
+
+    forkJoin(request$).subscribe({
+      next: () => {
+        const updated = this.notifications().map(n => ({ ...n, read: !allRead }));
+        this.notifications.set(updated);
+        const newCount = allRead ? this.unreadCount() + request$.length : Math.max(0, this.unreadCount() - request$.length);
+        this.unreadCount.set(newCount);
+        this.notificationService.updateUnreadCount(newCount);
+        this.allRead.set(!allRead);
+      },
+      error: (error) => {
+        console.error('Error toggling all notifications:', error);
+      }
+    });
   }
 
   onToggleSidebar() {

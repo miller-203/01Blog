@@ -42,6 +42,9 @@
                         <div class="notifications-popup" *ngIf="isNotificationsOpen()" (click)="$event.stopPropagation()">
                             <div class="notifications-popup-header">
                                 <h6>Recent notifications</h6>
+                                <button class="mark-all-btn" type="button" (click)="toggleAllNotifications($event)">
+                                    {{ allRead() ? 'all as read' : 'all as unread' }}
+                                </button>
                             </div>
 
                             <div class="notifications-popup-body" *ngIf="!isLoadingNotifications(); else loadingTemplate">
