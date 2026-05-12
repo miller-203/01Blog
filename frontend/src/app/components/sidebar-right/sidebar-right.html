@@ -52,10 +52,10 @@
             <!-- <button class="btn btn-sm btn-outline-primary" (click)="toggleFollow(user, $event)" [disabled]="followActionInProgress.has(user.id.toString())">
                 {{ followingUserIds.has(user.id.toString()) ? 'Unfollow' : 'Follow' }}
             </button> -->
-            <button class="btn btn-sm btn-outline-primary" (click)="toggleFollow(user, $event)" [disabled]="isLoading">
+            <button class="btn btn-sm btn-outline-primary" (click)="toggleFollow(user, $event)" [disabled]="followActionInProgress.has(user.id.toString())">
                 <!-- <i class="fas fa-user-plus" *ngIf="!isFollowing"></i>
                 <i class="fas fa-user-check" *ngIf="isFollowing"></i> -->
-                {{ isFollowing ? 'Unfollow' : 'Follow' }}
+                {{ isFollowing(user) ? 'Unfollow' : 'Follow' }}
             </button>
         </a>
     </div>

@@ -1,9 +1,8 @@
-import { Component, HostBinding, Input, inject, OnInit, ErrorHandler } from '@angular/core';
+import { Component, HostBinding, Input, inject, OnInit } from '@angular/core';
 import { UserService } from '../../core/services/user.service';
 import { User } from '../../core/models/user';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Popup } from '../../components/popup/popup';
 
 
 @Component({
@@ -25,9 +24,6 @@ export class SidebarRight implements OnInit {
   isSearching = false;
   followingUserIds = new Set<string>();
   followActionInProgress = new Set<string>();
-  isLoading: boolean = false;
-  isFollowing: boolean = false;
-  popup!: Popup;
 
 
   private userService = inject(UserService);
@@ -69,47 +65,37 @@ export class SidebarRight implements OnInit {
     this.onSearch();
   }
 
-checkFollowStatus(user: User): void {
-    if (!user) return;
-    this.userService.isFollowing(user.id).subscribe({
-      next: (isFollowing) => {
-        this.isFollowing = isFollowing;
-      },
-      error: (err) => {
-        console.error('Error checking follow status:', err);
-      }
-    });
+  isFollowing(user: User): boolean {
+    return this.followingUserIds.has(String(user.id));
   }
 
   toggleFollow(user: User, event: MouseEvent): void {
     event.preventDefault();
     event.stopPropagation();
-    if (!user || this.isLoading) return;
+    const userId = String(user?.id ?? '');
+    if (!user || !userId || this.followActionInProgress.has(userId)) return;
 
-
-    this.isLoading = true;
-    const action = this.isFollowing ? this.userService.unfollow(user.id) : this.userService.follow(user.id);
+    this.followActionInProgress.add(userId);
+    const currentlyFollowing = this.followingUserIds.has(userId);
+    const action = currentlyFollowing ? this.userService.unfollow(userId) : this.userService.follow(userId);
 
 
     action.subscribe({
       next: () => {
-        this.isFollowing = !this.isFollowing;
-        // Update follower count
-        if (this.isFollowing) {
-          user!.followersCount++;
-          this.userService.notifyFollowCountChange(1);
-          this.popup.show('Successfully followed!', true);
-        } else {
-          user!.followersCount--;
+        if (currentlyFollowing) {
+          this.followingUserIds.delete(userId);
+          user.followersCount = Math.max(0, (user.followersCount ?? 0) - 1);
           this.userService.notifyFollowCountChange(-1);
-          this.popup.show('Successfully unfollowed!', true);
+        } else {
+          this.followingUserIds.add(userId);
+          user.followersCount = (user.followersCount ?? 0) + 1;
+          this.userService.notifyFollowCountChange(1);
         }
-        this.isLoading = false;
+        this.followActionInProgress.delete(userId);
       },
       error: (err) => {
         console.error('Error following/unfollowing user:', err);
-        // this.popup.show(ErrorHandler.extractErrorMessage(err), false);
-        this.isLoading = false;
+        this.followActionInProgress.delete(userId);
       }
     });
   }
