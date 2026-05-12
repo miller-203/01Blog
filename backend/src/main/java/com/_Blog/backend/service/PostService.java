@@ -91,7 +91,6 @@ public class PostService {
             throw new RuntimeException("Post not found");
         }
 
-        // Delete dependent rows first to avoid FK constraint violations.
         commentLikeRepository.deleteByCommentPostId(id);
         commentRepository.deleteByPostId(id);
         likeRepository.deleteByPostId(id);

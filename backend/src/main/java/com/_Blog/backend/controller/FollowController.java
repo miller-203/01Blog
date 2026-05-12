@@ -55,7 +55,7 @@ public class FollowController {
 
         notificationService.createNotification(me, toFollow, null, me.getUsername() + " started following you", "USER");
 
-        return ResponseEntity.ok("Followed successfully");
+        return ResponseEntity.ok().build();
     }
 
     @PostMapping("/unfollow/{userId}")
@@ -78,7 +78,7 @@ public class FollowController {
         return followRepository.findByFollowerAndFollowed(me, toFollow)
                 .map(follow -> {
                     followRepository.delete(follow);
-                    return ResponseEntity.ok("Follow removed!");
+                    return ResponseEntity.ok().build();
                 })
                 .orElseGet(() -> ResponseEntity.badRequest().body("Not currently following this user"));
     }
