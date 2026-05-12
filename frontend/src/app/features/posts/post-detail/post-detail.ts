@@ -171,7 +171,10 @@ export class PostDetail implements OnInit {
   }
 
   onSubmitComment() {
-    if (!this.newCommentContent.trim()) return;
+    if (!this.newCommentContent.trim()) {
+      this.popup.show('Comment cannot be empty.', false);
+      return;
+    }
 
     const postId = this.route.snapshot.paramMap.get('id');
     const commentRequest: CommentRequest = { content: this.newCommentContent };
@@ -200,7 +203,10 @@ export class PostDetail implements OnInit {
         comment.liked = res.liked;
         comment.likesCount = res.likesCount;
       },
-      error: (err) => console.error('Comment like error', err)
+      error: (err) => {
+        console.error('Comment like error', err);
+        this.popup.show(ErrorHandler.extractErrorMessage(err), false);
+      }
     });
   }
 
@@ -244,7 +250,11 @@ export class PostDetail implements OnInit {
   }
 
   submitReportPost() {
-    if (!this.post || !this.reportForm.reason.trim()) return;
+    if (!this.post) return;
+    if (!this.reportForm.reason.trim()) {
+      this.popup.show('Please provide a reason before submitting the report.', false);
+      return;
+    }
 
     this.reportService.reportPost(this.post.id, this.reportForm.reason).subscribe({
       next: () => {
