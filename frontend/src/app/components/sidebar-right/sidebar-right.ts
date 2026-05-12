@@ -1,18 +1,22 @@
-import { Component, HostBinding, Input, inject, OnInit } from '@angular/core';
+import { Component, HostBinding, Input, inject, OnInit, ViewChild } from '@angular/core';
 import { UserService } from '../../core/services/user.service';
 import { User } from '../../core/models/user';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Popup } from '../../components/popup/popup';
+
+
 
 
 @Component({
   selector: 'app-sidebar-right',
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, Popup],
   templateUrl: './sidebar-right.html',
   styleUrl: './sidebar-right.scss'
 })
 export class SidebarRight implements OnInit {
   @Input() isOpenInput = false;
+  @ViewChild('popup') popup!: Popup;
 
   @HostBinding('class.open')
   get isOpenClass() {
@@ -86,10 +90,12 @@ export class SidebarRight implements OnInit {
           this.followingUserIds.delete(userId);
           user.followersCount = Math.max(0, (user.followersCount ?? 0) - 1);
           this.userService.notifyFollowCountChange(-1);
+          this.popup.show('Successfully unfollowed!', true);
         } else {
           this.followingUserIds.add(userId);
           user.followersCount = (user.followersCount ?? 0) + 1;
           this.userService.notifyFollowCountChange(1);
+          this.popup.show('Successfully followed!', true);
         }
         this.followActionInProgress.delete(userId);
       },

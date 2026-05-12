@@ -28,6 +28,26 @@
   color: #657786;
 }
 
+.follow-btn {
+  background: #1a1a1a;
+  color: #fff;
+  border: none;
+  padding: 8px 10px;
+  border-radius: 50px;
+  font-weight: 600;
+  font-size: 15px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.follow-btn:hover {
+  transform: translateY(-2px);
+}
+
+.follow-btn:active {
+  transform: translateY(0);
+}
+
 .no-results svg {
   margin-bottom: 20px;
   color: #aab8c2;
@@ -120,7 +140,7 @@
 .user-item {
   display: flex;
   align-items: center;
-  padding: .5rem;
+  padding: .6rem;
   border-radius: 1rem;
   transition: all .3s ease;
   cursor: pointer;
