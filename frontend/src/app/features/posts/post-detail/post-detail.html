@@ -185,5 +185,11 @@
       message="Are you sure you want to delete this post? This action cannot be undone." (confirm)="confirmDeletePost()"
       (cancel)="cancelDeletePost()">
     </app-confirm-delete-popup>
+
+    <!-- Confirm Delete Popup -->
+    <app-confirm-delete-popup [show]="showDeleteCommentPopup" [item]="commentToDelete" title="Delete Comment"
+      message="Are you sure you want to delete this comment? This action cannot be undone."
+      (confirm)="confirmDeleteComment()" (cancel)="cancelDeleteComment()">
+    </app-confirm-delete-popup>
   </div>
 </div>

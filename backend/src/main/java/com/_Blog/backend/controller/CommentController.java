@@ -84,9 +84,9 @@ public class CommentController {
             return ResponseEntity.status(403).build();
         }
 
-        commentLikeRepository.deleteByCommentId(comment.getId());
+        commentLikeRepository.deleteByCommentPostId(comment.getId());
         commentRepository.delete(comment);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok().build();
     }
 
     @PostMapping("/like")

@@ -37,6 +37,8 @@ export class PostDetail implements OnInit {
   postToDelete: Post | null = null;
   reportForm = { reason: '' };
   authorAvatar: string | null = null;
+  showDeleteCommentPopup: boolean = false;
+  commentToDelete: Comment | null = null;
 
   // Injected Services
   postService = inject(PostService);
@@ -210,15 +212,17 @@ export class PostDetail implements OnInit {
     });
   }
 
-  onDeleteComment(comment: Comment) {
-    if (confirm('Are you sure you want to delete this comment?')) {
-      this.commentService.deleteComment(comment.id).subscribe({
+  confirmDeleteComment() {
+    if (this.commentToDelete) {
+      this.commentService.deleteComment(this.commentToDelete.id).subscribe({
         next: () => {
-          this.comments = this.comments.filter(c => c.id !== comment.id);
+          this.comments = this.comments.filter(c => c.id !== this.commentToDelete!.id);
           if (this.post) {
             this.post.commentsCount = (this.post.commentsCount || 0) - 1;
           }
           this.popup.show("Your comment has been deleted.", true);
+          this.showDeleteCommentPopup = false;
+          this.commentToDelete = null;
         },
         error: (err) => {
           console.error('Comment delete error', err);
@@ -226,6 +230,17 @@ export class PostDetail implements OnInit {
         }
       });
     }
+  }
+
+  cancelDeleteComment() {
+    this.showDeleteCommentPopup = false;
+    this.commentToDelete = null;
+  }
+
+  onDeleteComment(comment: Comment) {
+    this.commentToDelete = comment;
+    this.showDeleteCommentPopup = true;
+    this.showMenu = false;
   }
 
   canDeleteComment(comment: Comment): boolean {

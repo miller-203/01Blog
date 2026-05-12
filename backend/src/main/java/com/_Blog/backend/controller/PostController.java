@@ -327,6 +327,7 @@ public class PostController {
             return ResponseEntity.status(403).body("You cannot delete posts while your account is banned!");
         }
 
+        
         postService.deletePost(id);
         return ResponseEntity.ok("Post deleted successfully");
     }
