@@ -62,6 +62,20 @@ public class NotificationController {
         return ResponseEntity.noContent().build();
     }
 
+    @PutMapping("/{notificationId}/unread")
+    public ResponseEntity<Void> markNotificationAsUnread(@PathVariable Long notificationId, Authentication authentication) {
+        Notification notification = notificationRepository.findById(notificationId)
+                .orElseThrow(() -> new RuntimeException("Notification not found"));
+
+        if (!notification.getRecipient().getUsername().equals(authentication.getName())) {
+            return ResponseEntity.status(403).build();
+        }
+
+        notification.setIsRead(false);
+        notificationRepository.save(notification);
+        return ResponseEntity.noContent().build();
+    }
+
     private NotificationResponse toResponse(Notification notification) {
         NotificationResponse response = new NotificationResponse();
         response.setId(notification.getId());

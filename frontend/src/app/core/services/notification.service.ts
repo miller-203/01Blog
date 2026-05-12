@@ -46,6 +46,10 @@ export class NotificationService {
     return this.http.put<void>(`${this.apiUrl}/${notificationId}/read`, {});
   }
 
+  markAsUnread(notificationId: number): Observable<void> {
+    return this.http.put<void>(`${this.apiUrl}/${notificationId}/unread`, {});
+  }
+
   updateUnreadCount(count: number): void {
     this.unreadCountSubject.next(count);
   }
