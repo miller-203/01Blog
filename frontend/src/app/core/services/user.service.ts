@@ -4,6 +4,11 @@ import { map, Observable, Subject } from 'rxjs';
 import { User } from '../models/user';
 import { environment } from '../../../environments/environment';
 
+export interface FollowStateChangeEvent {
+  targetUserId: string;
+  isFollowing: boolean;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -13,9 +18,15 @@ export class UserService {
 
   private followCountChangesSubject = new Subject<number>();
   followCountChanges$ = this.followCountChangesSubject.asObservable();
+  private followStateChangesSubject = new Subject<FollowStateChangeEvent>();
+  followStateChanges$ = this.followStateChangesSubject.asObservable();
 
   notifyFollowCountChange(delta: number): void {
     this.followCountChangesSubject.next(delta);
+  }
+
+  notifyFollowStateChange(event: FollowStateChangeEvent): void {
+    this.followStateChangesSubject.next(event);
   }
 
   getCurrentUser(): Observable<User> {

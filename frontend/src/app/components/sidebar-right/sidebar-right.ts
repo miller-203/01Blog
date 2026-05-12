@@ -90,11 +90,13 @@ export class SidebarRight implements OnInit {
           this.followingUserIds.delete(userId);
           user.followersCount = Math.max(0, (user.followersCount ?? 0) - 1);
           this.userService.notifyFollowCountChange(-1);
+          this.userService.notifyFollowStateChange({ targetUserId: userId, isFollowing: false });
           this.popup.show('Successfully unfollowed!', true);
         } else {
           this.followingUserIds.add(userId);
           user.followersCount = (user.followersCount ?? 0) + 1;
           this.userService.notifyFollowCountChange(1);
+          this.userService.notifyFollowStateChange({ targetUserId: userId, isFollowing: true });
           this.popup.show('Successfully followed!', true);
         }
         this.followActionInProgress.delete(userId);
