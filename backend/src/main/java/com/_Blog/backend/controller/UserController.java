@@ -3,7 +3,6 @@ package com._Blog.backend.controller;
 import com._Blog.backend.domain.model.User;
 import com._Blog.backend.dto.UserProfileDTO;
 import com._Blog.backend.repository.PostRepository;
-import com._Blog.backend.repository.UserBlockRepository;
 import com._Blog.backend.repository.UserRepository;
 import com._Blog.backend.service.FileStorageService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,8 +13,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/user")
@@ -27,9 +24,6 @@ public class UserController {
 
     @Autowired
     PostRepository postRepository;
-
-    @Autowired
-    UserBlockRepository userBlockRepository;
 
     @Autowired
     FileStorageService fileStorageService;
@@ -61,16 +55,8 @@ public class UserController {
         User currentUser = userRepository.findByUsername(currentUsername)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
-        Set<Long> blockedByMe = userBlockRepository.findByBlocker(currentUser).stream()
-                .map(block -> block.getBlocked().getId())
-                .collect(Collectors.toSet());
-        Set<Long> blockedMe = userBlockRepository.findByBlocked(currentUser).stream()
-                .map(block -> block.getBlocker().getId())
-                .collect(Collectors.toSet());
-
         List<UserProfileDTO> users = userRepository.findAll().stream()
                 .filter(user -> !user.getUsername().equals(currentUsername))
-                .filter(user -> !blockedByMe.contains(user.getId()) && !blockedMe.contains(user.getId()))
                 .map(user -> {
                     int postCount = postRepository.findByUserId(user.getId()).size();
                     return new UserProfileDTO(

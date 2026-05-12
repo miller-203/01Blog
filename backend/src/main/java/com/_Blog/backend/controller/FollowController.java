@@ -3,7 +3,6 @@ package com._Blog.backend.controller;
 import com._Blog.backend.domain.model.Follow;
 import com._Blog.backend.domain.model.User;
 import com._Blog.backend.repository.FollowRepository;
-import com._Blog.backend.repository.UserBlockRepository;
 import com._Blog.backend.repository.UserRepository;
 import com._Blog.backend.service.NotificationService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,8 +11,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/follows")
@@ -27,8 +24,6 @@ public class FollowController {
     @Autowired
     private FollowRepository followRepository;
 
-    @Autowired
-    private UserBlockRepository userBlockRepository;
 
     @Autowired
     private NotificationService notificationService;
@@ -51,12 +46,6 @@ public class FollowController {
 
         if (followRepository.existsByFollowerAndFollowed(me, toFollow)) {
             return ResponseEntity.badRequest().body("Already following");
-        }
-
-        boolean blockedEitherWay = userBlockRepository.existsByBlockerAndBlocked(me, toFollow)
-                || userBlockRepository.existsByBlockerAndBlocked(toFollow, me);
-        if (blockedEitherWay) {
-            return ResponseEntity.badRequest().body("Follow unavailable due to block relationship");
         }
 
         Follow follow = new Follow();
@@ -101,16 +90,8 @@ public class FollowController {
         User me = userRepository.findByUsername(currentUsername)
                 .orElseThrow(() -> new RuntimeException("Current user not found"));
 
-        Set<Long> blockedByMe = userBlockRepository.findByBlocker(me).stream()
-                .map(block -> block.getBlocked().getId())
-                .collect(Collectors.toSet());
-        Set<Long> blockedMe = userBlockRepository.findByBlocked(me).stream()
-                .map(block -> block.getBlocker().getId())
-                .collect(Collectors.toSet());
-
         List<Long> followingIds = followRepository.findByFollower(me).stream()
                 .map(follow -> follow.getFollowed().getId())
-                .filter(id -> !blockedByMe.contains(id) && !blockedMe.contains(id))
                 .toList();
 
         return ResponseEntity.ok(followingIds);

@@ -10,7 +10,6 @@ import com._Blog.backend.repository.LikeRepository;
 import com._Blog.backend.repository.NotificationRepository;
 import com._Blog.backend.repository.PostRepository;
 import com._Blog.backend.repository.ReportRepository;
-import com._Blog.backend.repository.UserBlockRepository;
 import com._Blog.backend.repository.UserRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -34,7 +33,6 @@ public class AdminController {
     private final CommentLikeRepository commentLikeRepository;
     private final NotificationRepository notificationRepository;
     private final FollowRepository followRepository;
-    private final UserBlockRepository userBlockRepository;
 
     public AdminController(
             UserRepository userRepository,
@@ -44,8 +42,7 @@ public class AdminController {
             CommentRepository commentRepository,
             CommentLikeRepository commentLikeRepository,
             NotificationRepository notificationRepository,
-            FollowRepository followRepository,
-            UserBlockRepository userBlockRepository
+            FollowRepository followRepository
     ) {
         this.userRepository = userRepository;
         this.postRepository = postRepository;
@@ -55,7 +52,6 @@ public class AdminController {
         this.commentLikeRepository = commentLikeRepository;
         this.notificationRepository = notificationRepository;
         this.followRepository = followRepository;
-        this.userBlockRepository = userBlockRepository;
     }
 
     @GetMapping("/users")
@@ -102,9 +98,6 @@ public class AdminController {
 
         followRepository.deleteByFollowerId(id);
         followRepository.deleteByFollowedId(id);
-
-        userBlockRepository.deleteByBlockerId(id);
-        userBlockRepository.deleteByBlockedId(id);
 
         commentLikeRepository.deleteByUserId(id);
         commentRepository.deleteByUserId(id);

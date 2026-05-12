@@ -570,3 +570,18 @@
         right: -40px;
     }
 }
+
+.notification-state-btn {
+  margin-left: auto;
+  border: 1px solid #e5e7eb;
+  background: #fff;
+  color: #374151;
+  border-radius: 999px;
+  padding: 4px 10px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.notification-state-btn:hover {
+  background: #f3f4f6;
+}

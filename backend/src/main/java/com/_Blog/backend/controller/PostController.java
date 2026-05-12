@@ -8,7 +8,6 @@ import com._Blog.backend.repository.FollowRepository;
 import com._Blog.backend.repository.LikeRepository;
 import com._Blog.backend.repository.PostRepository;
 import com._Blog.backend.repository.CommentRepository;
-import com._Blog.backend.repository.UserBlockRepository;
 import com._Blog.backend.repository.UserRepository;
 import com._Blog.backend.service.FileStorageService;
 import com._Blog.backend.service.PostService;
@@ -23,7 +22,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @RestController
@@ -55,8 +53,6 @@ public class PostController {
     @Autowired
     private FollowRepository followRepository;
 
-    @Autowired
-    private UserBlockRepository userBlockRepository;
 
     private static final long MAX_IMAGE_SIZE_BYTES = 5 * 1024 * 1024;
     private static final long MAX_VIDEO_SIZE_BYTES = 25 * 1024 * 1024;
@@ -179,21 +175,8 @@ public class PostController {
                 ? userRepository.findByUsername(currentUsername).orElse(null)
                 : null;
 
-        final Set<Long> blockedByMe = (currentUser != null)
-                ? userBlockRepository.findByBlocker(currentUser).stream()
-                    .map(block -> block.getBlocked().getId())
-                    .collect(java.util.stream.Collectors.toSet())
-                : java.util.Collections.emptySet();
-
-        final Set<Long> blockedMe = (currentUser != null)
-                ? userBlockRepository.findByBlocked(currentUser).stream()
-                    .map(block -> block.getBlocker().getId())
-                    .collect(java.util.stream.Collectors.toSet())
-                : java.util.Collections.emptySet();
-
         List<Post> posts = postService.getAllPosts().stream()
                 .filter(this::isVisiblePost)
-                .filter(post -> !blockedByMe.contains(post.getUser().getId()) && !blockedMe.contains(post.getUser().getId()))
                 .toList();
 
         List<PostResponse> responseList = posts.stream().map(post -> {
@@ -228,16 +211,8 @@ public class PostController {
         User currentUser = userRepository.findByUsername(currentUsername)
                 .orElseThrow(() -> new RuntimeException("Current user not found"));
 
-        Set<Long> blockedByMe = userBlockRepository.findByBlocker(currentUser).stream()
-                .map(block -> block.getBlocked().getId())
-                .collect(java.util.stream.Collectors.toSet());
-        Set<Long> blockedMe = userBlockRepository.findByBlocked(currentUser).stream()
-                .map(block -> block.getBlocker().getId())
-                .collect(java.util.stream.Collectors.toSet());
-
         List<User> followedUsers = followRepository.findByFollower(currentUser).stream()
                 .map(follow -> follow.getFollowed())
-                .filter(user -> !blockedByMe.contains(user.getId()) && !blockedMe.contains(user.getId()))
                 .toList();
 
         if (followedUsers.isEmpty()) {

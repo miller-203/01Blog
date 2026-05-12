@@ -55,6 +55,12 @@
                                         <p>{{ notification.message }}</p>
                                         <small>{{ formatDate(notification.createdAt) }}</small>
                                     </div>
+                                    <button
+                                        class="notification-state-btn"
+                                        type="button"
+                                        (click)="toggleReadState($event, notification)">
+                                        {{ notification.read ? 'Unread' : 'Read' }}
+                                    </button>
                                 </button>
 
                                 <div class="empty-notifications" *ngIf="notifications().length === 0">

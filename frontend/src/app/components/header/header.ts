@@ -125,6 +125,30 @@ export class Header implements OnInit, OnDestroy {
     });
   }
 
+  toggleReadState(event: MouseEvent, notification: NotificationResponse): void {
+    event.stopPropagation();
+    const targetReadState = !notification.read;
+    const request$ = targetReadState
+      ? this.notificationService.markAsRead(notification.id)
+      : this.notificationService.markAsUnread(notification.id);
+
+    request$.subscribe({
+      next: () => {
+        const updated = this.notifications().map(item =>
+          item.id === notification.id ? { ...item, read: targetReadState } : item
+        );
+        this.notifications.set(updated);
+        const countDelta = targetReadState ? -1 : 1;
+        const nextCount = Math.max(0, this.unreadCount() + countDelta);
+        this.unreadCount.set(nextCount);
+        this.notificationService.updateUnreadCount(nextCount);
+      },
+      error: (error) => {
+        console.error('Error updating notification state:', error);
+      }
+    });
+  }
+
   toggleDropdown() {
     this.isOpen.update((v: boolean) => !v);
     if (this.isOpen()) {
