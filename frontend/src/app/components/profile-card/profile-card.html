@@ -2,9 +2,12 @@
   <div class="profile-cover" [style.background-image]="user.coverUrl ? 'url(' + user.coverUrl + ')' : null"></div>
 
   <div class="profile-avatar">
-    <img
-       src="{{user.avatarUrl}}"
+    <img *ngIf="user.avatarUrl; else smallAvatarFallback"
+       [src]="user.avatarUrl"
       alt="Profile Picture">
+    <ng-template #smallAvatarFallback>
+      <div class="profile-avatar-fallback"></div>
+    </ng-template>
   </div>
 
   <h4 class="profile-name">{{ user.firstName }} {{ user.lastName }}</h4>

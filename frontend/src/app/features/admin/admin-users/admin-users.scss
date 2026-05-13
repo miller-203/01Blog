@@ -120,6 +120,13 @@
     text-decoration: underline;
 }
 
+.admin-user-avatar-fallback {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: #000;
+}
+
 /* Status Badges */
 .status-badge {
     display: inline-flex;

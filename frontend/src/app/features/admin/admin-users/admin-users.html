@@ -38,7 +38,12 @@
                     <tr *ngFor="let user of displayedUsers" [class.banned-row]="user.role === 'BANNED'">
                         <td>
                             <div class="d-flex align-items-center gap-2">
-                            <img [src]="user.avatarUrl || '/assets/avatar-placeholder.png'" width="28" height="28" class="rounded-circle" alt="avatar">
+                            <ng-container *ngIf="user.avatarUrl; else adminAvatarFallback">
+                                <img [src]="user.avatarUrl" width="28" height="28" class="rounded-circle" alt="avatar">
+                            </ng-container>
+                            <ng-template #adminAvatarFallback>
+                                <div class="admin-user-avatar-fallback" aria-label="avatar"></div>
+                            </ng-template>
                             <a [href]="'/profile/' + user.username" class="username-link">
                                 @{{ user.username }}
                             </a></div>
