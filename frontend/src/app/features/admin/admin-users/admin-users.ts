@@ -33,7 +33,6 @@ export class AdminUsers implements OnInit {
   loadUsers() {
     this.adminService.getAllUsers().subscribe({
       next: (users) => {
-        console.log(">>>>>>>>>", users);
         this.users = users;
         this.filteredUsers = users;
         this.displayedUsers = this.filteredUsers.slice(0, this.displayedCount);
@@ -89,13 +88,11 @@ export class AdminUsers implements OnInit {
   }
 
   toggleUserStatus(user: User) {
-    console.log('Unbanning user:', user.username);
 
     this.adminService.toggleUserStatus(user.id).subscribe({
       next: (data) => {
         // Update local user status
         user.status = data.status;
-        console.log('User successfully unbanned:', data);
         this.popup.show(`User ${String(data.status) === 'BANNED' ? 'banned' : 'unbanned'} successfully.`, true);
       },
       error: (err) => {

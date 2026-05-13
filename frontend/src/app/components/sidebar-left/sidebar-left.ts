@@ -61,7 +61,6 @@ export class SidebarLeft implements OnInit, OnDestroy {
           this.user = user;
           const normalizedRole = (user.role || "").toUpperCase();
           this.isAdmin = normalizedRole === "ADMIN" || normalizedRole === "ROLE_ADMIN";
-          console.log("user ::::::", user);
         },
         error: (err) => {
           console.error('Error fetching user:', err);
@@ -69,9 +68,7 @@ export class SidebarLeft implements OnInit, OnDestroy {
       });
   }
   logout() {
-    console.log('Logout clicked');
     this.isOpen.set(false);
-    console.log('Logging out user');
     this.authService.logout();
   }
 }

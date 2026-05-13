@@ -82,7 +82,6 @@ export class PostDetail implements OnInit {
         };
         this.authorAvatar = this.normalizeAvatar(this.post.authorAvatar ?? this.post.authorImage ?? this.post.avatarUrl ?? null);
         this.createdAt = this.dateUtils.formatDate(post.createdAt);
-        console.log('Post details:', this.post);
       },
       error: (error) => {
         console.error('Error fetching post details:', error);

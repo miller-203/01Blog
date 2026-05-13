@@ -54,6 +54,7 @@ export class Header implements OnInit, OnDestroy {
         this.unreadCount.set(count);
       },
       error: (error) => {
+        
         console.error('Error loading unread count:', error);
       }
     });

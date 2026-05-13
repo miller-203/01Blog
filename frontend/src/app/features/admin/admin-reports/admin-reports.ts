@@ -32,7 +32,6 @@ export class AdminReports implements OnInit {
   loadReports() {
     this.adminService.getAllReports().subscribe({
       next: (reports) => {
-        console.log(reports);
 
         this.reports = reports;
         this.applyFilters();
@@ -67,7 +66,6 @@ export class AdminReports implements OnInit {
 
   onViewClick(report: ReportResponse) {
     this.selectedReport = report;
-    console.log("on View Click", this.selectedReport);
   }
 
   closeModal() {

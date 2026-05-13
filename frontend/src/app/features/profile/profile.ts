@@ -226,7 +226,6 @@ export class Profile implements OnInit, OnDestroy {
     if (!this.user) return;
 
 
-    console.log("this.editForm", this.editForm);
 
 
     const formData = new FormData();
@@ -294,7 +293,6 @@ export class Profile implements OnInit, OnDestroy {
     }
 
 
-    console.log("Report submitted");
 
 
     this.reportService.reportUser(this.user.id, this.reportForm.reason).subscribe({

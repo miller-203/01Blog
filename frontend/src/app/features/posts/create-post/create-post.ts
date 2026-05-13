@@ -111,7 +111,6 @@ export class CreatePost implements OnInit, OnDestroy {
   // ===== POST OPERATIONS =====
   private loadExistingPost(): void {
     this.postService.getPostById(this.postId!).subscribe(async (post: any) => {
-      console.log("this.title >>>>>>>>", post);
 
       this.form.patchValue({
         title: post.title,
@@ -120,13 +119,11 @@ export class CreatePost implements OnInit, OnDestroy {
 
       if (this.editor && post.content) {
         const parsed = parseEditorJsContent(post.content);
-        console.log("parsed", parsed.blocks);
         if (post.content) {
           try {
             await this.editor.isReady;
 
             const parsed = parseEditorJsContent(post.content);
-            console.log("parsed", parsed.blocks);
 
             this.title = post.title;
             this.editor.render({
@@ -135,7 +132,6 @@ export class CreatePost implements OnInit, OnDestroy {
               version: '2.28.0'
             });
 
-            console.log('Content rendered!');
           } catch (error) {
             console.error('Render error', error);
           }
@@ -173,7 +169,6 @@ export class CreatePost implements OnInit, OnDestroy {
 
     this.postService.createPost(postData).subscribe({
       next: res => {
-        console.log('Post created!', res);
         this.router.navigate(['/home'], { queryParams: { success: 'post-created' } });
       },
       error: err => this.popup.show(ErrorHandler.extractErrorMessage(err), false)
@@ -192,7 +187,6 @@ export class CreatePost implements OnInit, OnDestroy {
     if (this.postId) {
       this.postService.updatePost(this.postId, postData).subscribe({
         next: res => {
-          console.log('Post updated!', res);
           this.popup.show('Post updated successfully.', true);
           this.router.navigate(['/posts', this.postId]);
         },

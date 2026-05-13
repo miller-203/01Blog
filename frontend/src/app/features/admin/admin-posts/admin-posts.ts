@@ -74,7 +74,6 @@ export class AdminPosts implements OnInit {
   }
 
   viewPost(post: Post) {
-    console.log('View post:', post.id);
   }
 
   deletePost(post: Post) {

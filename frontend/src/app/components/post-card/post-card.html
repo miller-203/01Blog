@@ -61,7 +61,7 @@
             </div>
         </div>
 
-        <div class="card-image">
+        <div class="card-image" *ngIf="imageUrl">
             <img *ngIf="imageUrl" [src]="imageUrl" alt="Post image">
         </div>
     </div>

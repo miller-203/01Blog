@@ -67,7 +67,6 @@ export class Register {
             err,
             'Registration failed. Please try again.'
           );
-          console.log("err >>>>>>>>", err);
           this.popup.show(errorMessage, false);
         }
       });
