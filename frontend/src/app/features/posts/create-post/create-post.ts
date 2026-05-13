@@ -171,7 +171,13 @@ export class CreatePost implements OnInit, OnDestroy {
       next: res => {
         this.router.navigate(['/home'], { queryParams: { success: 'post-created' } });
       },
-      error: err => this.popup.show(ErrorHandler.extractErrorMessage(err), false)
+      error: err => {
+        if (err.status === 429) {
+          this.popup.show('Please wait a moment before trying again.', false);
+        } else {
+          this.popup.show("Failed to create post!", false);
+        }
+      }
     });
   }
 

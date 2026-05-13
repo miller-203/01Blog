@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -61,12 +62,43 @@ public class PostService {
         List<User> followers = followService.getFollowersForUser(user);
         for (User follower : followers) {
             notificationService.createNotification(
-                user,
-                follower,
-                savedPost,
-                user.getUsername() + " posted: " + savedPost.getTitle(),
-                "POST"
-            );
+                    user,
+                    follower,
+                    savedPost,
+                    user.getUsername() + " posted: " + savedPost.getTitle(),
+                    "POST");
+        }
+
+        return savedPost;
+    }
+
+    @Transactional
+    public Post createPost(String username, String title, String content, String imageUrl) {
+        User user = userRepository.findByUsernameForUpdate(username)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        LocalDateTime lastPostTime = postRepository.getTimeLastPostByUser(user);
+
+        if (lastPostTime != null && lastPostTime.isAfter(LocalDateTime.now().minusSeconds(10))) {
+            throw new RuntimeException("RATE_LIMIT");
+        }
+
+        Post post = new Post();
+        post.setTitle(title);
+        post.setContent(content);
+        post.setImageUrl(imageUrl);
+        post.setUser(user);
+
+        Post savedPost = postRepository.saveAndFlush(post);
+
+        List<User> followers = followService.getFollowersForUser(user);
+        for (User follower : followers) {
+            notificationService.createNotification(
+                    user,
+                    follower,
+                    savedPost,
+                    user.getUsername() + " posted: " + savedPost.getTitle(),
+                    "POST");
         }
 
         return savedPost;

@@ -56,9 +56,10 @@ public class PostController {
     private static final long MAX_IMAGE_SIZE_BYTES = 5 * 1024 * 1024;
     private static final long MAX_VIDEO_SIZE_BYTES = 25 * 1024 * 1024;
 
-    @PostMapping(value = "/upload-image", consumes = {"multipart/form-data"})
+    @PostMapping(value = "/upload-image", consumes = { "multipart/form-data" })
     public ResponseEntity<?> uploadImage(@RequestParam("image") MultipartFile image, Authentication authentication) {
-        ResponseEntity<?> bannedResponse = bannedActionResponse(authentication, "You cannot upload images while your account is banned!");
+        ResponseEntity<?> bannedResponse = bannedActionResponse(authentication,
+                "You cannot upload images while your account is banned!");
         if (bannedResponse != null) {
             return bannedResponse;
         }
@@ -83,9 +84,10 @@ public class PostController {
         return ResponseEntity.ok(response);
     }
 
-    @PostMapping(value = "/upload-video", consumes = {"multipart/form-data"})
+    @PostMapping(value = "/upload-video", consumes = { "multipart/form-data" })
     public ResponseEntity<?> uploadVideo(@RequestParam("video") MultipartFile video, Authentication authentication) {
-        ResponseEntity<?> bannedResponse = bannedActionResponse(authentication, "You cannot upload videos while your account is banned!");
+        ResponseEntity<?> bannedResponse = bannedActionResponse(authentication,
+                "You cannot upload videos while your account is banned!");
         if (bannedResponse != null) {
             return bannedResponse;
         }
@@ -110,7 +112,6 @@ public class PostController {
         return ResponseEntity.ok(response);
     }
 
-
     private String toPublicUploadUrl(String storedPath) {
         if (storedPath == null || storedPath.isBlank()) {
             return storedPath;
@@ -131,7 +132,7 @@ public class PostController {
                 .toUriString();
     }
 
-    @PostMapping(consumes = {"multipart/form-data"})
+    @PostMapping(consumes = { "multipart/form-data" })
     public ResponseEntity<?> createPost(
             @RequestParam("title") String title,
             @RequestParam("content") String content,
@@ -139,31 +140,41 @@ public class PostController {
             Authentication authentication) {
 
         String username = authentication.getName();
-        String imageUrl = null;
 
         if (username == null || username.isEmpty()) {
             return ResponseEntity.status(401).body("Authentication required");
         }
-        ResponseEntity<?> bannedResponse = bannedActionResponse(authentication, "You cannot create posts while your account is banned!");
+
+        ResponseEntity<?> bannedResponse = bannedActionResponse(
+                authentication,
+                "You cannot create posts while your account is banned!");
+
         if (bannedResponse != null) {
             return bannedResponse;
         }
+
+        String imageUrl = null;
 
         if (file != null && !file.isEmpty()) {
             if (file.getSize() > MAX_IMAGE_SIZE_BYTES) {
                 return ResponseEntity.status(413).body("Image exceeds 5MB limit");
             }
+
             imageUrl = toPublicUploadUrl(fileStorageService.saveFile(file));
         }
 
-        Post newPost = postService.createPost(username, title, content);
+        try {
+            Post newPost = postService.createPost(username, title, content, imageUrl);
+            return ResponseEntity.ok(newPost);
+        } catch (RuntimeException e) {
+            if ("RATE_LIMIT".equals(e.getMessage())) {
+                return ResponseEntity
+                        .status(429)
+                        .body("Please wait 40 seconds before creating another post.");
+            }
 
-        if (imageUrl != null) {
-            newPost.setImageUrl(imageUrl);
-            postService.savePost(newPost);
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
-
-        return ResponseEntity.ok(newPost);
     }
 
     @GetMapping
@@ -180,24 +191,24 @@ public class PostController {
 
         List<PostResponse> responseList = posts.stream().map(post -> {
             PostResponse resp = new PostResponse();
-                resp.setId(post.getId());
-                resp.setTitle(post.getTitle());
-                resp.setContent(post.getContent());
-                resp.setImageUrl(post.getImageUrl());
-                resp.setCreatedAt(post.getCreatedAt());
-                resp.setUserId(post.getUser().getId());
-                resp.setUsername(post.getUser().getUsername());
-                resp.setAuthorFirstName(post.getUser().getFirstName());
-                resp.setAuthorLastName(post.getUser().getLastName());
-                resp.setAvatarUrl(post.getUser().getProfilePicUrl());
-                resp.setOwner(currentUser != null && post.getUser().getId().equals(currentUser.getId()));
-                
-                resp.setLikeCount(likeRepository.countByPost(post));
-                resp.setCommentsCount(commentRepository.findByPostId(post.getId()).size());
-                if (currentUser != null) {
-                    resp.setLikedByCurrentUser(likeRepository.findByUserAndPost(currentUser, post).isPresent());
-                }
-                return resp;
+            resp.setId(post.getId());
+            resp.setTitle(post.getTitle());
+            resp.setContent(post.getContent());
+            resp.setImageUrl(post.getImageUrl());
+            resp.setCreatedAt(post.getCreatedAt());
+            resp.setUserId(post.getUser().getId());
+            resp.setUsername(post.getUser().getUsername());
+            resp.setAuthorFirstName(post.getUser().getFirstName());
+            resp.setAuthorLastName(post.getUser().getLastName());
+            resp.setAvatarUrl(post.getUser().getProfilePicUrl());
+            resp.setOwner(currentUser != null && post.getUser().getId().equals(currentUser.getId()));
+
+            resp.setLikeCount(likeRepository.countByPost(post));
+            resp.setCommentsCount(commentRepository.findByPostId(post.getId()).size());
+            if (currentUser != null) {
+                resp.setLikedByCurrentUser(likeRepository.findByUserAndPost(currentUser, post).isPresent());
+            }
+            return resp;
         }).collect(Collectors.toList());
 
         return ResponseEntity.ok(responseList);
@@ -245,7 +256,6 @@ public class PostController {
         return ResponseEntity.ok(responseList);
     }
 
-
     @GetMapping("/{id}")
     public ResponseEntity<PostResponse> getPostById(@PathVariable Long id, Authentication authentication) {
         String currentUsername = (authentication != null) ? authentication.getName() : "";
@@ -289,25 +299,25 @@ public class PostController {
         List<PostResponse> responseList = postRepository.findByUserId(userId).stream()
                 .filter(this::isVisiblePost)
                 .map(post -> {
-            PostResponse resp = new PostResponse();
-            resp.setId(post.getId());
-            resp.setTitle(post.getTitle());
-            resp.setContent(post.getContent());
-            resp.setImageUrl(post.getImageUrl());
-            resp.setCreatedAt(post.getCreatedAt());
-            resp.setUserId(post.getUser().getId());
-            resp.setUsername(post.getUser().getUsername());
-            resp.setAuthorFirstName(post.getUser().getFirstName());
-            resp.setAuthorLastName(post.getUser().getLastName());
-            resp.setAvatarUrl(post.getUser().getProfilePicUrl());
-            resp.setOwner(currentUser != null && post.getUser().getId().equals(currentUser.getId()));
-            resp.setLikeCount(likeRepository.countByPost(post));
-            resp.setCommentsCount(commentRepository.findByPostId(post.getId()).size());
-            if (currentUser != null) {
-                resp.setLikedByCurrentUser(likeRepository.findByUserAndPost(currentUser, post).isPresent());
-                }
-            return resp;
-        }).collect(Collectors.toList());
+                    PostResponse resp = new PostResponse();
+                    resp.setId(post.getId());
+                    resp.setTitle(post.getTitle());
+                    resp.setContent(post.getContent());
+                    resp.setImageUrl(post.getImageUrl());
+                    resp.setCreatedAt(post.getCreatedAt());
+                    resp.setUserId(post.getUser().getId());
+                    resp.setUsername(post.getUser().getUsername());
+                    resp.setAuthorFirstName(post.getUser().getFirstName());
+                    resp.setAuthorLastName(post.getUser().getLastName());
+                    resp.setAvatarUrl(post.getUser().getProfilePicUrl());
+                    resp.setOwner(currentUser != null && post.getUser().getId().equals(currentUser.getId()));
+                    resp.setLikeCount(likeRepository.countByPost(post));
+                    resp.setCommentsCount(commentRepository.findByPostId(post.getId()).size());
+                    if (currentUser != null) {
+                        resp.setLikedByCurrentUser(likeRepository.findByUserAndPost(currentUser, post).isPresent());
+                    }
+                    return resp;
+                }).collect(Collectors.toList());
 
         return ResponseEntity.ok(responseList);
     }
@@ -325,17 +335,18 @@ public class PostController {
         if (accountStatus != null && accountStatus.equalsIgnoreCase("BANNED")) {
             return ResponseEntity.status(403).body("You cannot delete posts while your account is banned!");
         }
-        
+
         postService.deletePost(id);
         return ResponseEntity.ok("Post deleted successfully");
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> updatePost(@PathVariable Long id, @RequestBody PostRequest request, Authentication authentication) {
+    public ResponseEntity<?> updatePost(@PathVariable Long id, @RequestBody PostRequest request,
+            Authentication authentication) {
         String username = authentication.getName();
         User currentUser = userRepository.findByUsername(username).orElse(null);
         Post post = postService.getPostById(id);
-        
+
         if (currentUser == null || !post.getUser().getId().equals(currentUser.getId())) {
             return ResponseEntity.status(403).body("You can only edit your own posts!");
         }
@@ -348,7 +359,7 @@ public class PostController {
         post.setTitle(request.getTitle());
         post.setContent(request.getContent());
         postService.savePost(post);
-        
+
         return ResponseEntity.ok(post);
     }
 

@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import com._Blog.backend.service.CommentService;
 
 import java.util.HashMap;
 import java.util.List;
@@ -35,27 +36,44 @@ public class CommentController {
     @Autowired
     private CommentLikeRepository commentLikeRepository;
 
+    @Autowired
+    private CommentService commentService;
+
     @PostMapping
-    public ResponseEntity<?> addComment(@RequestBody CommentRequest request, Authentication authentication) {
-        String username = authentication.getName();
+public ResponseEntity<?> addComment(
+        @RequestBody CommentRequest request,
+        Authentication authentication) {
 
-        User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new RuntimeException("User not found"));
-        if (isBanned(user)) {
-            return ResponseEntity.status(403).body("You cannot comment while your account is banned!");
-        }
+    String username = authentication.getName();
 
-        Post post = postRepository.findById(request.getPostId())
-                .orElseThrow(() -> new RuntimeException("Post not found"));
+    User user = userRepository.findByUsername(username)
+            .orElseThrow(() -> new RuntimeException("User not found"));
 
-        Comment comment = new Comment();
-        comment.setContent(request.getContent());
-        comment.setUser(user);
-        comment.setPost(post);
+    if (isBanned(user)) {
+        return ResponseEntity
+                .status(403)
+                .body("You cannot comment while your account is banned!");
+    }
 
-        Comment saved = commentRepository.save(comment);
+    try {
+        Comment saved = commentService.createComment(
+                username,
+                request.getPostId(),
+                request.getContent()
+        );
 
         return ResponseEntity.ok(toFrontendComment(saved, user));
+
+    } catch (RuntimeException e) {
+
+        if ("COMMENT_RATE_LIMIT".equals(e.getMessage())) {
+            return ResponseEntity
+                    .status(429)
+                    .body("Please wait 2 seconds before commenting again.");
+        }
+
+        return ResponseEntity.badRequest().body(e.getMessage());
+    }
     }
 
     @GetMapping("/{postId}")
