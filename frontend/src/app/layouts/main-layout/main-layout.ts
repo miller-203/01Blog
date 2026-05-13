@@ -13,7 +13,8 @@ import { filter } from 'rxjs';
   styleUrl: './main-layout.scss'
 })
 export class MainLayout {
-  isSidebarOpen = signal(false);
+  isRightSidebarOpen = signal(false);
+  isLeftSidebarOpen = signal(false);
   currentUrl = signal('');
 
   private router = inject(Router);
@@ -30,20 +31,26 @@ export class MainLayout {
       .subscribe((event) => {
         this.currentUrl.set(event.urlAfterRedirects);
         if (!this.showUsersSidebar()) {
-          this.closeSidebar();
+          this.closeSidebars();
         }
       });
   }
 
-  toggleSidebar() {
-    if (!this.showUsersSidebar()) {
-      return;
-    }
-    this.isSidebarOpen.update(v => !v);
+  toggleRightSidebar() {
+    if (!this.showUsersSidebar()) return;
+    this.isLeftSidebarOpen.set(false);
+    this.isRightSidebarOpen.update(v => !v);
   }
 
-  closeSidebar() {
-    this.isSidebarOpen.set(false);
+  toggleLeftSidebar() {
+    if (!this.showUsersSidebar()) return;
+    this.isRightSidebarOpen.set(false);
+    this.isLeftSidebarOpen.update(v => !v);
+  }
+
+  closeSidebars() {
+    this.isRightSidebarOpen.set(false);
+    this.isLeftSidebarOpen.set(false);
   }
 
   isMobile(): boolean {

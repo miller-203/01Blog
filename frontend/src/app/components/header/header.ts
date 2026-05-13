@@ -29,7 +29,8 @@ export class Header implements OnInit, OnDestroy {
 
   private subscription: Subscription = new Subscription();
 
-  @Output() toggleSidebar = new EventEmitter<void>();
+  @Output() toggleRightSidebar = new EventEmitter<void>();
+  @Output() toggleLeftSidebar = new EventEmitter<void>();
 
   private authService = inject(AuthService);
   private notificationService = inject(NotificationService);
@@ -211,8 +212,12 @@ export class Header implements OnInit, OnDestroy {
     });
   }
 
-  onToggleSidebar() {
-    this.toggleSidebar.emit();
+  onToggleRightSidebar() {
+    this.toggleRightSidebar.emit();
+  }
+
+  onToggleLeftSidebar() {
+    this.toggleLeftSidebar.emit();
   }
 
   @HostListener('document:click', ['$event'])

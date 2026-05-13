@@ -14,14 +14,14 @@
             <div class="col-auto">
                 <div class="d-flex align-items-center gap-2">
                     <!-- Hamburger Menu for Mobile/Tablet -->
-                    <button class="btn-hamburger d-lg-none" type="button" (click)="onToggleSidebar()">
+                    <button class="btn-hamburger d-lg-none" type="button" (click)="onToggleRightSidebar()" title="Open users sidebar">
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
-                            <g fill="none" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M8 12h.009m3.995 0h.01m3.977 0H16" />
-                                <path stroke-width="1.5"
-                                    d="M2 12c0-4.714 0-7.071 1.464-8.536C4.93 2 7.286 2 12 2c4.714 0 7.071 0 8.535 1.464C22 4.93 22 7.286 22 12c0 4.714 0 7.071-1.465 8.535C19.072 22 16.714 22 12 22s-7.071 0-8.536-1.465C2 19.072 2 16.714 2 12Z" />
-                            </g>
+                            <path fill="currentColor" d="M4 6h16v2H4zm0 5h10v2H4zm0 5h16v2H4z"/>
+                        </svg>
+                    </button>
+                    <button class="btn-hamburger d-lg-none" type="button" (click)="onToggleLeftSidebar()" title="Open navigation sidebar">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                            <path fill="currentColor" d="M3 5h18v14H3zm2 2v10h14V7zm2 2h4v2H7zm0 4h4v2H7z"/>
                         </svg>
                     </button>
 
