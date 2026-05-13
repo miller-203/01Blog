@@ -9,7 +9,10 @@
                 <div class="cover-photo" [style.background-image]="user.coverUrl ? 'url(' + user.coverUrl + ')' : null"></div>
                 <div class="profile-image-wrapper">
                     <div class="profile-image">
-                        <img src="{{user.avatarUrl}}" alt="Profile image">
+                        <img *ngIf="user.avatarUrl; else profileAvatarFallback" [src]="user.avatarUrl" alt="Profile image">
+                        <ng-template #profileAvatarFallback>
+                            <div class="profile-image-fallback"></div>
+                        </ng-template>
                     </div>
                 </div>
                 <div class="profile-content">

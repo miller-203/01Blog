@@ -53,7 +53,10 @@
                                     [class.unread]="!notification.read"
                                     *ngFor="let notification of visibleNotifications()"
                                     (click)="onNotificationClick(notification)">
-                                    <img [src]="notification.actorAvatar" [alt]="notification.actorFirstName" />
+                                    <img *ngIf="notification.actorAvatar; else notificationAvatarFallback" [src]="notification.actorAvatar" [alt]="notification.actorFirstName" />
+                                    <ng-template #notificationAvatarFallback>
+                                        <div class="notification-avatar-fallback" [attr.aria-label]="notification.actorFirstName + ' avatar'"></div>
+                                    </ng-template>
                                     <div class="notification-item-content">
                                         <p>{{ notification.message }}</p>
                                         <small>{{ formatDate(notification.createdAt) }}</small>

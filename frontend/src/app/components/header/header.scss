@@ -560,6 +560,14 @@
     object-fit: cover;
 }
 
+.notification-avatar-fallback {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: #000;
+    flex-shrink: 0;
+}
+
 .notification-item-content p {
     margin: 0;
     color: #1f2937;

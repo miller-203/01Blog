@@ -45,7 +45,10 @@
         </ng-container>
         <a *ngFor="let user of displayedUsers" [href]="'/profile/' + user.username" class="user-item">
             <div class="user-avatar">
-                <img [src]="user.avatarUrl || '/assets/avatar-placeholder.png'" [alt]="user.firstName">
+                <img *ngIf="user.avatarUrl; else sidebarAvatarFallback" [src]="user.avatarUrl" [alt]="user.firstName">
+                <ng-template #sidebarAvatarFallback>
+                    <div class="user-avatar-fallback" [attr.aria-label]="user.firstName + ' avatar'"></div>
+                </ng-template>
             </div>
             <div class="flex-fill ms-3">
                 <h3 class="name">{{ user.firstName }} {{ user.lastName }}</h3>

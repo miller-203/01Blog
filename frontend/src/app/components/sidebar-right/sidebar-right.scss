@@ -173,6 +173,14 @@
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, .1);
 }
 
+.user-avatar-fallback {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #000;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, .1);
+}
+
 .name {
   font-size: .700rem;
   font-weight: 600;

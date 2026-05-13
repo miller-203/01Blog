@@ -63,6 +63,13 @@
   object-fit: cover;
 }
 
+.profile-avatar-fallback {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: #000;
+}
+
 .small-profile:hover .profile-avatar {
   transform: scale(1.05);
 }
