@@ -149,12 +149,27 @@ export class CreatePost implements OnInit, OnDestroy {
 
     const output = await this.editor.save();
 
+    const hasContent = output.blocks.some((block: any) => {
+      if (block.type === 'paragraph' || block.type === 'header') {
+        return block.data?.text?.replace(/<[^>]*>/g, '').trim().length > 0;
+      }
+
+      if (block.type === 'image' || block.type === 'video') {
+        return !!block.data?.file?.url;
+      }
+
+      return true;
+    });
+
+    if (!this.title.trim() || !hasContent) {
+      this.popup.show('Title and content cannot be empty.', false);
+      return;
+    }
+
     const postData = {
-      title: this.title,
+      title: this.title.trim(),
       content: JSON.stringify(output.blocks)
     };
-
-    console.log('postData !', postData);
 
     this.postService.createPost(postData).subscribe({
       next: res => {

@@ -53,7 +53,6 @@ public class PostController {
     @Autowired
     private FollowRepository followRepository;
 
-
     private static final long MAX_IMAGE_SIZE_BYTES = 5 * 1024 * 1024;
     private static final long MAX_VIDEO_SIZE_BYTES = 25 * 1024 * 1024;
 
@@ -326,7 +325,6 @@ public class PostController {
         if (accountStatus != null && accountStatus.equalsIgnoreCase("BANNED")) {
             return ResponseEntity.status(403).body("You cannot delete posts while your account is banned!");
         }
-
         
         postService.deletePost(id);
         return ResponseEntity.ok("Post deleted successfully");

@@ -80,9 +80,23 @@ export class AdminService {
             map(users => users.map(user => ({
                 ...user,
                 id: String(user.id),
-                avatarUrl: user.avatarUrl ?? user.profilePicUrl ?? ''
+                avatarUrl: this.normalizeAvatar(user.avatarUrl ?? user.profilePicUrl ?? '')
             })))
         );
+    }
+
+    private normalizeAvatar(value: unknown): string | null {
+      const avatar = String(value ?? '').trim();
+      if (!avatar || avatar.toLowerCase() === 'false' || avatar.toLowerCase() === 'null') {
+        return null;
+      }
+      if (/^https?:\/\//i.test(avatar) || avatar.startsWith('/')) {
+        return avatar;
+      }
+  
+      const origin = environment.apiUrl.replace(/\/api\/?$/, '');
+      const normalizedPath = avatar.startsWith('uploads/') ? avatar : `uploads/${avatar}`;
+      return `${origin}/${normalizedPath}`;
     }
 
     deleteUser(userId: string): Observable<any> {

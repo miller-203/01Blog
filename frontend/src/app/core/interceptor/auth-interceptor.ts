@@ -1,20 +1,29 @@
 import { HttpErrorResponse, HttpInterceptorFn } from '@angular/common/http';
 import { inject } from '@angular/core';
+import { Router } from '@angular/router';
 import { AuthService } from '../services/auth.service';
 import { catchError, switchMap, throwError } from 'rxjs';
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const authService = inject(AuthService);
-  
+  const router = inject(Router);
+
+  const redirectToLogin = () => {
+    authService.logout();
+    router.navigate(['/login']);
+  };
+
   // Skip auth endpoints
-  if (req.url.includes('/auth/login') ||
+  if (
+    req.url.includes('/auth/login') ||
     req.url.includes('/auth/register') ||
-    req.url.includes('/auth/refresh')) {
+    req.url.includes('/auth/refresh')
+  ) {
     return next(req);
   }
 
-  // Add token to request
   const accessToken = authService.getAccessToken();
+
   if (accessToken) {
     req = req.clone({
       setHeaders: {
@@ -23,44 +32,34 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
     });
   }
 
-return next(req).pipe(
-    catchError((error: HttpErrorResponse) => {      
-      if (error.status === 401) {
-        const errorType = error.error?.error || '';
+  return next(req).pipe(
+    catchError((error: HttpErrorResponse) => {
+      const errorType = error.error?.error || '';
 
-        if (errorType === 'JWT_EXPIRED') {
-          
+      if (error.status === 401 || error.status === 403) {
+        if (error.status === 401 && errorType === 'JWT_EXPIRED') {
           return authService.refreshToken().pipe(
-            switchMap((response: any) => {
-              
-              // Retry the original request with new token
+            switchMap(() => {
               const newToken = authService.getAccessToken();
+
               const clonedRequest = req.clone({
                 setHeaders: {
                   Authorization: `Bearer ${newToken}`
                 }
               });
+
               return next(clonedRequest);
             }),
             catchError((refreshError: HttpErrorResponse) => {
-              // Check if refresh token expired
-              const refreshErrorType = refreshError.error?.error || '';
-              
-              if (refreshErrorType === 'REFRESH_TOKEN_EXPIRED') {
-              } else {
-              }
-              
-              // Logout user
-              authService.logout();
+              redirectToLogin();
               return throwError(() => refreshError);
             })
           );
-        } 
-        // If JWT is invalid or any other 401 error
-        else {
-          authService.logout();
-          return throwError(() => error);
         }
+
+        // JWT invalid, banned, disabled, unauthorized, forbidden
+        redirectToLogin();
+        return throwError(() => error);
       }
 
       return throwError(() => error);
