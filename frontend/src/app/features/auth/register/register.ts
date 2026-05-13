@@ -19,6 +19,7 @@ export class Register {
   
   passwordVisible = false;
   isSubmitting = false;
+  readonly passwordPolicyMessage = 'Password must be at least 8 characters and include uppercase, lowercase, number, and special character.';
   
   userRegister: UserRegister = {
     username: '',
@@ -49,6 +50,11 @@ export class Register {
     // Basic email validation
     if (!this.isValidEmail(this.userRegister.email)) {
       this.popup.show('Please enter a valid email address.', false);
+      return;
+    }
+
+    if (!this.isValidPassword(this.userRegister.password)) {
+      this.popup.show(this.passwordPolicyMessage, false);
       return;
     }
 
@@ -85,5 +91,10 @@ export class Register {
   private isValidEmail(email: string): boolean {
     const emailPattern = /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$/i;
     return emailPattern.test(email);
+  }
+
+  private isValidPassword(password: string): boolean {
+    const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,}$/;
+    return passwordPattern.test(password);
   }
 }
