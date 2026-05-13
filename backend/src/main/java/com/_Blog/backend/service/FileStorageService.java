@@ -8,6 +8,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.Objects;
 import java.util.UUID;
 
 @Service
@@ -32,7 +33,9 @@ public class FileStorageService {
 
     public String saveFile(MultipartFile file, String directory) {
         try {
-            String filename = UUID.randomUUID() + "_" + file.getOriginalFilename();
+            String originalName = Objects.requireNonNullElse(file.getOriginalFilename(), "upload.bin");
+            String safeName = Paths.get(originalName).getFileName().toString().replaceAll("[^a-zA-Z0-9._-]", "_");
+            String filename = UUID.randomUUID() + "_" + safeName;
             Path targetDirectory = rootLocation.resolve(directory);
             Files.createDirectories(targetDirectory);
             Files.copy(file.getInputStream(), targetDirectory.resolve(filename), StandardCopyOption.REPLACE_EXISTING);

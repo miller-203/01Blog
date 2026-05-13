@@ -19,9 +19,12 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @RestController
@@ -55,6 +58,12 @@ public class PostController {
 
     private static final long MAX_IMAGE_SIZE_BYTES = 5 * 1024 * 1024;
     private static final long MAX_VIDEO_SIZE_BYTES = 25 * 1024 * 1024;
+    private static final Set<String> ALLOWED_IMAGE_CONTENT_TYPES = new HashSet<>(Arrays.asList(
+            "image/jpeg", "image/png", "image/webp", "image/gif"
+    ));
+    private static final Set<String> ALLOWED_VIDEO_CONTENT_TYPES = new HashSet<>(Arrays.asList(
+            "video/mp4", "video/webm", "video/quicktime"
+    ));
 
     @PostMapping(value = "/upload-image", consumes = { "multipart/form-data" })
     public ResponseEntity<?> uploadImage(@RequestParam("image") MultipartFile image, Authentication authentication) {
@@ -70,6 +79,10 @@ public class PostController {
 
         if (image.getSize() > MAX_IMAGE_SIZE_BYTES) {
             return ResponseEntity.status(413).body("Image exceeds 5MB limit");
+        }
+
+        if (!isAllowed(image, ALLOWED_IMAGE_CONTENT_TYPES, new String[]{".jpg", ".jpeg", ".png", ".webp", ".gif"})) {
+            return ResponseEntity.badRequest().body("Invalid image type. Allowed: jpg, jpeg, png, webp, gif");
         }
 
         String imageUrl = fileStorageService.saveFile(image);
@@ -98,6 +111,10 @@ public class PostController {
 
         if (video.getSize() > MAX_VIDEO_SIZE_BYTES) {
             return ResponseEntity.status(413).body("Video exceeds 25MB limit");
+        }
+
+        if (!isAllowed(video, ALLOWED_VIDEO_CONTENT_TYPES, new String[]{".mp4", ".webm", ".mov"})) {
+            return ResponseEntity.badRequest().body("Invalid video type. Allowed: mp4, webm, mov");
         }
 
         String videoUrl = fileStorageService.saveFile(video);
@@ -132,6 +149,18 @@ public class PostController {
                 .toUriString();
     }
 
+
+    private boolean isAllowed(MultipartFile file, Set<String> allowedContentTypes, String[] allowedExtensions) {
+        String contentType = file.getContentType();
+        boolean typeAllowed = contentType != null && allowedContentTypes.contains(contentType.toLowerCase());
+
+        String originalName = file.getOriginalFilename();
+        String lowerName = originalName == null ? "" : originalName.toLowerCase();
+        boolean extensionAllowed = Arrays.stream(allowedExtensions).anyMatch(lowerName::endsWith);
+
+        return typeAllowed && extensionAllowed;
+    }
+
     @PostMapping(consumes = { "multipart/form-data" })
     public ResponseEntity<?> createPost(
             @RequestParam("title") String title,
@@ -158,6 +187,10 @@ public class PostController {
         if (file != null && !file.isEmpty()) {
             if (file.getSize() > MAX_IMAGE_SIZE_BYTES) {
                 return ResponseEntity.status(413).body("Image exceeds 5MB limit");
+            }
+
+            if (!isAllowed(file, ALLOWED_IMAGE_CONTENT_TYPES, new String[]{".jpg", ".jpeg", ".png", ".webp", ".gif"})) {
+                return ResponseEntity.badRequest().body("Invalid image type. Allowed: jpg, jpeg, png, webp, gif");
             }
 
             imageUrl = toPublicUploadUrl(fileStorageService.saveFile(file));
