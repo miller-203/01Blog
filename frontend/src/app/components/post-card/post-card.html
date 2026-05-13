@@ -61,7 +61,8 @@
             </div>
         </div>
 
-        <div class="card-image" *ngIf="imageUrl">
+        <div class="card-image" *ngIf="imageUrl || videoUrl">
+            <video *ngIf="videoUrl" [src]="videoUrl" controls preload="metadata"></video>
             <img *ngIf="imageUrl" [src]="imageUrl" alt="Post image">
         </div>
     </div>

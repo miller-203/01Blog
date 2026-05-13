@@ -21,6 +21,7 @@ export class PostCard implements OnInit {
   authorAvatar?: string | null;
   excerpt: string = '';
   imageUrl?: string | null;
+  videoUrl?: string | null;
   createdAt?: string;
 
   // Injected Services
@@ -50,6 +51,7 @@ export class PostCard implements OnInit {
   private initializePostContent(): void {
     const blocks = this.extractBlocks();
     this.extractImageUrl(blocks);
+    this.extractVideoUrl(blocks);
     this.extractExcerpt(blocks);
   }
 
@@ -69,6 +71,11 @@ export class PostCard implements OnInit {
   private extractImageUrl(blocks: any[]): void {
     const imageBlock = blocks.find(b => b.type === 'image');
     this.imageUrl = imageBlock?.data?.file?.url ?? imageBlock?.data?.url ?? null;
+  }
+
+  private extractVideoUrl(blocks: any[]): void {
+    const videoBlock = blocks.find(b => b.type === 'video');
+    this.videoUrl = videoBlock?.data?.file?.url ?? videoBlock?.data?.url ?? null;
   }
 
   private extractExcerpt(blocks: any[]): void {

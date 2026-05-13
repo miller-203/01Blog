@@ -10,6 +10,8 @@ import org.springframework.stereotype.Service;
 @Service
 public class AuthService {
 
+    private static final String PASSWORD_POLICY_REGEX = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[^A-Za-z0-9]).{8,}$";
+
     @Autowired
     UserRepository userRepository;
 
@@ -23,6 +25,10 @@ public class AuthService {
 
         if (userRepository.existsByEmail(request.getEmail())) {
             return "Error: Email is already in use!";
+        }
+
+        if (request.getPassword() == null || !request.getPassword().matches(PASSWORD_POLICY_REGEX)) {
+            return "Error: Password must be at least 8 characters and include uppercase, lowercase, number, and special character.";
         }
 
         User user = new User();
