@@ -4,3 +4,7 @@ cd backend
 #start frontend
 cd ../frontend
 ng serve
+
+
+export $(grep -v '^#' .env | xargs)
+./mvnw spring-boot:run

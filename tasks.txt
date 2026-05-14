@@ -1,9 +1,0 @@
-- delete user from admin
-- delete post from admin
-- delete post from user
-- dashboard
-- reports
-- change password
-- avatar
-- create post
-- check admin for every action admin
