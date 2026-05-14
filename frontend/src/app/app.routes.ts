@@ -15,6 +15,7 @@ import { noAuthGuard } from './core/guard/no-auth-guard';
 import { CreatePost } from './features/posts/create-post/create-post';
 import { PostDetail } from './features/posts/post-detail/post-detail';
 import { Profile } from './features/profile/profile';
+import { NotFound } from './features/not-found/not-found';
 
 export const routes: Routes = [
   {
@@ -53,5 +54,5 @@ export const routes: Routes = [
     ]
   },
 
-  { path: '**', redirectTo: '' }
+  { path: '**', component: NotFound }
 ];

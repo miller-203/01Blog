@@ -1,0 +1,25 @@
+.not-found {
+    text-align: center;
+    margin-top: 50px;
+}
+
+.not-found h1 {
+    font-size: 48px;
+    color: #333;
+}
+
+.not-found p {
+    font-size: 18px;
+    color: #666;
+}
+
+.not-found button {
+    margin-top: 20px;
+    border-radius: 10px;
+    font-size: 1rem;
+}
+
+.not-found button a {
+    color: rgb(0, 0, 0);
+    text-decoration: none;
+}

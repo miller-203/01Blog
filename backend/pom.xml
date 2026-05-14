@@ -12,7 +12,7 @@
     <name>backend</name>
     <description>01Blog Backend API</description>
     <properties>
-        <java.version>21</java.version>
+        <java.version>17</java.version>
     </properties>
     
     <dependencies>

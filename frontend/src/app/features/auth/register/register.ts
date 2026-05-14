@@ -73,7 +73,7 @@ export class Register {
             err,
             'Registration failed. Please try again.'
           );
-          this.popup.show(errorMessage, false);
+          this.popup.show("There was an error registering your account.", false);
         }
       });
   }
